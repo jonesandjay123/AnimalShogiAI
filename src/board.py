@@ -5,7 +5,7 @@ import sys
 pygame.init()
 
 # 設置窗口的寬度和高度
-WIDTH, HEIGHT = 450, 600
+WIDTH, HEIGHT = 900, 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # 設置顏色
@@ -19,7 +19,7 @@ ROWS, COLS = 4, 3
 SQUARE_SIZE = 100
 
 # 計算新的起點來將棋盤置中
-GRID_OFFSET_X = (WIDTH - (COLS * SQUARE_SIZE)) // 2
+GRID_OFFSET_X = 125
 GRID_OFFSET_Y = (HEIGHT - (ROWS * SQUARE_SIZE)) // 2
 
 
