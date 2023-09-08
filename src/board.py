@@ -2,6 +2,7 @@
 import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
 
+
 def draw_grid(window):
     # Draw the grid lines of the board
     for row in range(ROWS + 1):

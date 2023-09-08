@@ -4,6 +4,7 @@ import sys
 from board import draw_grid, draw_labels, draw_buttons
 from const import WIDTH, HEIGHT
 
+
 def main():
     # Initialize pygame
     pygame.init()
@@ -17,7 +18,8 @@ def main():
 
     run = True
     while run:
-        duel_button, setup_button = draw_buttons(window)  # Get the button rectangles
+        duel_button, setup_button = draw_buttons(
+            window)  # Get the button rectangles
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
