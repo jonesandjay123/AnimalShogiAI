@@ -1,6 +1,17 @@
 
 import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
+from piece import Elephant, Lion, Giraffe, Chick
+
+
+def init_board():
+    board = [
+        [Giraffe('down'), Lion('down'), Elephant('down')],
+        [None, Chick('down'), None],
+        [None, Chick('up'), None],
+        [Elephant('up'), Lion('up'), Giraffe('up')]
+    ]
+    return board
 
 
 def draw_grid(window):

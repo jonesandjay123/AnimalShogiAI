@@ -1,48 +1,81 @@
 
+import pygame
+
 class Piece:
-    def __init__(self, player):
-        """
-        Initialize a new piece.
-        
-        :param player: The player who owns this piece ('player1' or 'player2').
-        """
-        self.player = player
+    def __init__(self, direction):
+        self.direction = direction  # Direction can be 'up' or 'down'
 
     def get_available_moves(self, board):
-        """
-        Get a list of available moves for this piece.
-
-        :param board: The current state of the game board.
-        :return: A list of available moves.
-        """
-        raise NotImplementedError("This method should be overridden by subclasses")
-
-
-class Lion(Piece):
-    def get_available_moves(self, board):
-        # TODO: Implement the method to get available moves for the Lion piece
+        # This method should be implemented by the subclasses to provide the available moves for a piece
         pass
 
 
 class Elephant(Piece):
+    def __init__(self, direction):
+        super().__init__(direction)
+        self.image = pygame.image.load(f'assets/elephant_{direction}.png')
+
     def get_available_moves(self, board):
-        # TODO: Implement the method to get available moves for the Elephant piece
-        pass
+        # Define the available moves for the elephant
+        if self.direction == 'up':
+            return [(1, 1), (-1, 1), (1, -1), (-1, -1)]
+        else:
+            # Flip the moves for the down direction
+            return [(-x, -y) for x, y in [(1, 1), (-1, 1), (1, -1), (-1, -1)]]
 
 
 class Giraffe(Piece):
+    def __init__(self, direction):
+        super().__init__(direction)
+        self.image = pygame.image.load(f'assets/giraffe_{direction}.png')
+
     def get_available_moves(self, board):
-        # TODO: Implement the method to get available moves for the Giraffe piece
-        pass
+        # Define the available moves for the giraffe
+        if self.direction == 'up':
+            return [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        else:
+            # Flip the moves for the down direction
+            return [(-x, -y) for x, y in [(0, 1), (1, 0), (0, -1), (-1, 0)]]
+
+
+class Lion(Piece):
+    def __init__(self, direction):
+        super().__init__(direction)
+        self.image = pygame.image.load(f'assets/lion_{direction}.png')
+
+    def get_available_moves(self, board):
+        # Define the available moves for the lion
+        if self.direction == 'up':
+            return [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1)]
+        else:
+            # Flip the moves for the down direction
+            return [(-x, -y) for x, y in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1)]]
 
 
 class Chick(Piece):
+    def __init__(self, direction):
+        super().__init__(direction)
+        self.image = pygame.image.load(f'assets/chick_{direction}.png')
+
     def get_available_moves(self, board):
-        # TODO: Implement the method to get available moves for the Chick piece
-        pass
+        # Define the available moves for the chick
+        if self.direction == 'up':
+            return [(0, -1)]
+        else:
+            # Flip the move for the down direction
+            return [(0, 1)]
 
 
-class Chicken(Piece):
+class Hen(Piece):
+    def __init__(self, direction):
+        super().__init__(direction)
+        self.image = pygame.image.load(f'assets/hen_{direction}.png')
+
     def get_available_moves(self, board):
-        # TODO: Implement the method to get available moves for the Chicken piece
-        pass
+        # Define the available moves for the hen
+        if self.direction == 'up':
+            return [(0, 1), (1, 0), (0, -1), (-1, 0), (-1, 1), (1, 1)]
+        else:
+            # Flip the moves for the down direction
+            return [(-x, -y) for x, y in [(0, 1), (1, 0), (0, -1), (-1, 0), (-1, 1), (1, 1)]]
+
