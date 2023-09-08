@@ -58,13 +58,19 @@ def draw_labels():
 
 
 def main():
+    # 載入和調整背景圖片的大小
+    background = pygame.image.load('assets/background.png')
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-        window.fill(WHITE)  # 將窗口背景設置為白色
+        # 繪製背景圖片
+        window.blit(background, (0, 0))
+
         draw_grid()
         draw_labels()
         pygame.display.update()
