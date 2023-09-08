@@ -1,32 +1,5 @@
 import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
-from piece import Elephant, Lion, Giraffe, Chick
-
-
-# The initial configuration of the board in terms of pieces
-initial_board_config = {
-    "b1": Lion('down'),
-    "c1": Elephant('down'),
-    "b2": Chick('down'),
-    "a1": Giraffe('down'),
-    "a4": Elephant('up'),
-    "b3": Chick('up'),
-    "b4": Lion('up'),
-    "c4": Giraffe('up'),
-}
-
-
-def create_board():
-    board = [
-        [None, None, None],
-        [None, None, None],
-        [None, None, None],
-        [None, None, None],
-    ]
-    for key, value in initial_board_config.items():
-        col, row = ord(key[0]) - ord('a'), int(key[1]) - 1
-        board[row][col] = value
-    return board
 
 
 def draw_squares(window):
@@ -38,12 +11,12 @@ def draw_squares(window):
                              GRID_OFFSET_Y + row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
 
-def draw_pieces(window, board):
-    for row in range(ROWS):
-        for col in range(COLS):
-            piece = board[row][col]
-            if piece:
-                piece.draw(window, row, col)
+def draw_pieces(window, board_config):
+    for key, value in board_config.items():
+        col, row = ord(key[0]) - ord('a'), int(key[1]) - 1
+        piece_image = pygame.image.load(f'{value.image}')
+        window.blit(piece_image, (GRID_OFFSET_X + col *
+                    SQUARE_SIZE, GRID_OFFSET_Y + row * SQUARE_SIZE))
 
 
 def draw_grid(window):

@@ -1,12 +1,15 @@
 import pygame
 import sys
-from board import create_board, draw_grid, draw_squares, draw_labels, draw_buttons, draw_pieces
+from board import draw_grid, draw_squares, draw_labels, draw_buttons, draw_pieces
 from const import WIDTH, HEIGHT
+from game import Game
 
 
 def main():
     # Initialize pygame
     pygame.init()
+
+    game = Game()  # 創建 Game 類的一個實例
 
     # Set the dimensions of the window
     window = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -14,10 +17,6 @@ def main():
     # Load and scale the background image
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-
-    board = create_board()  # Create the initial board setup
-
-    display_pieces = False  # Variable to track whether to display the pieces
 
     run = True
     while run:
@@ -30,10 +29,11 @@ def main():
                 # The duel button was clicked
                 if duel_button.collidepoint(pygame.mouse.get_pos()):
                     print("對局按鈕被點擊")
-                    display_pieces = True  # Set display_pieces to True when the duel button is clicked
+                    game.create_initial_board_config()  # 初始化為對局模式的配置
                 # The setup button was clicked
                 elif setup_button.collidepoint(pygame.mouse.get_pos()):
                     print("擺盤按鈕被點擊")
+                    game.initialize_setup_mode()  # 清空棋盤，進入擺盤模式
 
         # 繪製背景圖片
         window.blit(background, (0, 0))
@@ -41,9 +41,7 @@ def main():
         draw_grid(window)
         draw_labels(window)
         draw_buttons(window)
-
-        if display_pieces:  # Only draw the pieces if display_pieces is True
-            draw_pieces(window, board)  # Draw the pieces on the board
+        draw_pieces(window, game.board_config)  # Draw the pieces on the board
 
         pygame.display.update()
 
