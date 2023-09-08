@@ -74,6 +74,7 @@ def draw_buttons():
     pygame.draw.rect(window, LIGHT_WOOD, setup_button)
     setup_label = font.render('擺盤', True, BLACK)
     window.blit(setup_label, (setup_button.x + 8, setup_button.y + 4))
+    return duel_button, setup_button
 
 
 def main():
@@ -83,9 +84,17 @@ def main():
 
     run = True
     while run:
+        duel_button, setup_button = draw_buttons()  # Get the button rectangles
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:  # A mouse button was pressed
+                # The duel button was clicked
+                if duel_button.collidepoint(pygame.mouse.get_pos()):
+                    print("對局按鈕被點擊")
+                # The setup button was clicked
+                elif setup_button.collidepoint(pygame.mouse.get_pos()):
+                    print("擺盤按鈕被點擊")
 
         # 繪製背景圖片
         window.blit(background, (0, 0))
