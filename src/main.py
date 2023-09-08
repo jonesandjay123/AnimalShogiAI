@@ -1,7 +1,6 @@
-
 import pygame
 import sys
-from board import draw_grid, draw_labels, draw_buttons
+from board import create_board, draw_grid, draw_squares, draw_labels, draw_buttons, draw_pieces
 from const import WIDTH, HEIGHT
 
 
@@ -15,6 +14,8 @@ def main():
     # Load and scale the background image
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+
+    board = create_board()  # Create the initial board setup
 
     run = True
     while run:
@@ -34,9 +35,11 @@ def main():
         # Draw background image
         window.blit(background, (0, 0))
 
+        draw_squares(window)  # Draw the squares on the board
         draw_grid(window)
         draw_labels(window)
         draw_buttons(window)
+        draw_pieces(window, board)  # Draw the pieces on the board
         pygame.display.update()
 
     pygame.quit()

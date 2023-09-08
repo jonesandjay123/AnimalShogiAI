@@ -1,17 +1,49 @@
-
 import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
 from piece import Elephant, Lion, Giraffe, Chick
 
 
-def init_board():
+# The initial configuration of the board in terms of pieces
+initial_board_config = {
+    "b1": Lion('down'),
+    "c1": Elephant('down'),
+    "b2": Chick('down'),
+    "a1": Giraffe('down'),
+    "a4": Elephant('up'),
+    "b3": Chick('up'),
+    "b4": Lion('up'),
+    "c4": Giraffe('up'),
+}
+
+
+def create_board():
     board = [
-        [Giraffe('down'), Lion('down'), Elephant('down')],
-        [None, Chick('down'), None],
-        [None, Chick('up'), None],
-        [Elephant('up'), Lion('up'), Giraffe('up')]
+        [None, None, None],
+        [None, None, None],
+        [None, None, None],
+        [None, None, None],
     ]
+    for key, value in initial_board_config.items():
+        col, row = ord(key[0]) - ord('a'), int(key[1]) - 1
+        board[row][col] = value
     return board
+
+
+def draw_squares(window):
+    window.fill(WHITE)
+    for row in range(ROWS):
+        for col in range(COLS):
+            color = LIGHT_WOOD if (row + col) % 2 == 0 else DARK_WOOD
+            pygame.draw.rect(window, color, (GRID_OFFSET_X + col * SQUARE_SIZE,
+                             GRID_OFFSET_Y + row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+
+
+def draw_pieces(window, board):
+    for row in range(ROWS):
+        for col in range(COLS):
+            piece = board[row][col]
+            if piece:
+                piece.draw(window, row, col)
 
 
 def draw_grid(window):
