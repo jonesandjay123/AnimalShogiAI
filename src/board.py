@@ -19,7 +19,7 @@ ROWS, COLS = 4, 3
 SQUARE_SIZE = 100
 
 # 計算新的起點來將棋盤置中
-GRID_OFFSET_X = 125
+GRID_OFFSET_X = 150
 GRID_OFFSET_Y = (HEIGHT - (ROWS * SQUARE_SIZE)) // 2
 
 
@@ -57,6 +57,25 @@ def draw_labels():
                     (GRID_OFFSET_X - 30, GRID_OFFSET_Y + i * SQUARE_SIZE + SQUARE_SIZE // 2 - 10))
 
 
+def draw_buttons():
+    font = pygame.font.Font('assets/NotoSansTC-Bold.ttf', 24)
+    button_width, button_height = 60, 40
+
+    # 繪製“對局”按鈕
+    duel_button = pygame.Rect(
+        GRID_OFFSET_X - button_width - 60, HEIGHT // 2 - 60, button_width, button_height)
+    pygame.draw.rect(window, LIGHT_WOOD, duel_button)
+    duel_label = font.render('對局', True, BLACK)
+    window.blit(duel_label, (duel_button.x + 8, duel_button.y + 4))
+
+    # 繪製“擺盤”按鈕
+    setup_button = pygame.Rect(
+        GRID_OFFSET_X - button_width - 60, HEIGHT // 2 + 20, button_width, button_height)
+    pygame.draw.rect(window, LIGHT_WOOD, setup_button)
+    setup_label = font.render('擺盤', True, BLACK)
+    window.blit(setup_label, (setup_button.x + 8, setup_button.y + 4))
+
+
 def main():
     # 載入和調整背景圖片的大小
     background = pygame.image.load('assets/background.png')
@@ -71,6 +90,9 @@ def main():
         # 繪製背景圖片
         window.blit(background, (0, 0))
 
+        draw_grid()
+        draw_labels()
+        draw_buttons()
         draw_grid()
         draw_labels()
         pygame.display.update()
