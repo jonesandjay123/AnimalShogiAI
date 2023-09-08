@@ -9,8 +9,10 @@ WIDTH, HEIGHT = 300, 400
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # 設置顏色
-WHITE = (255, 255, 255)
+DARK_WOOD = (101, 67, 33)
+LIGHT_WOOD = (205, 133, 63)
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 # 設置棋盤參數
 ROWS, COLS = 4, 3
@@ -23,13 +25,33 @@ def draw_grid():
             rect = pygame.Rect(col * SQUARE_SIZE, row *
                                SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
             if (row + col) % 2 == 0:
-                pygame.draw.rect(window, WHITE, rect)
+                pygame.draw.rect(window, LIGHT_WOOD, rect)
             else:
-                pygame.draw.rect(window, BLACK, rect)
-            pygame.draw.line(window, BLACK, (col * SQUARE_SIZE,
-                             0), (col * SQUARE_SIZE, HEIGHT))
-        pygame.draw.line(window, BLACK, (0, row * SQUARE_SIZE),
-                         (WIDTH, row * SQUARE_SIZE))
+                pygame.draw.rect(window, DARK_WOOD, rect)
+
+    # 繪製虛線邊框
+    pygame.draw.line(window, BLACK, (0, 0), (WIDTH, 0), 1)
+    pygame.draw.line(window, BLACK, (0, 0), (0, HEIGHT), 1)
+    pygame.draw.line(window, BLACK, (WIDTH, 0), (WIDTH, HEIGHT), 1)
+    pygame.draw.line(window, BLACK, (0, HEIGHT), (WIDTH, HEIGHT), 1)
+
+
+def draw_labels():
+    font = pygame.font.SysFont(None, 24)
+
+    # 繪製列標籤
+    labels_col = ['A', 'B', 'C']
+    for i, label in enumerate(labels_col):
+        label_surface = font.render(label, True, BLACK)
+        window.blit(label_surface, (i * SQUARE_SIZE +
+                    SQUARE_SIZE // 2 - 10, 10))
+
+    # 繪製行標籤
+    labels_row = ['1', '2', '3', '4']
+    for i, label in enumerate(labels_row):
+        label_surface = font.render(label, True, BLACK)
+        window.blit(label_surface,
+                    (10, i * SQUARE_SIZE + SQUARE_SIZE // 2 - 10))
 
 
 def main():
@@ -40,6 +62,7 @@ def main():
                 run = False
 
         draw_grid()
+        draw_labels()
         pygame.display.update()
 
     pygame.quit()
