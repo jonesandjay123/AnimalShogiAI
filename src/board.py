@@ -20,14 +20,13 @@ SQUARE_SIZE = WIDTH // COLS
 
 
 def draw_grid():
-    for row in range(ROWS):
-        for col in range(COLS):
-            rect = pygame.Rect(col * SQUARE_SIZE, row *
-                               SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
-            if (row + col) % 2 == 0:
-                pygame.draw.rect(window, LIGHT_WOOD, rect)
-            else:
-                pygame.draw.rect(window, DARK_WOOD, rect)
+    # 繪製棋盤的網格線
+    for row in range(ROWS + 1):
+        pygame.draw.line(window, BLACK, (0, row * SQUARE_SIZE),
+                         (WIDTH, row * SQUARE_SIZE), 1)
+    for col in range(COLS + 1):
+        pygame.draw.line(window, BLACK, (col * SQUARE_SIZE, 0),
+                         (col * SQUARE_SIZE, HEIGHT), 1)
 
     # 繪製虛線邊框
     pygame.draw.line(window, BLACK, (0, 0), (WIDTH, 0), 1)
@@ -61,6 +60,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
+        window.fill(WHITE)  # 將窗口背景設置為白色
         draw_grid()
         draw_labels()
         pygame.display.update()
