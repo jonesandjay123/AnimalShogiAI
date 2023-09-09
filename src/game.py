@@ -1,4 +1,4 @@
-from piece import Elephant, Lion, Giraffe, Chick
+from piece import Piece
 
 
 class Game:
@@ -10,14 +10,14 @@ class Game:
 
     def create_initial_board_config(self):
         self.board_config = {
-            "b1": Lion('down'),
-            "c1": Elephant('down'),
-            "b2": Chick('down'),
-            "a1": Giraffe('down'),
-            "a4": Elephant('up'),
-            "b3": Chick('up'),
-            "b4": Lion('up'),
-            "c4": Giraffe('up'),
+            "b1": Piece("L", -1),
+            "c1": Piece("E", -1),
+            "b2": Piece("C", -1),
+            "a1": Piece("G", -1),
+            "a4": Piece("E", 1),
+            "b3": Piece("C", 1),
+            "b4": Piece("L", 1),
+            "c4": Piece("G", 1),
         }
         self.storage_area_player1 = []
         self.storage_area_player2 = []
@@ -25,7 +25,7 @@ class Game:
     def initialize_setup_mode(self):
         # 這將清空棋盤，進入擺盤模式
         self.board_config = {}
-        self.storage_area_player1 = [Lion('up'), Giraffe(
-            'up'), Elephant('up'), Chick('up')]
-        self.storage_area_player2 = [Lion('down'), Giraffe(
-            'down'), Elephant('down'), Chick('down')]
+        self.storage_area_player1 = [Piece("L", 1), Piece(
+            "G", 1), Piece("E", 1), Piece("C", 1)]
+        self.storage_area_player2 = [
+            Piece("L", -1), Piece("G", -1), Piece("E", -1), Piece("C", -1)]
