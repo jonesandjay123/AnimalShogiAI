@@ -4,8 +4,12 @@ from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y
 
 
 class Piece:
+    image_file = ""  # This will be overridden in each subclass
+
     def __init__(self, direction):
         self.direction = direction  # Direction can be 'up' or 'down'
+        self.image = pygame.image.load(
+            f"assets/{self.image_file}_{direction}.png")  # Load the image here
 
     def draw(self, window, row, col):
         # Scale the image to fit the square size
@@ -21,9 +25,10 @@ class Piece:
 
 
 class Elephant(Piece):
+    image_file = "elephant"  # Setting the image file name for the Elephant class
+
     def __init__(self, direction):
         super().__init__(direction)
-        self.image = f"assets/elephant_{direction}.png"
 
     def get_available_moves(self, board):
         # Define the available moves for the elephant
@@ -35,9 +40,10 @@ class Elephant(Piece):
 
 
 class Giraffe(Piece):
+    image_file = "giraffe"
+
     def __init__(self, direction):
         super().__init__(direction)
-        self.image = f"assets/giraffe_{direction}.png"
 
     def get_available_moves(self, board):
         # Define the available moves for the giraffe
@@ -49,9 +55,10 @@ class Giraffe(Piece):
 
 
 class Lion(Piece):
+    image_file = "lion"
+
     def __init__(self, direction):
         super().__init__(direction)
-        self.image = f"assets/lion_{direction}.png"
 
     def get_available_moves(self, board):
         # Define the available moves for the lion
@@ -63,9 +70,10 @@ class Lion(Piece):
 
 
 class Chick(Piece):
+    image_file = "chick"
+
     def __init__(self, direction):
         super().__init__(direction)
-        self.image = f"assets/chick_{direction}.png"
 
     def get_available_moves(self, board):
         # Define the available moves for the chick
@@ -77,9 +85,10 @@ class Chick(Piece):
 
 
 class Hen(Piece):
+    image_file = "chicken"
+
     def __init__(self, direction):
         super().__init__(direction)
-        self.image = f"assets/chicken_{direction}.png"
 
     def get_available_moves(self, board):
         # Define the available moves for the hen

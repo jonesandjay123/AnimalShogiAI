@@ -5,7 +5,7 @@ from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, 
 def draw_pieces(window, board_config):
     for key, value in board_config.items():
         col, row = ord(key[0]) - ord('a'), int(key[1]) - 1
-        piece_image = pygame.image.load(f'{value.image}')
+        piece_image = value.image  # Get the already loaded image
         piece_image = pygame.transform.scale(
             piece_image, (SQUARE_SIZE, SQUARE_SIZE))  # Resize the image
         window.blit(piece_image, (GRID_OFFSET_X + col *
