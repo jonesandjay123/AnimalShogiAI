@@ -12,6 +12,8 @@ class Game:
         self.storage_area_player2 = []
         self.selected_piece = None  # 用來追蹤當前選中的棋子
         self.selected_piece_origin = None  # 用來追蹤選中棋子的原始位置
+        # Add this line to initialize the mouse position
+        self.mouse_pos = (0, 0)
 
     def create_initial_board_config(self):
         self.board_config = {
@@ -77,10 +79,8 @@ class Game:
         piece = self.get_piece_at_pos(pos)
         if piece:
             self.selected_piece = piece
-            # Here we also store the original position (cell name or storage index)
-            # of the selected piece to know where it comes from
             self.selected_piece_origin = self.get_piece_origin(piece)
-            # 打印選定的棋子和它的原始位置
+            self.mouse_pos = pos  # Update the mouse position when a piece is selected
             print(
                 f"Piece selected: {self.selected_piece}, Origin: {self.selected_piece_origin}")
 
@@ -100,14 +100,13 @@ class Game:
     def place_piece(self, pos):
         if self.setup_mode and self.selected_piece:
             new_cell_name = self.get_cell_name_from_pos(pos)
-            if new_cell_name:  # 檢查新位置是否是一個有效的單元名稱
-                # 更新棋盤配置來包含新位置
+            if new_cell_name:
                 self.board_config[new_cell_name] = self.selected_piece
-                # 從原來的位置移除棋子
                 self.remove_piece_from_origin()
-                # 重置所選棋子
                 self.selected_piece = None
-                print(f"Piece placed at: {new_cell_name}")  # 打印棋子被放置的位置
+                # Reset the mouse position when a piece is placed
+                self.mouse_pos = (0, 0)
+                print(f"Piece placed at: {new_cell_name}")
 
     def get_cell_name_from_pos(self, pos):
         column_map = {0: "a", 1: "b", 2: "c"}

@@ -3,8 +3,10 @@ from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, 
 from utils import get_storage_cell_details, get_storage_cell_coords
 
 
-def draw_pieces(window, board_config, storage_area_player1, storage_area_player2):
+def draw_pieces(window, board_config, storage_area_player1, storage_area_player2, selected_piece=None, mouse_pos=None):
     for key, value in board_config.items():
+        if value == selected_piece:  # Skip drawing the selected piece at its original position
+            continue
         col, row = ord(key[0]) - ord('a'), int(key[1]) - 1
         piece_image = value.image  # Get the already loaded image
         piece_image = pygame.transform.scale(
@@ -30,6 +32,14 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
     for i, piece in enumerate(storage_area_player1):
         x, y = get_storage_cell_coords(i, 1, storage_cell_size, margin)
         draw_storage_piece(piece, x, y)
+
+    # Draw the selected piece at the mouse position (if any)
+    if selected_piece and mouse_pos:
+        piece_image = selected_piece.image
+        piece_image = pygame.transform.scale(
+            piece_image, (SQUARE_SIZE, SQUARE_SIZE))
+        window.blit(
+            piece_image, (mouse_pos[0] - SQUARE_SIZE // 2, mouse_pos[1] - SQUARE_SIZE // 2))
 
 
 def draw_grid(window):

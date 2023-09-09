@@ -26,6 +26,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
             elif event.type == pygame.MOUSEMOTION:  # The mouse was moved
+                game.mouse_pos = event.pos  # Update the mouse position on mouse move
                 if game.selected_piece and game.setup_mode:
                     # Update the position of the selected piece to follow the mouse
                     game.selected_piece.update_position(pygame.mouse.get_pos())
@@ -59,8 +60,8 @@ def main():
         # draw_storage_area(window)  # Draw the storage areas
         draw_labels(window)
         draw_buttons(window)
-        draw_pieces(window, game.board_config,
-                    game.storage_area_player1, game.storage_area_player2)
+        draw_pieces(window, game.board_config, game.storage_area_player1,
+                    game.storage_area_player2, game.selected_piece, game.mouse_pos)
 
         pygame.display.update()
 
