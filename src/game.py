@@ -115,29 +115,30 @@ class Game:
     def place_piece(self, pos):
         if self.setup_mode and self.selected_piece:
             new_cell_name = self.get_cell_name_from_pos(pos)
-            print(
-                f"New cell name: {new_cell_name}, Selected piece: {self.selected_piece}")
+            print(f"New cell name: {new_cell_name}, Selected piece: {self.selected_piece}")
+            
             if new_cell_name:
+                # Check if the target cell is already occupied by another piece
+                if self.board_config.get(new_cell_name):
+                    # If the target cell is occupied, return the current selected piece to its origin
+                    piece, origin = self.temp_removed_piece
+                    self.return_piece_to_origin(piece, origin)
+                    return
+
                 self.board_config[new_cell_name] = self.selected_piece
                 # Reset the temp removed piece as the placement was successful
                 self.temp_removed_piece = None
             else:
                 # If the new position is not valid, put back the piece to its origin
                 piece, origin = self.temp_removed_piece
-                print(f"Piece: {piece}, Origin: {origin}")
-                if isinstance(origin, tuple):
-                    # If the origin is in the storage area
-                    if origin[0] == 'storage1':
-                        self.storage_area_player1.insert(origin[1], piece)
-                    else:
-                        self.storage_area_player2.insert(origin[1], piece)
-                else:
-                    # If the origin is on the board
-                    self.board_config[origin] = piece
+                self.return_piece_to_origin(piece, origin)
+            
             self.selected_piece = None
             # Reset the mouse position when a piece is placed
             self.mouse_pos = (0, 0)
             print(f"Piece placed at: {new_cell_name}")
+
+
 
     def get_cell_name_from_pos(self, pos):
         column_map = {0: "a", 1: "b", 2: "c"}
@@ -166,3 +167,14 @@ class Game:
             elif origin[0] == 'storage2':
                 removed_piece = self.storage_area_player2.pop(origin[1])
                 print(f"Removed piece from player 2's storage: {removed_piece}")
+
+    def return_piece_to_origin(self, piece, origin):
+        if isinstance(origin, tuple):
+            # If the origin is in the storage area
+            if origin[0] == 'storage1':
+                self.storage_area_player1.insert(origin[1], piece)
+            else:
+                self.storage_area_player2.insert(origin[1], piece)
+        else:
+            # If the origin is on the board
+            self.board_config[origin] = piece
