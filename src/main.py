@@ -25,15 +25,32 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            elif event.type == pygame.MOUSEMOTION:  # The mouse was moved
+                if game.selected_piece and game.setup_mode:
+                    # Update the position of the selected piece to follow the mouse
+                    game.selected_piece.update_position(pygame.mouse.get_pos())
             elif event.type == pygame.MOUSEBUTTONDOWN:  # A mouse button was pressed
                 # The duel button was clicked
                 if duel_button.collidepoint(pygame.mouse.get_pos()):
                     print("對局按鈕被點擊")
                     game.create_initial_board_config()  # 初始化為對局模式的配置
+                    game.setup_mode = False  # Set the mode to normal game mode
                 # The setup button was clicked
                 elif setup_button.collidepoint(pygame.mouse.get_pos()):
                     print("擺盤按鈕被點擊")
                     game.initialize_setup_mode()  # 清空棋盤，進入擺盤模式
+                    game.setup_mode = True   # Set the mode to setup mode
+                else:
+                    # Try to select a piece if we are in setup mode
+                    if game.setup_mode:
+                        game.select_piece(pygame.mouse.get_pos())
+            elif event.type == pygame.MOUSEBUTTONUP:  # A mouse button was released
+                if game.selected_piece and game.setup_mode:
+                    # Place the selected piece at the current mouse position
+                    game.place_piece(pygame.mouse.get_pos())
+                    # Reset the selected piece
+                    game.selected_piece = None
+                    game.selected_piece_origin = None
 
         # 繪製背景圖片
         window.blit(background, (0, 0))

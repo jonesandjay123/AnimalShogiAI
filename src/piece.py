@@ -47,3 +47,7 @@ class Piece:
             # Flip the moves for the down direction
             return [(-x, -y) for x, y in self.move_rules]
         return self.move_rules
+
+    def update_position(self, pos):
+        self.x = pos[0]
+        self.y = pos[1]
