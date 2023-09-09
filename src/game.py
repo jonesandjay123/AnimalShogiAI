@@ -12,6 +12,7 @@ class Game:
         self.storage_area_player2 = []
         self.selected_piece = None  # 用來追蹤當前選中的棋子
         self.selected_piece_origin = None  # 用來追蹤選中棋子的原始位置
+        self.temp_removed_piece = None  # 用來追蹤暫時移除的棋子
         # Add this line to initialize the mouse position
         self.mouse_pos = (0, 0)
 
@@ -80,6 +81,10 @@ class Game:
         if piece:
             self.selected_piece = piece
             self.selected_piece_origin = self.get_piece_origin(piece)
+            # Store the removed piece and its origin
+            self.temp_removed_piece = (
+                self.selected_piece, self.selected_piece_origin)
+            self.remove_piece_from_origin()  # Immediately remove the piece from its origin
             self.mouse_pos = pos  # Update the mouse position when a piece is selected
             print(
                 f"Piece selected: {self.selected_piece}, Origin: {self.selected_piece_origin}")
@@ -102,11 +107,24 @@ class Game:
             new_cell_name = self.get_cell_name_from_pos(pos)
             if new_cell_name:
                 self.board_config[new_cell_name] = self.selected_piece
-                self.remove_piece_from_origin()
-                self.selected_piece = None
-                # Reset the mouse position when a piece is placed
-                self.mouse_pos = (0, 0)
-                print(f"Piece placed at: {new_cell_name}")
+                # Reset the temp removed piece as the placement was successful
+                self.temp_removed_piece = None
+            else:
+                # If the new position is not valid, put back the piece to its origin
+                piece, origin = self.temp_removed_piece
+                if isinstance(origin, tuple):
+                    # If the origin is in the storage area
+                    if origin[0] == 'storage1':
+                        self.storage_area_player1.insert(origin[1], piece)
+                    else:
+                        self.storage_area_player2.insert(origin[1], piece)
+                else:
+                    # If the origin is on the board
+                    self.board_config[origin] = piece
+            self.selected_piece = None
+            # Reset the mouse position when a piece is placed
+            self.mouse_pos = (0, 0)
+            print(f"Piece placed at: {new_cell_name}")
 
     def get_cell_name_from_pos(self, pos):
         column_map = {0: "a", 1: "b", 2: "c"}
