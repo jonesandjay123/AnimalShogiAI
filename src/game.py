@@ -39,12 +39,17 @@ class Game:
             Piece("E", -1), Piece("L", -1), Piece("G", -1), Piece("C", -1)]
 
     def get_piece_at_pos(self, pos):
+        print(f"Checking pos: {pos}")
+
         # Iterate over the board configuration to find if a piece is at the current position
         for cell, piece in self.board_config.items():
             cell_x, cell_y = self.get_cell_coords(cell)
             if cell_x * SQUARE_SIZE <= pos[0] <= (cell_x + 1) * SQUARE_SIZE and \
                     cell_y * SQUARE_SIZE <= pos[1] <= (cell_y + 1) * SQUARE_SIZE:
+                print(
+                    f"Checking cell: {cell}, Cell coords: {(cell_x, cell_y)}, Piece: {piece}")
                 return piece
+
         # Also check the storage areas and adjust the margin as needed
         storage_cell_size, margin = get_storage_cell_details()
 
@@ -54,6 +59,8 @@ class Game:
             if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
                 # Return the piece at this storage cell if any
                 if i < len(self.storage_area_player2):
+                    print(
+                        f"Checking storage cell index: {i}, Player: 2, Cell coords: {(x, y)}, Piece: {self.storage_area_player2[i]}")
                     return self.storage_area_player2[i]
 
         # Check player1's storage area
@@ -62,6 +69,8 @@ class Game:
             if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
                 # Return the piece at this storage cell if any
                 if i < len(self.storage_area_player1):
+                    print(
+                        f"Checking storage cell index: {i}, Player: 1, Cell coords: {(x, y)}, Piece: {self.storage_area_player1[i]}")
                     return self.storage_area_player1[i]
 
         return None
@@ -78,6 +87,7 @@ class Game:
     def select_piece(self, pos):
         """根據給定的位置選擇一個棋子"""
         piece = self.get_piece_at_pos(pos)
+        print(f"Piece at pos: {self.get_piece_at_pos(pos)}, Pos: {pos}")
         if piece:
             self.selected_piece = piece
             self.selected_piece_origin = self.get_piece_origin(piece)
@@ -105,6 +115,8 @@ class Game:
     def place_piece(self, pos):
         if self.setup_mode and self.selected_piece:
             new_cell_name = self.get_cell_name_from_pos(pos)
+            print(
+                f"New cell name: {new_cell_name}, Selected piece: {self.selected_piece}")
             if new_cell_name:
                 self.board_config[new_cell_name] = self.selected_piece
                 # Reset the temp removed piece as the placement was successful
@@ -112,6 +124,7 @@ class Game:
             else:
                 # If the new position is not valid, put back the piece to its origin
                 piece, origin = self.temp_removed_piece
+                print(f"Piece: {piece}, Origin: {origin}")
                 if isinstance(origin, tuple):
                     # If the origin is in the storage area
                     if origin[0] == 'storage1':
@@ -144,9 +157,14 @@ class Game:
         # Check if the origin is a cell name on the board
         if isinstance(origin, str):
             del self.board_config[origin]
+            print(f"Removed piece from cell: {origin}")
         # Check if the origin is an index in the storage areas
         elif isinstance(origin, tuple):
             if origin[0] == 'storage1':
-                self.storage_area_player1.pop(origin[1])
+                removed_piece = self.storage_area_player1.pop(origin[1])
+                print(
+                    f"Removed piece from player 1's storage: {removed_piece}")
             elif origin[0] == 'storage2':
-                self.storage_area_player2.pop(origin[1])
+                removed_piece = self.storage_area_player2.pop(origin[1])
+                print(
+                    f"Removed piece from player 2's storage: {removed_piece}")

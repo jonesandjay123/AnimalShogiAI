@@ -13,5 +13,5 @@ def get_storage_cell_coords(index, player, storage_cell_size, margin):
         y = GRID_OFFSET_Y + ROWS * SQUARE_SIZE + margin
     else:  # player 2
         y = GRID_OFFSET_Y - storage_cell_size - margin
-    x = storage_area_start_x + (index+2) * (storage_cell_size + margin)
+    x = storage_area_start_x + (index+0) * (storage_cell_size + margin)
     return x, y
