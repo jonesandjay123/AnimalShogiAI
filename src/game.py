@@ -1,5 +1,6 @@
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
+from utils import get_storage_cell_coords
 
 
 class Game:
@@ -43,13 +44,11 @@ class Game:
                 return piece
         # Also check the storage areas
         storage_cell_size = SQUARE_SIZE * 0.7
-        storage_area_start_x = GRID_OFFSET_X - storage_cell_size * 2
         margin = 8  # Adjust the margin as needed
 
         # First check player2's storage area, then check player1's.
         for i in range(7):
-            x = storage_area_start_x + (i+2) * (storage_cell_size + margin)
-            y = GRID_OFFSET_Y - storage_cell_size - margin
+            x, y = get_storage_cell_coords(i, 2, storage_cell_size, margin)
             if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
                 # Return the piece at this storage cell if any
                 if i < len(self.storage_area_player2):
@@ -57,8 +56,7 @@ class Game:
 
         # Check player1's storage area
         for i in range(7):
-            x = storage_area_start_x + (i+2) * (storage_cell_size + margin)
-            y = GRID_OFFSET_Y + ROWS * SQUARE_SIZE + margin
+            x, y = get_storage_cell_coords(i, 1, storage_cell_size, margin)
             if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
                 # Return the piece at this storage cell if any
                 if i < len(self.storage_area_player1):

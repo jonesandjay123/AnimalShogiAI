@@ -1,5 +1,6 @@
 import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
+from utils import get_storage_cell_coords
 
 
 def draw_pieces(window, board_config, storage_area_player1, storage_area_player2):
@@ -22,16 +23,14 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
             piece.image, (int(SQUARE_SIZE * 0.7), int(SQUARE_SIZE * 0.7)))  # Resize the image
         window.blit(scaled_image, (x, y))
 
-    # Draw pieces in player1's storage area
-    for i, piece in enumerate(storage_area_player1):
-        x = storage_area_start_x + (i+2) * (storage_cell_size + margin)
-        y = GRID_OFFSET_Y + ROWS * SQUARE_SIZE + margin
-        draw_storage_piece(piece, x, y)
-
     # Draw pieces in player2's storage area
     for i, piece in enumerate(storage_area_player2):
-        x = storage_area_start_x + (i+2) * (storage_cell_size + margin)
-        y = GRID_OFFSET_Y - storage_cell_size - margin
+        x, y = get_storage_cell_coords(i, 2, storage_cell_size, margin)
+        draw_storage_piece(piece, x, y)
+
+    # Draw pieces in player1's storage area
+    for i, piece in enumerate(storage_area_player1):
+        x, y = get_storage_cell_coords(i, 1, storage_cell_size, margin)
         draw_storage_piece(piece, x, y)
 
 
