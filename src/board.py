@@ -2,15 +2,6 @@ import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
 
 
-def draw_squares(window):
-    window.fill(WHITE)
-    for row in range(ROWS):
-        for col in range(COLS):
-            color = LIGHT_WOOD if (row + col) % 2 == 0 else DARK_WOOD
-            pygame.draw.rect(window, color, (GRID_OFFSET_X + col * SQUARE_SIZE,
-                             GRID_OFFSET_Y + row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-
-
 def draw_pieces(window, board_config):
     for key, value in board_config.items():
         col, row = ord(key[0]) - ord('a'), int(key[1]) - 1

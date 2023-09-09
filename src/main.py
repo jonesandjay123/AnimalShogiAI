@@ -1,6 +1,6 @@
 import pygame
 import sys
-from board import draw_grid, draw_squares, draw_labels, draw_buttons, draw_pieces
+from board import draw_grid, draw_labels, draw_buttons, draw_pieces
 from const import WIDTH, HEIGHT
 from game import Game
 
