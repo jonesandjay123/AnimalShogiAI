@@ -1,6 +1,6 @@
 import pygame
 import sys
-from board import draw_grid, draw_labels, draw_buttons, draw_pieces
+from board import draw_grid, draw_storage_area, draw_labels, draw_buttons, draw_pieces
 from const import WIDTH, HEIGHT
 from game import Game
 
@@ -39,9 +39,11 @@ def main():
         window.blit(background, (0, 0))
 
         draw_grid(window)
+        draw_storage_area(window)  # Draw the storage areas
         draw_labels(window)
         draw_buttons(window)
-        draw_pieces(window, game.board_config)  # Draw the pieces on the board
+        draw_pieces(window, game.board_config,
+                    game.storage_area_player1, game.storage_area_player2)
 
         pygame.display.update()
 
