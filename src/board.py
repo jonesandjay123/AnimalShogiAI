@@ -24,13 +24,13 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
 
     # Draw pieces in player1's storage area
     for i, piece in enumerate(storage_area_player1):
-        x = storage_area_start_x + i * (storage_cell_size + margin)
+        x = storage_area_start_x + (i+2) * (storage_cell_size + margin)
         y = GRID_OFFSET_Y + ROWS * SQUARE_SIZE + margin
         draw_storage_piece(piece, x, y)
 
     # Draw pieces in player2's storage area
     for i, piece in enumerate(storage_area_player2):
-        x = storage_area_start_x + i * (storage_cell_size + margin)
+        x = storage_area_start_x + (i+2) * (storage_cell_size + margin)
         y = GRID_OFFSET_Y - storage_cell_size - margin
         draw_storage_piece(piece, x, y)
 
