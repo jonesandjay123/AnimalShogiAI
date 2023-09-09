@@ -1,6 +1,6 @@
 import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
-from utils import get_storage_cell_coords
+from utils import get_storage_cell_details, get_storage_cell_coords
 
 
 def draw_pieces(window, board_config, storage_area_player1, storage_area_player2):
@@ -12,10 +12,8 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
         window.blit(piece_image, (GRID_OFFSET_X + col *
                     SQUARE_SIZE, GRID_OFFSET_Y + row * SQUARE_SIZE))
 
-    # Draw the pieces in the storage areas
-    storage_cell_size = SQUARE_SIZE * 0.7
-    storage_area_start_x = GRID_OFFSET_X - storage_cell_size * 2
-    margin = 8  # Adjust the margin as needed
+    # Draw the pieces in the storage areas and adjust the margin as needed
+    storage_cell_size, margin = get_storage_cell_details()
 
     # Function to draw a piece at a specific storage cell
     def draw_storage_piece(piece, x, y):
