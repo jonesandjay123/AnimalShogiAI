@@ -8,15 +8,12 @@ class Piece:
         self.direction = direction  # Direction can be 'up' or 'down'
 
     def draw(self, window, row, col):
-        # Load the image file for the piece
-        piece_image = pygame.image.load(self.image)
-        # Scale the image to fit within a square
-        piece_image = pygame.transform.scale(
-            piece_image, (SQUARE_SIZE, SQUARE_SIZE))
-        # Calculate the x, y position of the top left corner of the square where the piece will be drawn
+        # Scale the image to fit the square size
+        scaled_image = pygame.transform.scale(
+            self.image, (SQUARE_SIZE, SQUARE_SIZE))
         x = GRID_OFFSET_X + col * SQUARE_SIZE
         y = GRID_OFFSET_Y + row * SQUARE_SIZE
-        window.blit(piece_image, (x, y))  # Draw the piece on the board
+        window.blit(scaled_image, (x, y))
 
     def get_available_moves(self, board):
         # This method should be implemented by the subclasses to provide the available moves for a piece

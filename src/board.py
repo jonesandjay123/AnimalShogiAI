@@ -6,6 +6,8 @@ def draw_pieces(window, board_config):
     for key, value in board_config.items():
         col, row = ord(key[0]) - ord('a'), int(key[1]) - 1
         piece_image = pygame.image.load(f'{value.image}')
+        piece_image = pygame.transform.scale(
+            piece_image, (SQUARE_SIZE, SQUARE_SIZE))  # Resize the image
         window.blit(piece_image, (GRID_OFFSET_X + col *
                     SQUARE_SIZE, GRID_OFFSET_Y + row * SQUARE_SIZE))
 
