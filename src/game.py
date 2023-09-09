@@ -41,16 +41,7 @@ class Game:
     def get_piece_at_pos(self, pos):
         print(f"Checking pos: {pos}")
 
-        # Iterate over the board configuration to find if a piece is at the current position
-        for cell, piece in self.board_config.items():
-            cell_x, cell_y = self.get_cell_coords(cell)
-            if cell_x * SQUARE_SIZE <= pos[0] <= (cell_x + 1) * SQUARE_SIZE and \
-                    cell_y * SQUARE_SIZE <= pos[1] <= (cell_y + 1) * SQUARE_SIZE:
-                print(
-                    f"Checking cell: {cell}, Cell coords: {(cell_x, cell_y)}, Piece: {piece}")
-                return piece
-
-        # Also check the storage areas and adjust the margin as needed
+        # check the storage areas and adjust the margin as needed
         storage_cell_size, margin = get_storage_cell_details()
 
         # First check player2's storage area, then check player1's.
@@ -72,6 +63,15 @@ class Game:
                     print(
                         f"Checking storage cell index: {i}, Player: 1, Cell coords: {(x, y)}, Piece: {self.storage_area_player1[i]}")
                     return self.storage_area_player1[i]
+
+        # Iterate over the board configuration to find if a piece is at the current position
+        for cell, piece in self.board_config.items():
+            cell_x, cell_y = self.get_cell_coords(cell)
+            if cell_x * SQUARE_SIZE <= pos[0] <= (cell_x + 1) * SQUARE_SIZE and \
+                    cell_y * SQUARE_SIZE <= pos[1] <= (cell_y + 1) * SQUARE_SIZE:
+                print(
+                    f"Checking cell: {cell}, Cell coords: {(cell_x, cell_y)}, Piece: {piece}")
+                return piece
 
         return None
 
@@ -162,9 +162,7 @@ class Game:
         elif isinstance(origin, tuple):
             if origin[0] == 'storage1':
                 removed_piece = self.storage_area_player1.pop(origin[1])
-                print(
-                    f"Removed piece from player 1's storage: {removed_piece}")
+                print(f"Removed piece from player 1's storage: {removed_piece}")
             elif origin[0] == 'storage2':
                 removed_piece = self.storage_area_player2.pop(origin[1])
-                print(
-                    f"Removed piece from player 2's storage: {removed_piece}")
+                print(f"Removed piece from player 2's storage: {removed_piece}")
