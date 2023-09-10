@@ -51,3 +51,15 @@ class Piece:
     def update_position(self, pos):
         self.x = pos[0]
         self.y = pos[1]
+
+    def update_player(self, new_player):
+        # 更新 player 和 direction 屬性
+        self.player = new_player
+        self.direction = "up" if new_player == 1 else "down"
+        
+        # 重新加載正確的圖像
+        self.image = pygame.image.load(
+            f"assets/{self.image_file_name}_{self.direction}.png")
+        
+        # 更新移動規則，因為它們也可能依賴於 player 屬性
+        self.move_rules = self.get_move_rules()

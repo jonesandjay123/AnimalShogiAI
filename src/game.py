@@ -121,15 +121,49 @@ class Game:
                 # Reset the temp removed piece as the placement was successful
                 self.temp_removed_piece = None
             else:
-                # If the new position is not valid, put back the piece to its origin
-                piece, origin = self.temp_removed_piece
-                self.return_piece_to_origin(piece, origin)
-            
+                # 在這裡添加新的檢查來看新位置是否在任一 storage cell
+                storage_cell_size, margin = get_storage_cell_details()
+
+                # 檢查每個 player 的每個 storage cell
+                for player in [1, -1]:
+                    for index in range(7):  # 假設有7個 storage cells
+                        # 獲得當前 cell 的座標
+                        x, y = get_storage_cell_coords(index, player, storage_cell_size, margin)
+                
+                        # 檢查新位置是否在這個 cell 的範圍內
+                        if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
+                            # 如果在，則進行相應的操作
+                            print(f"Piece placed in storage cell: Player {player}, Index {index}")
+                            
+                            # 處理在儲存區的棋子放置
+                            self.place_piece_in_storage(player, index)
+                            break  # 當找到匹配的 cell 時跳出循环
+                    else:
+                        continue  # 只有當內部循環完成時才會執行
+                    break  # 如果內部循環被 break 打破，這將會執行，結束外部循環
+                else:
+                    # 如果新位置不在任何 storage cell 或棋盤有效單元格，則返回棋子到原點
+                    piece, origin = self.temp_removed_piece
+                    self.return_piece_to_origin(piece, origin)
+
             self.selected_piece = None
             # Reset the mouse position when a piece is placed
             self.mouse_pos = (0, 0)
             print(f"Piece placed at: {new_cell_name}")
 
+    
+    def place_piece_in_storage(self, player, index):
+        # 如果棋子是獅子並且它正在被拖到敵人的儲存區，則返回它到原點
+        if self.selected_piece.name == "Lion" and self.selected_piece.player != player:
+            piece, origin = self.temp_removed_piece
+            self.return_piece_to_origin(piece, origin)
+        else:
+            # 如果棋子被拖到敵人的儲存區，則變更其陣營
+            if self.selected_piece.player != player:
+                self.selected_piece.update_player(-self.selected_piece.player)
+
+            # Call return_piece_to_origin with the correct storage area and index
+            self.return_piece_to_origin(self.selected_piece, ('storage' + str(player), index))
 
 
     def get_cell_name_from_pos(self, pos):

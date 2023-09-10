@@ -56,7 +56,7 @@ def main():
         window.blit(background, (0, 0))
 
         draw_grid(window)
-        # draw_storage_area(window)  # Draw the storage areas
+        draw_storage_area(window)  # Draw the storage areas
         draw_labels(window)
         draw_buttons(window)
         draw_pieces(window, game.board_config, game.storage_area_player1,
