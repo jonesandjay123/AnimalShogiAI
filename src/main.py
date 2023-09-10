@@ -4,7 +4,6 @@ from board import draw_grid, draw_storage_area, draw_labels, draw_buttons, draw_
 from const import WIDTH, HEIGHT
 from game import Game
 
-
 def main():
     # Initialize pygame
     pygame.init()

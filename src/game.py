@@ -2,7 +2,6 @@ from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
 from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
 
-
 class Game:
     def __init__(self):
         self.setup_mode = False  # 追蹤是否處於擺盤模式
@@ -131,10 +130,8 @@ class Game:
     def handle_piece_placement_in_storage(self, pos):
         # 在這裡添加新的檢查來看新位置是否在任一 storage cell
         storage_cell_size, margin = get_storage_cell_details()
-        
         # 初始化一個變量來跟踪是否找到了一個有效的儲存單元格
         valid_storage_cell_found = False
-
         # 檢查每個 player 的每個 storage cell
         for player in [1, -1]:
             for index in range(7):  # 假設有7個 storage cells
@@ -153,11 +150,11 @@ class Game:
             # 如果已經找到一個有效的儲存單元格，則退出循環
             if valid_storage_cell_found:
                 break
-
         # 如果沒有找到任何有效的儲存單元格，則返回棋子到它的原點
         if not valid_storage_cell_found:
             piece, origin = self.temp_removed_piece
             self.return_piece_to_origin(piece, origin)
+
 
     def place_piece_in_storage(self, player, index):
         # 如果棋子是獅子並且它正在被拖到敵人的儲存區，則返回它到原點
@@ -168,10 +165,9 @@ class Game:
             # 如果棋子被拖到敵人的儲存區，則變更其陣營
             if self.selected_piece.player != player:
                 self.selected_piece.update_player(-self.selected_piece.player)
-
             # Call return_piece_to_origin with the correct storage area and index
             self.return_piece_to_origin(self.selected_piece, ('storage' + str(player), index))
-
+            
 
     def get_cell_name_from_pos(self, pos):
         column_map = {0: "a", 1: "b", 2: "c"}

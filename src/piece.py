@@ -9,7 +9,6 @@ piece_type_map = {
     "H": ("Chicken", "chicken")
 }
 
-
 class Piece:
     def __init__(self, piece_type, player):
         self.piece_type = piece_type
