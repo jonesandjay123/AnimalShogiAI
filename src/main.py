@@ -20,8 +20,7 @@ def main():
 
     run = True
     while run:
-        duel_button, setup_button = draw_buttons(
-            window)  # Get the button rectangles
+        duel_button, setup_button = draw_buttons(window)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False

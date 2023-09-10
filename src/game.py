@@ -5,9 +5,8 @@ from utils import get_storage_cell_details, get_storage_cell_coords
 
 class Game:
     def __init__(self):
-        self.setup_mode = False  # 追蹤蹤是否處於擺盤模式
+        self.setup_mode = False  # 追蹤是否處於擺盤模式
         self.board_config = {}  # 我們會在這裡存儲棋盤的當前配置
-        self.create_initial_board_config()
         self.storage_area_player1 = []
         self.storage_area_player2 = []
         self.selected_piece = None  # 用來追蹤當前選中的棋子
@@ -31,12 +30,9 @@ class Game:
         self.storage_area_player2 = []
 
     def initialize_setup_mode(self):
-        # 這將清空棋盤，進入擺盤模式
         self.board_config = {}
-        self.storage_area_player1 = [Piece(
-            "E", 1), Piece("L", 1), Piece("G", 1), Piece("C", 1)]
-        self.storage_area_player2 = [
-            Piece("E", -1), Piece("L", -1), Piece("G", -1), Piece("C", -1)]
+        self.storage_area_player1 = [Piece("E", 1), Piece("L", 1), Piece("G", 1), Piece("C", 1)]
+        self.storage_area_player2 = [Piece("E", -1), Piece("L", -1), Piece("G", -1), Piece("C", -1)]
 
     def get_piece_at_pos(self, pos):
         print(f"Checking pos: {pos}")
@@ -50,8 +46,7 @@ class Game:
             if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
                 # Return the piece at this storage cell if any
                 if i < len(self.storage_area_player2):
-                    print(
-                        f"Checking storage cell index: {i}, Player: 2, Cell coords: {(x, y)}, Piece: {self.storage_area_player2[i]}")
+                    print(f"Checking storage cell index: {i}, Player: 2, Cell coords: {(x, y)}, Piece: {self.storage_area_player2[i]}")
                     return self.storage_area_player2[i]
 
         # Check player1's storage area
@@ -60,8 +55,7 @@ class Game:
             if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
                 # Return the piece at this storage cell if any
                 if i < len(self.storage_area_player1):
-                    print(
-                        f"Checking storage cell index: {i}, Player: 1, Cell coords: {(x, y)}, Piece: {self.storage_area_player1[i]}")
+                    print(f"Checking storage cell index: {i}, Player: 1, Cell coords: {(x, y)}, Piece: {self.storage_area_player1[i]}")
                     return self.storage_area_player1[i]
 
         # Iterate over the board configuration to find if a piece is at the current position
@@ -69,8 +63,7 @@ class Game:
             cell_x, cell_y = self.get_cell_coords(cell)
             if cell_x * SQUARE_SIZE <= pos[0] <= (cell_x + 1) * SQUARE_SIZE and \
                     cell_y * SQUARE_SIZE <= pos[1] <= (cell_y + 1) * SQUARE_SIZE:
-                print(
-                    f"Checking cell: {cell}, Cell coords: {(cell_x, cell_y)}, Piece: {piece}")
+                print(f"Checking cell: {cell}, Cell coords: {(cell_x, cell_y)}, Piece: {piece}")
                 return piece
 
         return None
@@ -96,8 +89,7 @@ class Game:
                 self.selected_piece, self.selected_piece_origin)
             self.remove_piece_from_origin()  # Immediately remove the piece from its origin
             self.mouse_pos = pos  # Update the mouse position when a piece is selected
-            print(
-                f"Piece selected: {self.selected_piece}, Origin: {self.selected_piece_origin}")
+            print(f"Piece selected: {self.selected_piece}, Origin: {self.selected_piece_origin}")
 
     def get_piece_origin(self, piece):
         """獲取棋子的原始位置（可以是棋盤上的單元名稱或存儲區域的索引）"""
