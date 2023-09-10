@@ -62,3 +62,15 @@ class Piece:
         
         # 更新移動規則，因為它們也可能依賴於 player 屬性
         self.move_rules = self.get_move_rules()
+
+    def update_piece_type(self, new_piece_type):
+        self.piece_type = new_piece_type
+        # 更新名稱和圖像檔名
+        self.name, self.image_file_name = piece_type_map[new_piece_type]
+
+        # 重新加載正確的圖像
+        self.image = pygame.image.load(
+            f"assets/{self.image_file_name}_{self.direction}.png")
+
+        # 更新移動規則，因為它們也可能依賴於 piece_type 屬性
+        self.move_rules = self.get_move_rules()

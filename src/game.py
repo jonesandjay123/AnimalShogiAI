@@ -207,3 +207,8 @@ class Game:
         else:
             # If the origin is on the board
             self.board_config[origin] = piece
+
+    def toggle_chick_to_hen(self, piece):
+        if piece and piece.piece_type in ["C", "H"]:
+            new_piece_type = "H" if piece.piece_type == "C" else "C"
+            piece.update_piece_type(new_piece_type)

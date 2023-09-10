@@ -50,6 +50,11 @@ def main():
                     # Reset the selected piece
                     game.selected_piece = None
                     game.selected_piece_origin = None
+            elif event.type == pygame.KEYDOWN:  # A key was pressed
+                if event.key == pygame.K_t:  # The "T" key was pressed
+                    piece = game.get_piece_at_pos(pygame.mouse.get_pos())  # Get the piece under the mouse
+                    if piece and piece.piece_type in ["C", "H"]:  # Check if it's a chick or a hen
+                        game.toggle_chick_to_hen(piece)  # Toggle the piece
 
         # 繪製背景圖片
         window.blit(background, (0, 0))
