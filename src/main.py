@@ -19,7 +19,6 @@ def main():
 
     run = True
     while run:
-        duel_button, setup_button = draw_buttons(window)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -34,11 +33,13 @@ def main():
                     print("對局按鈕被點擊")
                     game.create_initial_board_config()  # 初始化為對局模式的配置
                     game.setup_mode = False  # Set the mode to normal game mode
+                    game.show_return_to_normal_game_route_button = False
                 # The setup button was clicked
                 elif setup_button.collidepoint(pygame.mouse.get_pos()):
                     print("擺盤按鈕被點擊")
                     game.initialize_setup_mode()  # 清空棋盤，進入擺盤模式
                     game.setup_mode = True   # Set the mode to setup mode
+                    game.show_return_to_normal_game_route_button = False
                 else:
                     # Try to select a piece if we are in setup mode
                     if game.setup_mode:
@@ -59,10 +60,12 @@ def main():
         # 繪製背景圖片
         window.blit(background, (0, 0))
 
+        # 立刻繪製按鈕
+        duel_button, setup_button, upper_turn_button, lower_turn_button = draw_buttons(window, game.show_return_to_normal_game_route_button)
+
         draw_grid(window)
         draw_storage_area(window)  # Draw the storage areas
         draw_labels(window)
-        draw_buttons(window)
         draw_pieces(window, game.board_config, game.storage_area_player1,
                     game.storage_area_player2, game.selected_piece, game.mouse_pos)
 

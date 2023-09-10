@@ -5,6 +5,7 @@ from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_
 class Game:
     def __init__(self):
         self.setup_mode = False  # 追蹤是否處於擺盤模式
+        self.show_return_to_normal_game_route_button = False # 追蹤是否顯示返回正常遊戲模式的按鈕
         self.board_config = {}  # 我們會在這裡存儲棋盤的當前配置
         self.storage_area_player1 = []
         self.storage_area_player2 = []
@@ -119,6 +120,9 @@ class Game:
                 self.board_config[new_cell_name] = self.selected_piece
                 # Reset the temp removed piece as the placement was successful
                 self.temp_removed_piece = None
+                # 檢查是否兩隻獅子都在棋盤上，並更新標誌以顯示或隱藏轉換選擇按鈕
+                self.show_button_when_two_lions()
+
             else:
                 self.handle_piece_placement_in_storage(pos)
 
@@ -154,7 +158,8 @@ class Game:
         if not valid_storage_cell_found:
             piece, origin = self.temp_removed_piece
             self.return_piece_to_origin(piece, origin)
-
+        # 檢查是否兩隻獅子都在棋盤上，並更新標誌以顯示或隱藏轉換選擇按鈕
+        self.show_button_when_two_lions()
 
     def place_piece_in_storage(self, player, index):
         # 如果棋子是獅子並且它正在被拖到敵人的儲存區，則返回它到原點
@@ -212,3 +217,7 @@ class Game:
         if piece and piece.piece_type in ["C", "H"]:
             new_piece_type = "H" if piece.piece_type == "C" else "C"
             piece.update_piece_type(new_piece_type)
+
+    def show_button_when_two_lions(self):
+        lion_count = sum(1 for piece in self.board_config.values() if piece.piece_type == "L")
+        self.show_return_to_normal_game_route_button = lion_count == 2
