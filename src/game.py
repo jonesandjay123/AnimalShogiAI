@@ -1,6 +1,6 @@
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
-from utils import get_storage_cell_details, get_storage_cell_coords
+from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
 
 
 class Game:
@@ -61,8 +61,9 @@ class Game:
         # Iterate over the board configuration to find if a piece is at the current position
         for cell, piece in self.board_config.items():
             cell_x, cell_y = self.get_cell_coords(cell)
-            if cell_x * SQUARE_SIZE <= pos[0] <= (cell_x + 1) * SQUARE_SIZE and \
-                    cell_y * SQUARE_SIZE <= pos[1] <= (cell_y + 1) * SQUARE_SIZE:
+            adjusted_x, adjusted_y = adjust_coordinates_with_offset(cell_x, cell_y, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE)
+            
+            if adjusted_x <= pos[0] <= (adjusted_x + SQUARE_SIZE) and adjusted_y <= pos[1] <= (adjusted_y + SQUARE_SIZE):
                 print(f"Checking cell: {cell}, Cell coords: {(cell_x, cell_y)}, Piece: {piece}")
                 return piece
 
@@ -85,8 +86,7 @@ class Game:
             self.selected_piece = piece
             self.selected_piece_origin = self.get_piece_origin(piece)
             # Store the removed piece and its origin
-            self.temp_removed_piece = (
-                self.selected_piece, self.selected_piece_origin)
+            self.temp_removed_piece = (self.selected_piece, self.selected_piece_origin)
             self.remove_piece_from_origin()  # Immediately remove the piece from its origin
             self.mouse_pos = pos  # Update the mouse position when a piece is selected
             print(f"Piece selected: {self.selected_piece}, Origin: {self.selected_piece_origin}")

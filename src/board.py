@@ -1,7 +1,12 @@
 import pygame
 from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
-from utils import get_storage_cell_details, get_storage_cell_coords
+from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
 
+
+def adjust_coordinates_with_offset(x, y, offset_x, offset_y, square_size):
+    adjusted_x = x * square_size + offset_x
+    adjusted_y = y * square_size + offset_y
+    return adjusted_x, adjusted_y
 
 def draw_pieces(window, board_config, storage_area_player1, storage_area_player2, selected_piece=None, mouse_pos=None):
     for key, value in board_config.items():
@@ -11,8 +16,8 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
         piece_image = value.image  # Get the already loaded image
         piece_image = pygame.transform.scale(
             piece_image, (SQUARE_SIZE, SQUARE_SIZE))  # Resize the image
-        window.blit(piece_image, (GRID_OFFSET_X + col *
-                    SQUARE_SIZE, GRID_OFFSET_Y + row * SQUARE_SIZE))
+        x, y = adjust_coordinates_with_offset(col, row, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE)
+        window.blit(piece_image, (x, y))
 
     # Draw the pieces in the storage areas and adjust the margin as needed
     storage_cell_size, margin = get_storage_cell_details()
