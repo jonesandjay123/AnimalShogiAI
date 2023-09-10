@@ -1,6 +1,6 @@
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
-from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
+from utils import adjust_coordinates_with_offset, get_current_game_state, get_storage_cell_details, get_storage_cell_coords
 
 class Game:
     def __init__(self):
@@ -133,7 +133,7 @@ class Game:
             # print(f"Piece placed at: {new_cell_name}")
 
             # 列印當前遊戲狀態
-            print(self.get_current_game_state())
+            print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player))
 
 
     def handle_piece_placement_in_storage(self, pos):
@@ -167,7 +167,7 @@ class Game:
         self.show_button_when_two_lions()
 
         # 列印當前遊戲狀態
-        print(self.get_current_game_state())
+        print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player))
 
     def place_piece_in_storage(self, player, index):
         # 如果棋子是獅子並且它正在被拖到敵人的儲存區，則返回它到原點
@@ -226,34 +226,12 @@ class Game:
             new_piece_type = "H" if piece.piece_type == "C" else "C"
             piece.update_piece_type(new_piece_type)
             # 列印當前遊戲狀態
-            print(self.get_current_game_state())
+            print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player))
 
     def show_button_when_two_lions(self):
         lion_count = sum(1 for piece in self.board_config.values() if piece.piece_type == "L")
         self.show_return_to_normal_game_route_button = lion_count == 2
 
-    def get_current_game_state(self):
-        game_state = {
-            "board": {},
-            "storage": {
-                1: [],
-                -1: []
-            },
-            "current_player": self.current_player  # 您需要確保有一個變數來跟蹤當前的玩家
-        }
-        
-        # 獲得棋盤的狀態
-        for cell_name, piece in self.board_config.items():
-            game_state["board"][cell_name] = (piece.piece_type, piece.player)
-        
-        # 獲得儲存區的狀態
-        for piece in self.storage_area_player1:
-            game_state["storage"][1].append(piece.piece_type)
-        
-        for piece in self.storage_area_player2:
-            game_state["storage"][-1].append(piece.piece_type)
-        
-        return game_state
 
     def end_turn(self):
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
