@@ -64,7 +64,7 @@ def main():
         duel_button, setup_button, upper_turn_button, lower_turn_button = draw_buttons(window, game.show_return_to_normal_game_route_button)
 
         draw_grid(window)
-        draw_storage_area(window)  # Draw the storage areas
+        # draw_storage_area(window)  # Draw boxed storage areas
         draw_labels(window)
         draw_pieces(window, game.board_config, game.storage_area_player1,
                     game.storage_area_player2, game.selected_piece, game.mouse_pos)

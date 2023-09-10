@@ -225,6 +225,8 @@ class Game:
         if piece and piece.piece_type in ["C", "H"]:
             new_piece_type = "H" if piece.piece_type == "C" else "C"
             piece.update_piece_type(new_piece_type)
+            # 列印當前遊戲狀態
+            print(self.get_current_game_state())
 
     def show_button_when_two_lions(self):
         lion_count = sum(1 for piece in self.board_config.values() if piece.piece_type == "L")
