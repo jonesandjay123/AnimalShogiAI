@@ -6,11 +6,11 @@ class Game:
         self.current_player = 1  # 初始化為 1，表示下方玩家、-1 表示上方的玩家
         self.setup_mode = False  # 追蹤是否處於擺盤模式
         self.show_return_to_normal_game_route_button = False # 追蹤是否顯示返回正常遊戲模式的按鈕
-        self.board_config = {}  # 我們會在這裡存儲棋盤的當前配置
+        self.mouse_pos = (0, 0) # 追蹤滑鼠位置
+        
+        self.board_config = {}  # 裡存儲棋盤的當前配置
         self.storage_area_player1 = []
         self.storage_area_player2 = []
-        # Add this line to initialize the mouse position
-        self.mouse_pos = (0, 0)
 
     def create_initial_board_config(self):
         """初始化為對局模式的配置"""

@@ -205,4 +205,4 @@ class SetupMode:
     def show_button_when_two_lions(self):
         """檢查是否兩隻獅子都在棋盤上，並更新標誌以顯示或隱藏轉換選擇按鈕"""
         lion_count = sum(1 for piece in self.game.board_config.values() if piece.piece_type == "L")
-        self.show_return_to_normal_game_route_button = lion_count == 2
+        self.game.show_return_to_normal_game_route_button = lion_count == 2
