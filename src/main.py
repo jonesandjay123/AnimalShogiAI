@@ -3,17 +3,16 @@ import sys
 from board import draw_grid, draw_storage_area, draw_labels, draw_buttons, draw_pieces
 from const import WIDTH, HEIGHT
 from game import Game
+from setup import SetupMode
 
 def main():
-    # Initialize pygame
     pygame.init()
 
     game = Game()  # 創建 Game 類的一個實例
+    setup_mode = SetupMode(game) 
 
-    # Set the dimensions of the window
     window = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    # Load and scale the background image
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
@@ -22,40 +21,39 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            elif event.type == pygame.MOUSEMOTION:  # The mouse was moved
-                game.mouse_pos = event.pos  # Update the mouse position on mouse move
-                if game.selected_piece and game.setup_mode:
-                    # Update the position of the selected piece to follow the mouse
-                    game.selected_piece.update_position(pygame.mouse.get_pos())
-            elif event.type == pygame.MOUSEBUTTONDOWN:  # A mouse button was pressed
-                # The duel button was clicked
+            elif event.type == pygame.MOUSEMOTION:  # 當滑鼠移動時
+                game.mouse_pos = event.pos  # 更新滑鼠位置
+                if setup_mode.selected_piece and game.setup_mode:
+                    setup_mode.selected_piece.update_position(pygame.mouse.get_pos())
+            elif event.type == pygame.MOUSEBUTTONDOWN:  # 當滑鼠按下時
+                # 對局按鈕被點擊
                 if duel_button.collidepoint(pygame.mouse.get_pos()):
                     print("對局按鈕被點擊")
                     game.create_initial_board_config()  # 初始化為對局模式的配置
-                    game.setup_mode = False  # Set the mode to normal game mode
+                    game.setup_mode = False
                     game.show_return_to_normal_game_route_button = False
-                # The setup button was clicked
+                # 擺盤按鈕被點擊
                 elif setup_button.collidepoint(pygame.mouse.get_pos()):
                     print("擺盤按鈕被點擊")
-                    game.initialize_setup_mode()  # 清空棋盤，進入擺盤模式
-                    game.setup_mode = True   # Set the mode to setup mode
+                    setup_mode.initialize_setup_mode() # 清空棋盤，進入擺盤模式
+                    game.setup_mode = True
                     game.show_return_to_normal_game_route_button = False
                 else:
-                    # Try to select a piece if we are in setup mode
+                    # 如果在擺盤模式下，則點擊了一個棋子
                     if game.setup_mode:
-                        game.select_piece(pygame.mouse.get_pos())
-            elif event.type == pygame.MOUSEBUTTONUP:  # A mouse button was released
-                if game.selected_piece and game.setup_mode:
-                    # Place the selected piece at the current mouse position
-                    game.place_piece(pygame.mouse.get_pos())
-                    # Reset the selected piece
-                    game.selected_piece = None
-                    game.selected_piece_origin = None
-            elif event.type == pygame.KEYDOWN:  # A key was pressed
-                if event.key == pygame.K_t:  # The "T" key was pressed
-                    piece = game.get_piece_at_pos(pygame.mouse.get_pos())  # Get the piece under the mouse
-                    if piece and piece.piece_type in ["C", "H"]:  # Check if it's a chick or a hen
-                        game.toggle_chick_to_hen(piece)  # Toggle the piece
+                        setup_mode.select_piece(pygame.mouse.get_pos())
+            elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時
+                if setup_mode.selected_piece and game.setup_mode:
+                    # 把棋子放在滑鼠位置
+                    setup_mode.place_piece(pygame.mouse.get_pos())
+                    # 重置選擇的棋子
+                    setup_mode.selected_piece = None
+                    setup_mode.selected_piece_origin = None
+            elif event.type == pygame.KEYDOWN:  # 當按下鍵盤按鈕時
+                if event.key == pygame.K_t:  # "Ｔ" 鍵被按下
+                    piece = setup_mode.get_piece_at_pos(pygame.mouse.get_pos())  # 取得滑鼠位置的棋子
+                    if piece and piece.piece_type in ["C", "H"]:  # 檢驗棋子是否為小雞或母雞
+                        setup_mode.toggle_chick_to_hen(piece)  # 切換小雞和母雞
 
         # 繪製背景圖片
         window.blit(background, (0, 0))
@@ -64,11 +62,10 @@ def main():
         duel_button, setup_button, upper_turn_button, lower_turn_button = draw_buttons(window, game.show_return_to_normal_game_route_button)
 
         draw_grid(window)
-        # draw_storage_area(window)  # Draw boxed storage areas
+        # draw_storage_area(window)  # 繪製儲存區的格線
         draw_labels(window)
         draw_pieces(window, game.board_config, game.storage_area_player1,
-                    game.storage_area_player2, game.selected_piece, game.mouse_pos)
-
+                    game.storage_area_player2, setup_mode.selected_piece, game.mouse_pos)
         pygame.display.update()
 
     pygame.quit()
