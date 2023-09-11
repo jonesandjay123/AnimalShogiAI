@@ -23,7 +23,7 @@ def main():
                 run = False
             elif event.type == pygame.MOUSEMOTION:  # 當滑鼠移動時
                 game.mouse_pos = event.pos  # 更新滑鼠位置
-                if game.selected_piece and game.setup_mode:
+                if game.selected_piece:
                     game.selected_piece.update_position(pygame.mouse.get_pos())
             elif event.type == pygame.MOUSEBUTTONDOWN:  # 當滑鼠按下時
                 # 對局按鈕被點擊
@@ -41,6 +41,9 @@ def main():
                 else:
                     # 如果在擺盤模式下，則點擊了一個棋子
                     if game.setup_mode:
+                        game.select_piece(pygame.mouse.get_pos())
+                    else:
+                        # 如果在正常對局模式下，則點擊了一個棋子
                         game.select_piece(pygame.mouse.get_pos())
             elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時
                 if game.selected_piece and game.setup_mode:

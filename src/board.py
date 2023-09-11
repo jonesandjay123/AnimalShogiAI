@@ -42,9 +42,10 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
     if selected_piece and mouse_pos:
         piece_image = selected_piece.image
         piece_image = pygame.transform.scale(
-            piece_image, (SQUARE_SIZE, SQUARE_SIZE))
+            piece_image, (int(SQUARE_SIZE * 1.2), int(SQUARE_SIZE * 1.2)))  # Increase the size of the selected piece
         window.blit(
-            piece_image, (mouse_pos[0] - SQUARE_SIZE // 2, mouse_pos[1] - SQUARE_SIZE // 2))
+            piece_image, (mouse_pos[0] - (SQUARE_SIZE * 1.2) // 2, mouse_pos[1] - (SQUARE_SIZE * 1.2) // 2))  # Adjust the position to keep the piece centered on the mouse
+
 
 
 def draw_grid(window):
