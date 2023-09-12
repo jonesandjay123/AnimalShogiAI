@@ -44,6 +44,15 @@ class Game:
             self.remove_piece_from_origin()  # 立刻從原點移除棋子
             self.mouse_pos = pos  # 更新滑鼠位置
 
+            
+            ################################################
+            # TODO: 要修改一下裡面get_invalid_moves裡面的bug
+            if not self.setup_mode:
+                # 獲得和打印可用移動
+                available_moves = self.selected_piece.get_available_moves(self.board_config, self.storage_area_player1, self.storage_area_player2)
+                print(f"Available moves for the selected piece: {available_moves}")
+            ################################################        
+
     def get_piece_at_pos(self, pos):
         """根據給定的位置獲取棋子"""
         storage_cell_size, margin = get_storage_cell_details()

@@ -42,3 +42,7 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
         game_state["storage"][-1].append(piece.piece_type)
     
     return game_state
+
+def is_piece_in_storage(piece, storage_area_player1, storage_area_player2):
+    """檢查一個棋子是否在存儲區域中。"""
+    return piece in storage_area_player1 or piece in storage_area_player2

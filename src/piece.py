@@ -1,5 +1,7 @@
 
 import pygame
+from utils import is_piece_in_storage
+
 
 piece_type_map = {
     "L": ("Lion", "lion"),
@@ -40,12 +42,43 @@ class Piece:
         # Get the move rules based on the piece type
         return move_rules[self.piece_type]
 
-    def get_available_moves(self):
-        # Get the moves based on the piece type
-        if self.direction == "down":
-            # Flip the moves for the down direction
-            return [(-x, -y) for x, y in self.move_rules]
-        return self.move_rules
+    ################################################
+    # TODO: 要修改一下裡面get_invalid_moves裡面的bug
+    def get_invalid_moves(self, board):
+        """找出所有不可移動的格子，包括被其他己方棋子佔據的位置。"""
+
+        invalid_moves = []
+
+        for x in range(3):
+            for y in range(3):
+                if board[x][y] is not None and board[x][y].player == self.player:
+                    invalid_moves.append((x, y))
+        
+        return invalid_moves
+
+    def get_available_moves(self, board, storage_area_player1, storage_area_player2):
+        """根據棋子的移動規則和棋盤的當前狀態來獲得可用的移動。"""
+
+        # 如果棋子來自存儲區，則返回所有空棋盤格作為可用移動
+        if is_piece_in_storage(self, storage_area_player1, storage_area_player2):
+            # 這裡您需要一個循環來查找所有空的棋盤格
+            available_moves = [(x, y) for x in range(3) for y in range(3) if board[x][y] is None]
+
+        else:
+            # 根據棋子的移動規則來獲得所有可能的移動
+            if self.player == 1:  # 方向 "up"
+                available_moves = self.get_move_rules()
+            else:  # 方向 "down"
+                available_moves = [(-x, -y) for x, y in self.get_move_rules()]
+
+            # 獲得不可用的移動列表
+            # not_available_moves = self.get_invalid_moves(board)
+            
+            # # 創建一個新的列表來存儲最終的可用移動，通過移除所有不可用的移動
+            # available_moves = [move for move in available_moves if move not in not_available_moves]
+        
+        return available_moves
+        ################################################
 
     def update_position(self, pos):
         self.x = pos[0]
