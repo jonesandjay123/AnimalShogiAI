@@ -12,9 +12,10 @@ piece_type_map = {
 }
 
 class Piece:
-    def __init__(self, piece_type, player):
+    def __init__(self, piece_type, player, coords=None):
         self.piece_type = piece_type
         self.player = player
+        self.coords = coords
 
         # Set the name and image file name based on the piece type
         self.name, self.image_file_name = piece_type_map[piece_type]
@@ -44,19 +45,22 @@ class Piece:
 
     ################################################
     # TODO: 要修改一下裡面get_invalid_moves裡面的bug
-    def get_invalid_moves(self, board):
+    def get_invalid_moves(self, piece, board):
         """找出所有不可移動的格子，包括被其他己方棋子佔據的位置。"""
 
         invalid_moves = []
+        print("piece:", piece)
+        print("coords:", piece.coords)
+        print("board:", board)
 
-        for x in range(3):
-            for y in range(3):
-                if board[x][y] is not None and board[x][y].player == self.player:
-                    invalid_moves.append((x, y))
+        # for x in range(3):
+        #     for y in range(3):
+        #         if board[x][y] is not None and board[x][y].player == self.player:
+        #             invalid_moves.append((x, y))
         
         return invalid_moves
 
-    def get_available_moves(self, board, storage_area_player1, storage_area_player2):
+    def get_available_moves(self, piece, board, storage_area_player1, storage_area_player2):
         """根據棋子的移動規則和棋盤的當前狀態來獲得可用的移動。"""
 
         # 如果棋子來自存儲區，則返回所有空棋盤格作為可用移動
@@ -72,10 +76,10 @@ class Piece:
                 available_moves = [(-x, -y) for x, y in self.get_move_rules()]
 
             # 獲得不可用的移動列表
-            # not_available_moves = self.get_invalid_moves(board)
+            not_available_moves = self.get_invalid_moves(piece, board)
             
             # # 創建一個新的列表來存儲最終的可用移動，通過移除所有不可用的移動
-            # available_moves = [move for move in available_moves if move not in not_available_moves]
+            available_moves = [move for move in available_moves if move not in not_available_moves]
         
         return available_moves
         ################################################

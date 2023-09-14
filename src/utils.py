@@ -1,8 +1,8 @@
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
 
 def adjust_coordinates_with_offset(x, y, offset_x, offset_y, square_size):
-    adjusted_x = x * square_size + offset_x
-    adjusted_y = y * square_size + offset_y
+    adjusted_x = (x-1) * square_size + offset_x
+    adjusted_y = (y-1) * square_size + offset_y
     return adjusted_x, adjusted_y
 
 def get_storage_cell_details():
