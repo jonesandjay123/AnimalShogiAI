@@ -1,7 +1,6 @@
 
 import pygame
-from utils import is_piece_in_storage
-
+from utils import get_drop_coords, get_available_coords, filter_invalid_moves
 
 piece_type_map = {
     "L": ("Lion", "lion"),
@@ -31,58 +30,25 @@ class Piece:
         self.move_rules = self.get_move_rules()
 
     def get_move_rules(self):
-        # Define the move rules for each piece type
+        """根據棋子的類型來獲得偏移量值。"""
         move_rules = {
             "L": [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)],
             "G": [(0, 1), (0, -1), (1, 0), (-1, 0)],
             "E": [(1, 1), (-1, 1), (1, -1), (-1, -1)],
-            "C": [(0, 1) if self.player == 1 else (0, -1)],
-            "H": [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+            "C": [(0, -1)], # 往上移動的動作在棋盤上是-1，因為y軸是上小下大。前面的子由於走位都是對稱的，所以不受影響。
+            "H": [(0, 1), (0, -1), (-1, 0), (1, 0), (1, -1), (-1, -1)] # 同上邏輯，y軸向上移是-1。
         }
-
-        # Get the move rules based on the piece type
         return move_rules[self.piece_type]
 
-    ################################################
-    # TODO: 要修改一下裡面get_invalid_moves裡面的bug
-    def get_invalid_moves(self, piece, board):
-        """找出所有不可移動的格子，包括被其他己方棋子佔據的位置。"""
-
-        invalid_moves = []
-        print("piece:", piece)
-        print("coords:", piece.coords)
-        print("board:", board)
-
-        # for x in range(3):
-        #     for y in range(3):
-        #         if board[x][y] is not None and board[x][y].player == self.player:
-        #             invalid_moves.append((x, y))
-        
-        return invalid_moves
-
-    def get_available_moves(self, piece, board, storage_area_player1, storage_area_player2):
+    def get_available_moves(self, piece, board):
         """根據棋子的移動規則和棋盤的當前狀態來獲得可用的移動。"""
-
-        # 如果棋子來自存儲區，則返回所有空棋盤格作為可用移動
-        if is_piece_in_storage(self, storage_area_player1, storage_area_player2):
-            # 這裡您需要一個循環來查找所有空的棋盤格
-            available_moves = [(x, y) for x in range(3) for y in range(3) if board[x][y] is None]
-
+        # 如果coords是None表示它來自存儲區，則返回所有空棋盤格作為可被打入的座標位置
+        if not piece.coords:
+            available_moves = get_drop_coords(board)
         else:
-            # 根據棋子的移動規則來獲得所有可能的移動
-            if self.player == 1:  # 方向 "up"
-                available_moves = self.get_move_rules()
-            else:  # 方向 "down"
-                available_moves = [(-x, -y) for x, y in self.get_move_rules()]
-
-            # 獲得不可用的移動列表
-            not_available_moves = self.get_invalid_moves(piece, board)
-            
-            # # 創建一個新的列表來存儲最終的可用移動，通過移除所有不可用的移動
-            available_moves = [move for move in available_moves if move not in not_available_moves]
-        
+            possible_moves = get_available_coords(piece)
+            available_moves = filter_invalid_moves(piece.player, possible_moves, board)
         return available_moves
-        ################################################
 
     def update_position(self, pos):
         self.x = pos[0]

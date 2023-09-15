@@ -1,6 +1,6 @@
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
-from utils import adjust_coordinates_with_offset, get_current_game_state, get_storage_cell_details, get_storage_cell_coords
+from utils import adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 
 class Game:
     def __init__(self):
@@ -27,9 +27,8 @@ class Game:
             "a4": Piece("E", 1, (1, 4)),
             "b3": Piece("C", 1, (2, 3)),
             "b4": Piece("L", 1, (2, 4)),
-            "c4": Piece("G", 1, (3, 4)),
         }
-        self.storage_area_player1 = []
+        self.storage_area_player1 = [Piece("G", 1)]
         self.storage_area_player2 = []
 
     def select_piece(self, pos):
@@ -44,14 +43,11 @@ class Game:
             self.remove_piece_from_origin()  # 立刻從原點移除棋子
             self.mouse_pos = pos  # 更新滑鼠位置
 
-            
-            ################################################
-            # TODO: 要修改一下get_available_moves裡面呼叫到get_invalid_moves那段的bug
+            # 正常對局模式下，還得根據選中的棋子類型跟陣營方向去判斷可能的落子位置
             if not self.setup_mode:
                 # 獲得和打印可用移動
-                available_moves = self.selected_piece.get_available_moves(piece, self.board_config, self.storage_area_player1, self.storage_area_player2)
-                print(f"Available moves for the selected piece: {available_moves}")
-            ################################################        
+                available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
+                print(f"Available moves for the selected piece: {available_moves}")        
 
     def get_piece_at_pos(self, pos):
         """根據給定的位置獲取棋子"""
@@ -75,7 +71,7 @@ class Game:
 
         # 迭代棋盤上的每個單元格，並檢查給定位置是否在單元格的範圍內
         for cell, piece in self.board_config.items():
-            cell_x, cell_y = self.get_cell_coords(cell)
+            cell_x, cell_y = get_cell_coords(cell)
             adjusted_x, adjusted_y = adjust_coordinates_with_offset(cell_x, cell_y, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE)
             if adjusted_x <= pos[0] <= (adjusted_x + SQUARE_SIZE) and adjusted_y <= pos[1] <= (adjusted_y + SQUARE_SIZE):
                 return piece
@@ -93,16 +89,6 @@ class Game:
             if piece == storage_piece:
                 return ('storage2', i)
         return None
-
-    def get_cell_coords(self, cell_name):
-        """獲取單元格名稱的座標"""
-        column_map = {"a": 1, "b": 2, "c": 3}
-
-        # 單元格名稱對應a都是從 1 開始的
-        column_letter = cell_name[0]
-        row_number = int(cell_name[1])
-
-        return column_map[column_letter], row_number
 
     def remove_piece_from_origin(self):
         """從原點移除棋子"""
