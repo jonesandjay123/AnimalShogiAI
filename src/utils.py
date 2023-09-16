@@ -10,8 +10,26 @@ def get_storage_cell_details():
     margin = 8  # Adjust the margin as needed
     return storage_cell_size, margin
 
+def get_grid_coordinates_from_pos(pos):
+    """根據給定的像素位置獲得格子座標"""
+    x, y = pos
+    col = (x - GRID_OFFSET_X) // SQUARE_SIZE
+    row = (y - GRID_OFFSET_Y) // SQUARE_SIZE
+    return col, row
+
+def get_cell_name_from_pos(pos):
+    """根據給定的位置獲取單元格名稱"""
+    column_map = {0: "a", 1: "b", 2: "c"}
+
+    col, row = get_grid_coordinates_from_pos(pos)
+    
+    if 0 <= col <= 2 and 0 <= row <= 3:
+        return column_map[col] + str(row + 1)
+    else:
+        return None  # 返回 None 如果位置不在有效的棋盤範圍內
 
 def get_storage_cell_coords(index, player, storage_cell_size, margin):
+    """獲得儲存區的座標"""
     storage_area_start_x = GRID_OFFSET_X - storage_cell_size * 2
     if player == 1:
         y = GRID_OFFSET_Y + ROWS * SQUARE_SIZE + margin
@@ -21,6 +39,7 @@ def get_storage_cell_coords(index, player, storage_cell_size, margin):
     return x, y
 
 def get_current_game_state(board_config, storage_area_player1, storage_area_player2, current_player):
+    """獲得當前遊戲狀態"""
     game_state = {
         "board": {},
         "storage": {
@@ -29,11 +48,9 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
         },
         "current_player": current_player
     }
-    
     # 獲得棋盤的狀態
     for cell_name, piece in board_config.items():
-        game_state["board"][cell_name] = (piece.piece_type, piece.player)
-    
+        game_state["board"][cell_name] = (piece.piece_type, piece.player) 
     # 獲得儲存區的狀態
     for piece in storage_area_player1:
         game_state["storage"][1].append(piece.piece_type)
@@ -57,7 +74,7 @@ def get_drop_coords(board):
     occupied_coords = {get_cell_coords(key) for key in board.keys()}
     all_coords = {(col, row) for col in range(1, 4) for row in range(1, 5)}
     available_coords = list(all_coords - occupied_coords)
-    
+
     return available_coords
 
 def get_available_coords(piece):

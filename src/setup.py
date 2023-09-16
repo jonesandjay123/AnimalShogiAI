@@ -1,7 +1,7 @@
 from game import Game
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y
-from utils import adjust_coordinates_with_offset, get_current_game_state, get_storage_cell_details, get_storage_cell_coords
+from utils import get_cell_name_from_pos, get_current_game_state, get_storage_cell_details, get_storage_cell_coords
 
 class SetupMode:
     def __init__(self, game: Game):
@@ -17,7 +17,7 @@ class SetupMode:
     def place_piece(self, pos):
         """根據給定的位置放置棋子"""
         if self.game.setup_mode and self.game.selected_piece:
-            new_cell_name = self.get_cell_name_from_pos(pos)
+            new_cell_name = get_cell_name_from_pos(pos)
             
             if new_cell_name:
                 # 檢驗新位置是否已經被佔用
@@ -91,20 +91,6 @@ class SetupMode:
             # 當棋子被放置在儲存區時，重置暫時移除的棋子
             self.game.return_piece_to_origin(self.game.selected_piece, ('storage' + str(player), index))
             
-
-    def get_cell_name_from_pos(self, pos):
-        """根據給定的位置獲取單元格名稱"""
-        column_map = {0: "a", 1: "b", 2: "c"}
-
-        x, y = pos
-        column = (x - GRID_OFFSET_X) // SQUARE_SIZE
-        row = (y - GRID_OFFSET_Y) // SQUARE_SIZE
-
-        if 0 <= column <= 2 and 0 <= row <= 3:
-            return column_map[column] + str(row + 1)
-        else:
-            return None  # 返回 None 如果位置不在有效的棋盤範圍內
-
 
     def toggle_chick_to_hen(self, piece : Piece):
         """將雞轉換為母雞，反之亦然"""

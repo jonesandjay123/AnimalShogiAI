@@ -1,9 +1,10 @@
 import pygame
 import sys
 from board import draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
-from const import WIDTH, HEIGHT
+from const import WIDTH, HEIGHT, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE
 from game import Game
 from setup import SetupMode
+from utils import get_cell_name_from_pos, get_grid_coordinates_from_pos
 
 def main():
     pygame.init()
@@ -40,12 +41,29 @@ def main():
                     game.setup_mode = True
                     game.show_return_to_normal_game_route_button = False
                 else:
-                    # 如果在擺盤模式下，則點擊了一個棋子
+                    x, y = pygame.mouse.get_pos()
+                    grid_x, grid_y = get_grid_coordinates_from_pos((x, y))
+
                     if game.setup_mode:
+                        # 在擺盤模式下，我們只需要處理棋子的選擇
                         available_moves = game.select_piece(pygame.mouse.get_pos())
                     else:
-                        # 如果在正常對局模式下，則點擊了一個棋子
-                        available_moves = game.select_piece(pygame.mouse.get_pos())
+                        # 在對局模式下
+                        if game.selected_piece is None:
+                            # 沒有當前選定的棋子，因此嘗試選擇一個新的棋子
+                            available_moves = game.select_piece(pygame.mouse.get_pos())
+                        else:
+                            # 有當前選定的棋子，因此嘗試將其移動到新位置
+                            if (grid_x + 1, grid_y + 1) in available_moves:
+                                print("執行移動")
+                                # 此處執行移動的代碼
+                            else:
+                                print("呼叫 return_piece_to_origin")
+                                # 此處返回棋子到原點的代碼
+
+                            # 重置選定的棋子和原點
+                            game.selected_piece = None
+                            game.selected_piece_origin = None
             elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時
                 if game.selected_piece and game.setup_mode:
                     # 把棋子放在滑鼠位置
