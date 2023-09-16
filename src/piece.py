@@ -45,11 +45,6 @@ class Piece:
         else:
             possible_moves = get_available_coords(piece)
             available_moves = filter_invalid_moves(piece.player, possible_moves, board)
-
-        print(f"Piece coords: {piece.coords}")  # 打印棋子的當前座標
-        print(f"Possible moves before filtering: {possible_moves}")  # 打印過濾之前的所有可能的移動
-        print(f"Available moves after filtering: {available_moves}")  # 打印過濾後的可用移動
-
         return available_moves
 
 
