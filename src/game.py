@@ -1,3 +1,4 @@
+import pygame
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
 from utils import get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
@@ -144,12 +145,19 @@ class Game:
         if piece and piece.piece_type in ["C", "H"]:
             new_piece_type = "H" if piece.piece_type == "C" else "C"
             piece.update_piece_type(new_piece_type)
-            
-    def declare_victory(self, player):
+
+
+    def declare_victory(self, screen):
         """宣布勝利"""
-        player_number = 1 if player == 1 else 2
-        print("player", player_number, "wins!!")
-        self.game_over = True
+        if self.game_over:
+            font = pygame.font.Font(None, 74)
+            player_number = 1 if self.current_player == 1 else 2
+            victory_message = f"Player {player_number} wins!!"
+            text_surface = font.render(victory_message, True, (255, 0, 0))
+            text_rect = text_surface.get_rect()
+            text_rect.center = (400, 300)  # 調整為您的屏幕中心
+            screen.blit(text_surface, text_rect)
+  
 
     def check_if_reached_opponent_base(self, piece, new_cell_name):
         # 獲得新位置的行數
@@ -159,8 +167,8 @@ class Game:
         if (piece.player == 1 and row_number == 1) or (piece.player == -1 and row_number == 4):
             if piece.piece_type == 'C':  # 如果是小雞，則升級
                 self.toggle_chick_to_hen(piece)
-            elif piece.piece_type == 'L':  # 如果是獅子，則宣布勝利
-                self.declare_victory(piece.player)
+            elif piece.piece_type == 'L':  # 如果是獅子衝到底線，則宣布遊戲結束
+                self.game_over = True
 
 
     def execute_move(self, new_cell_name, piece_origin):
@@ -196,7 +204,9 @@ class Game:
         if self.selected_piece_origin in self.board_config:
             del self.board_config[self.selected_piece_origin]
 
-        self.update_player_turn()
+        # 遊戲勝負未揭曉才需要繼續更新下一回合輪到哪位玩家
+        if not self.game_over:
+            self.update_player_turn()
 
 
     def move_event(self, pos):

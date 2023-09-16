@@ -67,6 +67,8 @@ def main():
         if not game.setup_mode and game.board_config:
             draw_current_player(window, game.current_player)
 
+        game.declare_victory(window)
+
         pygame.display.update()
 
     pygame.quit()
