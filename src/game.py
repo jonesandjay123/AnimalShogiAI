@@ -20,6 +20,7 @@ class Game:
         self.temp_removed_piece = None  # 用來追蹤暫時移除的棋子
         self.available_moves = []  # 當前選中棋子可移動的座標
 
+
     def create_initial_board_config(self, start_player=1):
         """初始化為對局模式的配置"""
         self.board_config = {
@@ -30,12 +31,15 @@ class Game:
             "a4": Piece("E", 1, (1, 4)),
             "b3": Piece("C", 1, (2, 3)),
             "b4": Piece("L", 1, (2, 4)),
+            "c4": Piece("G", 1, (3, 4)),
         }
         self.current_player = start_player
-        self.storage_area_player1 = [Piece("G", 1)]
+        self.storage_area_player1 = []
         self.storage_area_player2 = []
+        
 
     def click_on_piece(self, pos):
+        """處理棋子的點擊事件"""
         # 如果遊戲已結束，則直接返回而不進行任何操作
         if self.game_over:
             return
@@ -50,6 +54,7 @@ class Game:
                 # 根據游標當前棋子的新落點來盤段接續的移動事件
                 self.move_event(pos)
                 self.available_moves = []
+
 
     def select_piece(self, pos):
         """根據給定的位置選擇一個棋子"""
@@ -160,10 +165,8 @@ class Game:
   
 
     def check_if_reached_opponent_base(self, piece, new_cell_name):
-        # 獲得新位置的行數
+        """檢查是否到達對手的基線"""
         _, row_number = get_cell_coords(new_cell_name)
-
-        # 檢查是否達到對手的基線
         if (piece.player == 1 and row_number == 1) or (piece.player == -1 and row_number == 4):
             if piece.piece_type == 'C':  # 如果是小雞，則升級
                 self.toggle_chick_to_hen(piece)
@@ -173,19 +176,20 @@ class Game:
 
     def execute_move(self, new_cell_name, piece_origin):
         """執行移動"""
-
         if not piece_origin[0].startswith('storage'):
-            # 不是從儲存區打入的子才需要檢查是否達到對手的基線
+            # 非來自儲存區打入的子，才需要檢查是否到到達對手的基線
             self.check_if_reached_opponent_base(self.selected_piece, new_cell_name)
 
         # 獲得目標位置上可能存在的棋子
         target_piece = self.board_config.get(new_cell_name)
 
-        # 如果目標位置有一個棋子，將其移動到相應玩家的存儲區
+        # 如果目標位置有一個棋子
         if target_piece:
             # 如果目標棋子是母雞，則降級它
             if target_piece.piece_type == 'H':
                 self.toggle_chick_to_hen(target_piece)
+            elif target_piece.piece_type == 'L':  # 如果目標棋子是獅子，則宣布遊戲結束
+                self.game_over = True
 
             target_piece.update_player(self.current_player)
             target_piece.coords = None # 座標設置為 None 表示位在存儲區
@@ -194,11 +198,8 @@ class Game:
             storage_area = self.storage_area_player1 if self.current_player == 1 else self.storage_area_player2
             storage_area.append(target_piece)
 
-        # 更新棋子的 coords 屬性
-        self.selected_piece.coords = get_cell_coords(new_cell_name)
-
-        # 移動選定的棋子到新的位置
-        self.board_config[new_cell_name] = self.selected_piece
+        self.selected_piece.coords = get_cell_coords(new_cell_name)       
+        self.board_config[new_cell_name] = self.selected_piece # 移動選定的棋子到新的位置
 
         # 從其原始位置移除選定的棋子
         if self.selected_piece_origin in self.board_config:
@@ -210,7 +211,7 @@ class Game:
 
 
     def move_event(self, pos):
-        """處理棋子的移動事件"""
+        """分類移動事件"""
         grid_x, grid_y = get_grid_coordinates_from_pos(pos)
 
         # 有當前選定的棋子，因此嘗試將其移動到新位置
@@ -231,10 +232,12 @@ class Game:
 
 
     def update_player_turn(self):
+        """更新下一回合輪到哪位玩家"""
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
 
 
     def toggle_setup_mode(self, go_up):
+        """切換擺盤模式和對局模式"""
         self.setup_mode = go_up
         self.show_return_to_normal_game_route_button = False
         self.game_over = False
