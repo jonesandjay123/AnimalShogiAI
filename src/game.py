@@ -1,6 +1,6 @@
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
-from utils import adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
+from utils import get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 
 class Game:
     def __init__(self):
@@ -115,5 +115,52 @@ class Game:
             # 若原點是棋盤上的單元格，則將棋子放回原點
             self.board_config[origin] = piece
 
-    def end_turn(self):
+    def execute_move(self, new_cell_name):
+        # 獲得目標位置上可能存在的棋子
+        target_piece = self.board_config.get(new_cell_name)
+
+        # 如果目標位置有一個棋子，將其移動到相應玩家的存儲區
+        if target_piece:
+            # 更新棋子的玩家和其他相关属性
+            target_piece.update_player(self.current_player)
+            # 座標設置為 None 表示位在存儲區
+            target_piece.coords = None 
+            
+            # 將目標棋子添加到相應的存儲區
+            storage_area = self.storage_area_player1 if self.current_player == 1 else self.storage_area_player2
+            storage_area.append(target_piece)
+
+        # 移動選定的棋子到新的位置
+        self.board_config[new_cell_name] = self.selected_piece
+
+        # 從其原始位置移除選定的棋子
+        if self.selected_piece_origin in self.board_config:
+            del self.board_config[self.selected_piece_origin]
+
+        self.update_player_turn()
+
+    def attempt_move(self, x, y, available_moves):
+        """執行移動，並處理任何由移動引起的捕獲"""
+        grid_x, grid_y = get_grid_coordinates_from_pos((x, y))
+
+        # 有當前選定的棋子，因此嘗試將其移動到新位置
+        if (grid_x + 1, grid_y + 1) in available_moves:
+            print("執行移動")
+            # 獲得新單元格的名稱
+            new_cell_name = get_cell_name_from_pos((x, y))
+            # 呼叫新方法來執行移動
+            self.execute_move(new_cell_name)
+        else:
+            # 取得當前被選中棋子的原點
+            origin = self.selected_piece_origin
+            # 取得當前被選中的棋子
+            piece = self.selected_piece
+            # 呼叫方法將棋子返回到它的原點
+            self.return_piece_to_origin(piece, origin)
+
+        # 重置選定的棋子和原點
+        self.selected_piece = None
+        self.selected_piece_origin = None
+
+    def update_player_turn(self):
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1

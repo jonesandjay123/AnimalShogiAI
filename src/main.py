@@ -4,7 +4,6 @@ from board import draw_grid, draw_available_moves, draw_labels, draw_buttons, dr
 from const import WIDTH, HEIGHT, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE
 from game import Game
 from setup import SetupMode
-from utils import get_cell_name_from_pos, get_grid_coordinates_from_pos
 
 def main():
     pygame.init()
@@ -42,7 +41,6 @@ def main():
                     game.show_return_to_normal_game_route_button = False
                 else:
                     x, y = pygame.mouse.get_pos()
-                    grid_x, grid_y = get_grid_coordinates_from_pos((x, y))
 
                     if game.setup_mode:
                         # 在擺盤模式下，我們只需要處理棋子的選擇
@@ -53,17 +51,10 @@ def main():
                             # 沒有當前選定的棋子，因此嘗試選擇一個新的棋子
                             available_moves = game.select_piece(pygame.mouse.get_pos())
                         else:
-                            # 有當前選定的棋子，因此嘗試將其移動到新位置
-                            if (grid_x + 1, grid_y + 1) in available_moves:
-                                print("執行移動")
-                                # 此處執行移動的代碼
-                            else:
-                                print("呼叫 return_piece_to_origin")
-                                # 此處返回棋子到原點的代碼
+                            # 有一個選定的棋子，因此嘗試移動它
+                            game.attempt_move(x, y, available_moves)  # 嘗試移動棋子
+                            available_moves = []
 
-                            # 重置選定的棋子和原點
-                            game.selected_piece = None
-                            game.selected_piece_origin = None
             elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時
                 if game.selected_piece and game.setup_mode:
                     # 把棋子放在滑鼠位置
@@ -85,10 +76,10 @@ def main():
 
         draw_grid(window)
         # draw_storage_area(window)  # 繪製儲存區的格線
-        draw_labels(window)
-        draw_available_moves(window, available_moves)
+        draw_labels(window)       
         draw_pieces(window, game.board_config, game.storage_area_player1,
                     game.storage_area_player2, game.selected_piece, game.mouse_pos)
+        draw_available_moves(window, available_moves)
         pygame.display.update()
 
     pygame.quit()

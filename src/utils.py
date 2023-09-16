@@ -11,7 +11,7 @@ def get_storage_cell_details():
     return storage_cell_size, margin
 
 def get_grid_coordinates_from_pos(pos):
-    """根據給定的像素位置獲得格子座標"""
+    """根據給定的像素位置獲得數字座標"""
     x, y = pos
     col = (x - GRID_OFFSET_X) // SQUARE_SIZE
     row = (y - GRID_OFFSET_Y) // SQUARE_SIZE
@@ -22,7 +22,7 @@ def get_cell_name_from_pos(pos):
     column_map = {0: "a", 1: "b", 2: "c"}
 
     col, row = get_grid_coordinates_from_pos(pos)
-    
+
     if 0 <= col <= 2 and 0 <= row <= 3:
         return column_map[col] + str(row + 1)
     else:
