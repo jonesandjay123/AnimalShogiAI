@@ -1,6 +1,6 @@
 import pygame
 import sys
-from board import draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
+from board import draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
 from const import WIDTH, HEIGHT
 from game import Game
 from setup import SetupMode
@@ -63,6 +63,10 @@ def main():
         draw_pieces(window, game.board_config, game.storage_area_player1,
                     game.storage_area_player2, game.selected_piece, game.mouse_pos)
         draw_available_moves(window, game.available_moves)
+
+        if not game.setup_mode and game.board_config:
+            draw_current_player(window, game.current_player)
+
         pygame.display.update()
 
     pygame.quit()

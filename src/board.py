@@ -121,6 +121,16 @@ def draw_labels(window):
                     (GRID_OFFSET_X - 30, GRID_OFFSET_Y + i * SQUARE_SIZE + SQUARE_SIZE // 2 - 10))
 
 
+def draw_current_player(window, current_player):
+    font = pygame.font.Font(None, 36)     # 設定字體和大小
+    # 根據當前玩家設定顯示的文字
+    text = "Player 1's turn" if current_player == 1 else "Player 2's turn"
+    # 生成一個包含文字的表面
+    label = font.render(text, 1, DARK_WOOD)
+    # 繪製表面到窗口的左上角
+    window.blit(label, (10, 10))
+    
+
 def draw_buttons(window, show_return_to_game_buttons):
     font = pygame.font.Font('assets/NotoSansTC-Bold.ttf', 24)
     button_width, button_height = 60, 40
