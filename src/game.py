@@ -154,10 +154,12 @@ class Game:
             #     self.declare_victory(piece.player)
 
 
-    def execute_move(self, new_cell_name):
+    def execute_move(self, new_cell_name, piece_origin):
         """執行移動"""
 
-        self.check_if_reached_opponent_base(self.selected_piece, new_cell_name)
+        if not piece_origin[0].startswith('storage'):
+            # 不是從儲存區打入的子才需要檢查是否達到對手的基線
+            self.check_if_reached_opponent_base(self.selected_piece, new_cell_name, piece_origin)
 
         # 獲得目標位置上可能存在的棋子
         target_piece = self.board_config.get(new_cell_name)
@@ -195,7 +197,7 @@ class Game:
         # 有當前選定的棋子，因此嘗試將其移動到新位置
         if (grid_x + 1, grid_y + 1) in self.available_moves:
             new_cell_name = get_cell_name_from_pos(pos)
-            self.execute_move(new_cell_name)
+            self.execute_move(new_cell_name, self.selected_piece_origin)
         else:
             # 取得當前被選中棋子的原點
             origin = self.selected_piece_origin
