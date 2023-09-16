@@ -153,14 +153,14 @@ def draw_buttons(window, show_return_to_game_buttons):
     if show_return_to_game_buttons:
         # Draw "輪上方走" button
         upper_turn_button = pygame.Rect(
-            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + 80, button_width*1.85, button_height)
+            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + -80, button_width*1.85, button_height)
         pygame.draw.rect(window, WHITE, upper_turn_button)
         upper_turn_label = font.render('輪上方走', True, BLACK)
         window.blit(upper_turn_label, (upper_turn_button.x + 8, upper_turn_button.y + 4))
 
         # Draw "輪下方走" button
         lower_turn_button = pygame.Rect(
-            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + 140, button_width*1.85, button_height)
+            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + -30, button_width*1.85, button_height)
         pygame.draw.rect(window, WHITE, lower_turn_button)
         lower_turn_label = font.render('輪下方走', True, BLACK)
         window.blit(lower_turn_label, (lower_turn_button.x + 8, lower_turn_button.y + 4))
