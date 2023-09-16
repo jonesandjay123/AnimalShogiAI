@@ -1,6 +1,5 @@
 from game import Game
 from piece import Piece
-from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y
 from utils import get_cell_name_from_pos, get_current_game_state, get_storage_cell_details, get_storage_cell_coords
 
 class SetupMode:
@@ -13,6 +12,7 @@ class SetupMode:
         self.game.board_config = {}
         self.game.storage_area_player1 = [Piece("E", 1), Piece("L", 1), Piece("G", 1), Piece("C", 1)]
         self.game.storage_area_player2 = [Piece("E", -1), Piece("L", -1), Piece("G", -1), Piece("C", -1)]
+
 
     def place_piece(self, pos):
         """根據給定的位置放置棋子"""
@@ -78,6 +78,7 @@ class SetupMode:
         # 列印當前遊戲狀態
         print(get_current_game_state(self.game.board_config, self.game.storage_area_player1, self.game.storage_area_player2, self.game.current_player))
 
+
     def place_piece_in_storage(self, player, index):
         """將棋子放置在儲存區"""
         # 如果棋子是獅子並且它正在被拖到敵人的儲存區，則返回它到原點
@@ -89,8 +90,8 @@ class SetupMode:
             if self.game.selected_piece.player != player:
                 self.game.selected_piece.update_player(-self.game.selected_piece.player)
             # 當棋子被放置在儲存區時，重置暫時移除的棋子
-            self.game.return_piece_to_origin(self.game.selected_piece, ('storage' + str(player), index))
-            
+            self.game.return_piece_to_origin(self.game.selected_piece, ('storage' + str(player), index))    
+
 
     def toggle_chick_to_hen(self, piece : Piece):
         """將雞轉換為母雞，反之亦然"""
@@ -99,6 +100,7 @@ class SetupMode:
             piece.update_piece_type(new_piece_type)
             # 列印當前遊戲狀態
             print(get_current_game_state(self.game.board_config, self.game.storage_area_player1, self.game.storage_area_player2, self.game.current_player))
+
 
     def show_button_when_two_lions(self):
         """檢查是否兩隻獅子都在棋盤上，並更新標誌以顯示或隱藏轉換選擇按鈕"""
