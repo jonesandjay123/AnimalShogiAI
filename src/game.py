@@ -6,6 +6,7 @@ class Game:
     def __init__(self):
         self.current_player = 1  # 初始化為 1，表示下方玩家、-1 表示上方的玩家
         self.setup_mode = False  # 追蹤是否處於擺盤模式
+        self.game_over = False  # 追蹤是否遊戲結束
         self.show_return_to_normal_game_route_button = False # 追蹤是否顯示返回正常遊戲模式的按鈕
         self.mouse_pos = (0, 0) # 追蹤滑鼠位置
         
@@ -34,6 +35,9 @@ class Game:
         self.storage_area_player2 = []
 
     def click_on_piece(self, pos):
+        # 如果遊戲已結束，則直接返回而不進行任何操作
+        if self.game_over:
+            return
         # 擺盤模式下，只需要處理棋子的選擇
         if self.setup_mode:
             self.select_piece(pos)
@@ -63,7 +67,7 @@ class Game:
             if not self.setup_mode:
                 # 獲得和打印可用移動
                 self.available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
-                print(f"Available moves for the selected piece: {self.available_moves}")        
+                # print(f"Available moves for the selected piece: {self.available_moves}")        
 
 
     def get_piece_at_pos(self, pos):
@@ -141,6 +145,11 @@ class Game:
             new_piece_type = "H" if piece.piece_type == "C" else "C"
             piece.update_piece_type(new_piece_type)
             
+    def declare_victory(self, player):
+        """宣布勝利"""
+        player_number = 1 if player == 1 else 2
+        print("player", player_number, "wins!!")
+        self.game_over = True
 
     def check_if_reached_opponent_base(self, piece, new_cell_name):
         # 獲得新位置的行數
@@ -150,8 +159,8 @@ class Game:
         if (piece.player == 1 and row_number == 1) or (piece.player == -1 and row_number == 4):
             if piece.piece_type == 'C':  # 如果是小雞，則升級
                 self.toggle_chick_to_hen(piece)
-            # elif piece.piece_type == 'L':  # 如果是獅子，則宣布勝利
-            #     self.declare_victory(piece.player)
+            elif piece.piece_type == 'L':  # 如果是獅子，則宣布勝利
+                self.declare_victory(piece.player)
 
 
     def execute_move(self, new_cell_name, piece_origin):
@@ -159,7 +168,7 @@ class Game:
 
         if not piece_origin[0].startswith('storage'):
             # 不是從儲存區打入的子才需要檢查是否達到對手的基線
-            self.check_if_reached_opponent_base(self.selected_piece, new_cell_name, piece_origin)
+            self.check_if_reached_opponent_base(self.selected_piece, new_cell_name)
 
         # 獲得目標位置上可能存在的棋子
         target_piece = self.board_config.get(new_cell_name)
@@ -218,4 +227,5 @@ class Game:
     def toggle_setup_mode(self, go_up):
         self.setup_mode = go_up
         self.show_return_to_normal_game_route_button = False
+        self.game_over = False
         print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")
