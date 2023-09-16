@@ -18,16 +18,13 @@ class Piece:
 
         # Set the name and image file name based on the piece type
         self.name, self.image_file_name = piece_type_map[piece_type]
-
-        # Set the direction based on the player
         self.direction = "up" if player == 1 else "down"
+        self.move_rules = self.get_move_rules()
+        self.load_image()
 
-        # Load the image based on the image file name and direction
+    def load_image(self):
         self.image = pygame.image.load(
             f"assets/{self.image_file_name}_{self.direction}.png")
-
-        # Set the move rules based on the piece type
-        self.move_rules = self.get_move_rules()
 
     def get_move_rules(self):
         """根據棋子的類型來獲得偏移量值。"""
@@ -60,8 +57,7 @@ class Piece:
         self.direction = "up" if new_player == 1 else "down"
         
         # 重新加載正確的圖像
-        self.image = pygame.image.load(
-            f"assets/{self.image_file_name}_{self.direction}.png")
+        self.load_image()
         
         # 更新移動規則，因為它們也可能依賴於 player 屬性
         self.move_rules = self.get_move_rules()

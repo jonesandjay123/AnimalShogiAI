@@ -16,6 +16,7 @@ class Game:
         self.selected_piece = None  # 用來追蹤當前選中的棋子
         self.selected_piece_origin = None  # 用來追蹤選中棋子的原始位置
         self.temp_removed_piece = None  # 用來追蹤暫時移除的棋子
+        self.available_moves = []  # 當前選中棋子可移動的座標
 
     def create_initial_board_config(self):
         """初始化為對局模式的配置"""
@@ -31,11 +32,23 @@ class Game:
         self.storage_area_player1 = [Piece("G", 1)]
         self.storage_area_player2 = []
 
+    def click_on_piece(self, pos):
+        # 擺盤模式下，只需要處理棋子的選擇
+        if self.setup_mode:
+            self.select_piece(pos)
+        else:
+            # 對局模式下，棋子還沒被點擊到游標時，繪製可落點位置
+            if self.selected_piece is None:
+                self.select_piece(pos)
+            else:
+                # 根據游標當前棋子的新落點來盤段接續的移動事件
+                self.move_event(pos)
+                self.available_moves = []
 
     def select_piece(self, pos):
         """根據給定的位置選擇一個棋子"""
         piece = self.get_piece_at_pos(pos)
-        available_moves = []
+        self.available_moves = []
         if piece:
             self.selected_piece = piece
             self.selected_piece_origin = self.get_piece_origin(piece)
@@ -47,9 +60,8 @@ class Game:
             # 正常對局模式下，還得根據選中的棋子類型跟陣營方向去判斷可能的落子位置
             if not self.setup_mode:
                 # 獲得和打印可用移動
-                available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
-                print(f"Available moves for the selected piece: {available_moves}")        
-        return available_moves
+                self.available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
+                print(f"Available moves for the selected piece: {self.available_moves}")        
 
 
     def get_piece_at_pos(self, pos):
@@ -147,14 +159,13 @@ class Game:
         self.update_player_turn()
 
 
-    def move_event(self, x, y, available_moves):
-        """嘗試移動棋子"""
-        grid_x, grid_y = get_grid_coordinates_from_pos((x, y))
+    def move_event(self, pos):
+        """處理棋子的移動事件"""
+        grid_x, grid_y = get_grid_coordinates_from_pos(pos)
 
         # 有當前選定的棋子，因此嘗試將其移動到新位置
-        if (grid_x + 1, grid_y + 1) in available_moves:
-            print("執行移動")
-            new_cell_name = get_cell_name_from_pos((x, y))
+        if (grid_x + 1, grid_y + 1) in self.available_moves:
+            new_cell_name = get_cell_name_from_pos(pos)
             self.execute_move(new_cell_name)
         else:
             # 取得當前被選中棋子的原點
@@ -171,3 +182,9 @@ class Game:
 
     def update_player_turn(self):
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
+
+
+    def toggle_setup_mode(self, go_up):
+        self.setup_mode = go_up
+        self.show_return_to_normal_game_route_button = False
+        print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")

@@ -16,51 +16,38 @@ def main():
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
-    available_moves = []
     run = True
     while run:
         for event in pygame.event.get():
+
+            cursor_position = pygame.mouse.get_pos() # 獲取游標位置
+
             if event.type == pygame.QUIT:
                 run = False
             elif event.type == pygame.MOUSEMOTION:  # 當滑鼠移動時
-                game.mouse_pos = event.pos
+                game.mouse_pos = event.pos # 讓棋子得以跟著游標移動
                 if game.selected_piece:
-                    game.selected_piece.update_position(pygame.mouse.get_pos())
+                    game.selected_piece.update_position(cursor_position)
             elif event.type == pygame.MOUSEBUTTONDOWN:  # 當滑鼠按下時
                 # 對局按鈕被點擊
-                if duel_button.collidepoint(pygame.mouse.get_pos()):
-                    print("對局按鈕被點擊")
+                if duel_button.collidepoint(cursor_position):
                     game.create_initial_board_config()  # 初始化為對局模式的配置
-                    game.setup_mode = False
-                    game.show_return_to_normal_game_route_button = False
+                    game.toggle_setup_mode(False)
                 # 擺盤按鈕被點擊
-                elif setup_button.collidepoint(pygame.mouse.get_pos()):
-                    print("擺盤按鈕被點擊")
+                elif setup_button.collidepoint(cursor_position):
                     setup.initialize_setup_mode() # 清空棋盤，進入擺盤模式
-                    game.setup_mode = True
-                    game.show_return_to_normal_game_route_button = False
+                    game.toggle_setup_mode(True)
                 # 非按鈕區域被點擊
                 else:
-                    # 擺盤模式下，只需要處理棋子的選擇
-                    if game.setup_mode:
-                        game.select_piece(pygame.mouse.get_pos())
-                    else:
-                        # 對局模式下，棋子還沒被點擊到游標時，繪製可落點位置
-                        if game.selected_piece is None:
-                            available_moves = game.select_piece(pygame.mouse.get_pos())
-                        else:
-                            # 根據游標當前棋子的新落點來盤段接續的移動事件
-                            x, y = pygame.mouse.get_pos()
-                            game.move_event(x, y, available_moves)
-                            available_moves = []
+                    game.click_on_piece(cursor_position)
 
             elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時(擺盤模式下的長壓拖曳釋放)
                 if game.selected_piece and game.setup_mode:
-                    setup.place_piece(pygame.mouse.get_pos())
+                    setup.place_piece(cursor_position)
                     
             elif event.type == pygame.KEYDOWN:  # 當按下鍵盤按鈕時
                 if event.key == pygame.K_t:  # "Ｔ" 鍵被按下
-                    piece = game.get_piece_at_pos(pygame.mouse.get_pos())
+                    piece = game.get_piece_at_pos(cursor_position)
                     if piece and piece.piece_type in ["C", "H"]:  # 檢驗棋子是否為小雞或母雞
                         setup.toggle_chick_to_hen(piece)  # 切換小雞和母雞
 
@@ -75,7 +62,7 @@ def main():
         draw_labels(window)       
         draw_pieces(window, game.board_config, game.storage_area_player1,
                     game.storage_area_player2, game.selected_piece, game.mouse_pos)
-        draw_available_moves(window, available_moves)
+        draw_available_moves(window, game.available_moves)
         pygame.display.update()
 
     pygame.quit()
