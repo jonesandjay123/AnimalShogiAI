@@ -1,6 +1,6 @@
 import pygame
 import sys
-from board import draw_grid, draw_storage_area, draw_labels, draw_buttons, draw_pieces
+from board import draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
 from const import WIDTH, HEIGHT
 from game import Game
 from setup import SetupMode
@@ -16,6 +16,7 @@ def main():
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
+    available_moves = []
     run = True
     while run:
         for event in pygame.event.get():
@@ -41,10 +42,10 @@ def main():
                 else:
                     # 如果在擺盤模式下，則點擊了一個棋子
                     if game.setup_mode:
-                        game.select_piece(pygame.mouse.get_pos())
+                        available_moves = game.select_piece(pygame.mouse.get_pos())
                     else:
                         # 如果在正常對局模式下，則點擊了一個棋子
-                        game.select_piece(pygame.mouse.get_pos())
+                        available_moves = game.select_piece(pygame.mouse.get_pos())
             elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時
                 if game.selected_piece and game.setup_mode:
                     # 把棋子放在滑鼠位置
@@ -69,6 +70,7 @@ def main():
         draw_labels(window)
         draw_pieces(window, game.board_config, game.storage_area_player1,
                     game.storage_area_player2, game.selected_piece, game.mouse_pos)
+        draw_available_moves(window, available_moves)
         pygame.display.update()
 
     pygame.quit()

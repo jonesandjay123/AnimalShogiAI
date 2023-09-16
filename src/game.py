@@ -34,7 +34,7 @@ class Game:
     def select_piece(self, pos):
         """根據給定的位置選擇一個棋子"""
         piece = self.get_piece_at_pos(pos)
-
+        available_moves = []
         if piece:
             self.selected_piece = piece
             self.selected_piece_origin = self.get_piece_origin(piece)
@@ -48,6 +48,7 @@ class Game:
                 # 獲得和打印可用移動
                 available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
                 print(f"Available moves for the selected piece: {available_moves}")        
+        return available_moves
 
     def get_piece_at_pos(self, pos):
         """根據給定的位置獲取棋子"""

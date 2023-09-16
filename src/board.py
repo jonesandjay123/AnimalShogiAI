@@ -1,5 +1,5 @@
 import pygame
-from const import DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
+from const import ORANGE_TRANS, DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
 from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
 
 
@@ -46,6 +46,25 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
         window.blit(
             piece_image, (mouse_pos[0] - (SQUARE_SIZE * 1.2) // 2, mouse_pos[1] - (SQUARE_SIZE * 1.2) // 2))  # Adjust the position to keep the piece centered on the mouse
 
+def draw_available_moves(window, available_moves):
+    for move in available_moves:
+        x, y = move
+        adjusted_x, adjusted_y = adjust_coordinates_with_offset(x-1, y-1, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE)
+
+        # 計算新的矩形大小
+        new_size = int(SQUARE_SIZE * 0.8)
+        
+        # 計算新的 x 和 y 以使矩形居中
+        adjusted_x += (SQUARE_SIZE - new_size) // 2
+        adjusted_y += (SQUARE_SIZE - new_size) // 2
+        
+        # 創建一個半透明的表面
+        s = pygame.Surface((new_size, new_size))  
+        s.set_alpha(240)  # 設置 alpha 等級
+        s.fill(ORANGE_TRANS)  # 設置表面顏色
+
+        # 在正確的位置畫上這個表面
+        window.blit(s, (adjusted_x, adjusted_y))
 
 
 def draw_grid(window):

@@ -7,6 +7,7 @@ DARK_WOOD = (101, 67, 33)
 LIGHT_WOOD = (205, 133, 63)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+ORANGE_TRANS = (255, 165, 0, 128)
 
 # Board parameters
 ROWS, COLS = 4, 3
