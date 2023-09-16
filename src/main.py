@@ -16,6 +16,15 @@ def main():
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
+    def handle_turn_button_click(start_player):
+        game.create_initial_board_config(
+            start_player=start_player, 
+            board=game.board_config, 
+            storage1=game.storage_area_player1, 
+            storage2=game.storage_area_player2
+        )
+        game.toggle_setup_mode(False)
+
     run = True
     while run:
         for event in pygame.event.get():
@@ -37,6 +46,12 @@ def main():
                 elif setup_button.collidepoint(cursor_position):
                     setup.initialize_setup_mode() # 清空棋盤，進入擺盤模式
                     game.toggle_setup_mode(True)
+                # 擺盤完後讓玩家２先走
+                elif upper_turn_button and upper_turn_button.collidepoint(cursor_position):
+                    handle_turn_button_click(start_player = -1)
+                # 擺盤完後讓玩家１先走
+                elif lower_turn_button and lower_turn_button.collidepoint(cursor_position):
+                    handle_turn_button_click(start_player = 1)
                 # 非按鈕區域被點擊
                 else:
                     game.click_on_piece(cursor_position)

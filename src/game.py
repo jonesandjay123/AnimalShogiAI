@@ -21,22 +21,28 @@ class Game:
         self.available_moves = []  # 當前選中棋子可移動的座標
 
 
-    def create_initial_board_config(self, start_player=1):
-        """初始化為對局模式的配置"""
-        self.board_config = {
-            "b1": Piece("L", -1, (2, 1)),
-            "c1": Piece("E", -1, (3, 1)),
-            "b2": Piece("C", -1, (2, 2)),
-            "a1": Piece("G", -1, (1, 1)),
-            "a4": Piece("E", 1, (1, 4)),
-            "b3": Piece("C", 1, (2, 3)),
-            "b4": Piece("L", 1, (2, 4)),
-            "c4": Piece("G", 1, (3, 4)),
+    def default_board_config(self):
+        return {
+            "b1": Piece("L", -1),
+            "c1": Piece("E", -1),
+            "b2": Piece("C", -1),
+            "a1": Piece("G", -1),
+            "a4": Piece("E", 1),
+            "b3": Piece("C", 1),
+            "b4": Piece("L", 1),
+            "c4": Piece("G", 1),
         }
+
+    def create_initial_board_config(self, start_player=1, board=None, storage1=None, storage2=None):
+        """初始化為對局模式的配置"""
+        self.board_config = board if board is not None else self.default_board_config()
         self.current_player = start_player
-        self.storage_area_player1 = []
-        self.storage_area_player2 = []
+        self.storage_area_player1 = storage1 if storage1 is not None else []
+        self.storage_area_player2 = storage2 if storage2 is not None else []
         
+        for cell_name, piece in self.board_config.items():
+            piece.coords = get_cell_coords(cell_name) # 幫每個棋子標上對應的coords座標
+            
 
     def click_on_piece(self, pos):
         """處理棋子的點擊事件"""
