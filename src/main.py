@@ -49,7 +49,7 @@ def main():
                 if event.key == pygame.K_t:  # "Ｔ" 鍵被按下
                     piece = game.get_piece_at_pos(cursor_position)
                     if piece and piece.piece_type in ["C", "H"]:  # 檢驗棋子是否為小雞或母雞
-                        setup.toggle_chick_to_hen(piece)  # 切換小雞和母雞
+                        game.toggle_chick_to_hen(piece)  # 切換小雞和母雞
 
         # 繪製背景圖片
         window.blit(background, (0, 0))

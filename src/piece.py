@@ -1,4 +1,3 @@
-
 import pygame
 from utils import get_drop_coords, get_available_coords, filter_invalid_moves
 

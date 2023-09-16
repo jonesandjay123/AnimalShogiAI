@@ -135,17 +135,41 @@ class Game:
             self.board_config[origin] = piece
 
 
+    def toggle_chick_to_hen(self, piece : Piece):
+        """將雞轉換為母雞，反之亦然"""
+        if piece and piece.piece_type in ["C", "H"]:
+            new_piece_type = "H" if piece.piece_type == "C" else "C"
+            piece.update_piece_type(new_piece_type)
+            
+
+    def check_if_reached_opponent_base(self, piece, new_cell_name):
+        # 獲得新位置的行數
+        _, row_number = get_cell_coords(new_cell_name)
+
+        # 檢查是否達到對手的基線
+        if (piece.player == 1 and row_number == 1) or (piece.player == -1 and row_number == 4):
+            if piece.piece_type == 'C':  # 如果是小雞，則升級
+                self.toggle_chick_to_hen(piece)
+            # elif piece.piece_type == 'L':  # 如果是獅子，則宣布勝利
+            #     self.declare_victory(piece.player)
+
+
     def execute_move(self, new_cell_name):
         """執行移動"""
+
+        self.check_if_reached_opponent_base(self.selected_piece, new_cell_name)
+
         # 獲得目標位置上可能存在的棋子
         target_piece = self.board_config.get(new_cell_name)
 
         # 如果目標位置有一個棋子，將其移動到相應玩家的存儲區
         if target_piece:
-            # 更新棋子的玩家和其他相关属性
+            # 如果目標棋子是母雞，則降級它
+            if target_piece.piece_type == 'H':
+                self.toggle_chick_to_hen(target_piece)
+
             target_piece.update_player(self.current_player)
-            # 座標設置為 None 表示位在存儲區
-            target_piece.coords = None 
+            target_piece.coords = None # 座標設置為 None 表示位在存儲區
             
             # 將目標棋子添加到相應的存儲區
             storage_area = self.storage_area_player1 if self.current_player == 1 else self.storage_area_player2

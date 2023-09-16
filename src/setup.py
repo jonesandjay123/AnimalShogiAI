@@ -94,15 +94,6 @@ class SetupMode:
             self.game.return_piece_to_origin(self.game.selected_piece, ('storage' + str(player), index))    
 
 
-    def toggle_chick_to_hen(self, piece : Piece):
-        """將雞轉換為母雞，反之亦然"""
-        if piece and piece.piece_type in ["C", "H"]:
-            new_piece_type = "H" if piece.piece_type == "C" else "C"
-            piece.update_piece_type(new_piece_type)
-            # 列印當前遊戲狀態
-            print(get_current_game_state(self.game.board_config, self.game.storage_area_player1, self.game.storage_area_player2, self.game.current_player))
-
-
     def show_button_when_two_lions(self):
         """檢查是否兩隻獅子都在棋盤上，並更新標誌以顯示或隱藏轉換選擇按鈕"""
         lion_count = sum(1 for piece in self.game.board_config.values() if piece.piece_type == "L")
