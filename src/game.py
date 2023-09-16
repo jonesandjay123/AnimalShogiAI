@@ -49,7 +49,8 @@ class Game:
         """根據給定的位置選擇一個棋子"""
         piece = self.get_piece_at_pos(pos)
         self.available_moves = []
-        if piece:
+        # 擺盤模式下可以任意選擇棋子，但是對局模式下只能選擇自己的棋子
+        if piece and (self.setup_mode or piece.player == self.current_player):
             self.selected_piece = piece
             self.selected_piece_origin = self.get_piece_origin(piece)
             # 儲存暫時移除的棋子
