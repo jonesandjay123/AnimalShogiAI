@@ -1,7 +1,7 @@
 import pygame
 import sys
 from board import draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
-from const import WIDTH, HEIGHT, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE
+from const import WIDTH, HEIGHT
 from game import Game
 from setup import SetupMode
 
@@ -23,7 +23,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
             elif event.type == pygame.MOUSEMOTION:  # 當滑鼠移動時
-                game.mouse_pos = event.pos  # 更新滑鼠位置
+                game.mouse_pos = event.pos
                 if game.selected_piece:
                     game.selected_piece.update_position(pygame.mouse.get_pos())
             elif event.type == pygame.MOUSEBUTTONDOWN:  # 當滑鼠按下時
@@ -39,32 +39,28 @@ def main():
                     setup.initialize_setup_mode() # 清空棋盤，進入擺盤模式
                     game.setup_mode = True
                     game.show_return_to_normal_game_route_button = False
+                # 非按鈕區域被點擊
                 else:
-                    x, y = pygame.mouse.get_pos()
-
+                    # 擺盤模式下，只需要處理棋子的選擇
                     if game.setup_mode:
-                        # 在擺盤模式下，我們只需要處理棋子的選擇
-                        available_moves = game.select_piece(pygame.mouse.get_pos())
+                        game.select_piece(pygame.mouse.get_pos())
                     else:
-                        # 在對局模式下
+                        # 對局模式下，棋子還沒被點擊到游標時，繪製可落點位置
                         if game.selected_piece is None:
-                            # 沒有當前選定的棋子，因此嘗試選擇一個新的棋子
                             available_moves = game.select_piece(pygame.mouse.get_pos())
                         else:
-                            # 有一個選定的棋子，因此嘗試移動它
-                            game.attempt_move(x, y, available_moves)  # 嘗試移動棋子
+                            # 根據游標當前棋子的新落點來盤段接續的移動事件
+                            x, y = pygame.mouse.get_pos()
+                            game.move_event(x, y, available_moves)
                             available_moves = []
 
-            elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時
+            elif event.type == pygame.MOUSEBUTTONUP:  # 當滑鼠放開時(擺盤模式下的長壓拖曳釋放)
                 if game.selected_piece and game.setup_mode:
-                    # 把棋子放在滑鼠位置
                     setup.place_piece(pygame.mouse.get_pos())
-                    # 重置選擇的棋子
-                    game.selected_piece = None
-                    game.selected_piece_origin = None
+                    
             elif event.type == pygame.KEYDOWN:  # 當按下鍵盤按鈕時
                 if event.key == pygame.K_t:  # "Ｔ" 鍵被按下
-                    piece = game.get_piece_at_pos(pygame.mouse.get_pos())  # 取得滑鼠位置的棋子
+                    piece = game.get_piece_at_pos(pygame.mouse.get_pos())
                     if piece and piece.piece_type in ["C", "H"]:  # 檢驗棋子是否為小雞或母雞
                         setup.toggle_chick_to_hen(piece)  # 切換小雞和母雞
 

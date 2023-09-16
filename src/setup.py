@@ -36,8 +36,9 @@ class SetupMode:
             else:
                 self.handle_piece_placement_in_storage(pos)
 
+            # 當棋子被放置時，和滑鼠位置
             self.game.selected_piece = None
-            # 當棋子被放置時，重置滑鼠位置
+            self.game.selected_piece_origin = None
             self.mouse_pos = (0, 0)
 
             # 列印當前遊戲狀態

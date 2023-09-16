@@ -104,9 +104,9 @@ class Game:
         # 檢驗原點是否在儲存區
         elif isinstance(origin, tuple):
             if origin[0] == 'storage1':
-                removed_piece = self.storage_area_player1.pop(origin[1])
+                self.storage_area_player1.pop(origin[1])
             elif origin[0] == 'storage2':
-                removed_piece = self.storage_area_player2.pop(origin[1])
+                self.storage_area_player2.pop(origin[1])
 
 
     def return_piece_to_origin(self, piece, origin):
@@ -147,7 +147,7 @@ class Game:
         self.update_player_turn()
 
 
-    def attempt_move(self, x, y, available_moves):
+    def move_event(self, x, y, available_moves):
         """嘗試移動棋子"""
         grid_x, grid_y = get_grid_coordinates_from_pos((x, y))
 
