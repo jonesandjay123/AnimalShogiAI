@@ -18,7 +18,7 @@ class Game:
         self.temp_removed_piece = None  # 用來追蹤暫時移除的棋子
         self.available_moves = []  # 當前選中棋子可移動的座標
 
-    def create_initial_board_config(self):
+    def create_initial_board_config(self, start_player=1):
         """初始化為對局模式的配置"""
         self.board_config = {
             "b1": Piece("L", -1, (2, 1)),
@@ -29,6 +29,7 @@ class Game:
             "b3": Piece("C", 1, (2, 3)),
             "b4": Piece("L", 1, (2, 4)),
         }
+        self.current_player = start_player
         self.storage_area_player1 = [Piece("G", 1)]
         self.storage_area_player2 = []
 
@@ -149,6 +150,9 @@ class Game:
             # 將目標棋子添加到相應的存儲區
             storage_area = self.storage_area_player1 if self.current_player == 1 else self.storage_area_player2
             storage_area.append(target_piece)
+
+        # 更新棋子的 coords 屬性
+        self.selected_piece.coords = get_cell_coords(new_cell_name)
 
         # 移動選定的棋子到新的位置
         self.board_config[new_cell_name] = self.selected_piece
