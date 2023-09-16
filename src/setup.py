@@ -24,7 +24,7 @@ class SetupMode:
                 if self.game.board_config.get(new_cell_name):
                     # 若新位置已經被佔用，則返回棋子到它的原點
                     piece, origin = self.game.temp_removed_piece
-                    self.return_piece_to_origin(piece, origin)
+                    self.game.return_piece_to_origin(piece, origin)
                     return
 
                 self.game.board_config[new_cell_name] = self.game.selected_piece
@@ -71,7 +71,7 @@ class SetupMode:
         # 如果沒有找到任何有效的儲存單元格，則返回棋子到它的原點
         if not valid_storage_cell_found:
             piece, origin = self.game.temp_removed_piece
-            self.return_piece_to_origin(piece, origin)
+            self.game.return_piece_to_origin(piece, origin)
         # 檢查是否兩隻獅子都在棋盤上，並更新標誌以顯示或隱藏轉換選擇按鈕
         self.show_button_when_two_lions()
 
@@ -83,13 +83,13 @@ class SetupMode:
         # 如果棋子是獅子並且它正在被拖到敵人的儲存區，則返回它到原點
         if self.game.selected_piece.name == "Lion" and self.game.selected_piece.player != player:
             piece, origin = self.game.temp_removed_piece
-            self.return_piece_to_origin(piece, origin)
+            self.game.return_piece_to_origin(piece, origin)
         else:
             # 如果棋子被拖到敵人的儲存區，則變更其陣營
             if self.game.selected_piece.player != player:
                 self.game.selected_piece.update_player(-self.game.selected_piece.player)
             # 當棋子被放置在儲存區時，重置暫時移除的棋子
-            self.return_piece_to_origin(self.game.selected_piece, ('storage' + str(player), index))
+            self.game.return_piece_to_origin(self.game.selected_piece, ('storage' + str(player), index))
             
 
     def get_cell_name_from_pos(self, pos):
@@ -105,16 +105,6 @@ class SetupMode:
         else:
             return None  # 返回 None 如果位置不在有效的棋盤範圍內
 
-    def return_piece_to_origin(self, piece, origin):
-        """將棋子返回到原點"""
-        if isinstance(origin, tuple):
-            if origin[0] == 'storage1':
-                self.game.storage_area_player1.insert(origin[1], piece)
-            else:
-                self.game.storage_area_player2.insert(origin[1], piece)
-        else:
-            # 若原點是棋盤上的單元格，則將棋子放回原點
-            self.game.board_config[origin] = piece
 
     def toggle_chick_to_hen(self, piece : Piece):
         """將雞轉換為母雞，反之亦然"""

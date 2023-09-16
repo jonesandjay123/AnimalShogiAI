@@ -68,9 +68,9 @@ def main():
         draw_grid(window)
         # draw_storage_area(window)  # 繪製儲存區的格線
         draw_labels(window)
+        draw_available_moves(window, available_moves)
         draw_pieces(window, game.board_config, game.storage_area_player1,
                     game.storage_area_player2, game.selected_piece, game.mouse_pos)
-        draw_available_moves(window, available_moves)
         pygame.display.update()
 
     pygame.quit()

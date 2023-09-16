@@ -104,5 +104,16 @@ class Game:
             elif origin[0] == 'storage2':
                 removed_piece = self.storage_area_player2.pop(origin[1])
 
+    def return_piece_to_origin(self, piece, origin):
+        """將棋子返回到原點"""
+        if isinstance(origin, tuple):
+            if origin[0] == 'storage1':
+                self.storage_area_player1.insert(origin[1], piece)
+            else:
+                self.storage_area_player2.insert(origin[1], piece)
+        else:
+            # 若原點是棋盤上的單元格，則將棋子放回原點
+            self.board_config[origin] = piece
+
     def end_turn(self):
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
