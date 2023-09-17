@@ -16,7 +16,7 @@ def main():
     rect = pygame.Rect((550, 100), (250, 400))  # 將寬度減少30像素以創建空間來放置滾動條
 
     # 呼叫函數來創建 UIScrollingContainer
-    scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height = create_scrolling_container(ui_manager, rect)
+    scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height, handle_label_click = create_scrolling_container(ui_manager, rect)
     last_scroll_position = 0 # 用於跟踪滾動條的位置
     scroll_step = 0.01  # 這是每次滾動的距離，您可以根據需要調整它
     clock = pygame.time.Clock()
@@ -47,7 +47,10 @@ def main():
 
             ui_manager.process_events(event) # 處理事件列隊中的事件
 
-            if event.type == pygame.USEREVENT and event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.type == pygame.USEREVENT and event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if "label_" in event.ui_element.most_specific_combined_id:  # 檢查是否點擊了一個標籤
+                    label_index = int(event.ui_element.most_specific_combined_id.split('_')[-1])  # 獲取標籤索引
+                    handle_label_click(labels[label_index], label_index)  # 調用處理函數
                 if event.ui_element == vertical_scroll_bar.bottom_button or event.ui_element == vertical_scroll_bar.top_button:
                     # 使用新的 scroll_step 值來更新滾動條的位置
                     if event.ui_element == vertical_scroll_bar.bottom_button:
@@ -61,6 +64,8 @@ def main():
                     else:
                         current_scroll_position = 0
                     for i, label in enumerate(labels):
+                        if event.ui_element == label:
+                            handle_label_click(label, i)
                         new_y = original_label_positions[i][1] - (current_scroll_position * total_scrollable_height)
                         label.set_relative_position((original_label_positions[i][0], new_y))
 
@@ -137,9 +142,9 @@ def main():
             for i, label in enumerate(labels):
                 new_y = original_label_positions[i][1] - (current_scroll_position * total_scrollable_height)
                 label.set_relative_position((original_label_positions[i][0], new_y))
-                print(f"New position of label {i}: {new_y}")  # 新添加的 log
+                # print(f"New position of label {i}: {new_y}")  # 新添加的 log
             last_scroll_position = current_scroll_position
-            print(f"Current scroll position: {current_scroll_position}")  # 新添加的 log
+            # print(f"Current scroll position: {current_scroll_position}")  # 新添加的 log
         ui_manager.update(time_delta)
         ui_manager.draw_ui(window)
 

@@ -204,8 +204,8 @@ def create_scrolling_container(ui_manager, rect):
 
     total_scrollable_height = ((label_height + vertical_spacing_between_labels) * number_of_labels) - correction_value
     
-    print(f"Total scrollable height: {total_scrollable_height}")
-    print(f"Visible height: {rect.height}")
+    # print(f"Total scrollable height: {total_scrollable_height}")
+    # print(f"Visible height: {rect.height}")
 
 
     # 修正可滾動區域的寬度來配合滾動條
@@ -219,12 +219,22 @@ def create_scrolling_container(ui_manager, rect):
     labels = []
     original_label_positions = []
 
-    # 添加一些臨時標籤來測試滾動容器
+    def handle_label_click(label, index):
+        # 取消選中所有其他標籤
+        for i, other_label in enumerate(labels):
+            if i != index:
+                other_label.set_text(f'Test Label {i}')  # 重設背景顏色
+                other_label.rebuild()
+        
+        label.set_text(f'Test Label {index} (selected)')  # 設置選中標籤的背景顏色
+        label.rebuild()
+        print(f"Label {index} selected")
+
     for i in range(number_of_labels):
         label_rect = pygame.Rect((0, i * (label_height + vertical_spacing_between_labels)), (180, label_height))
-        label = pygame_gui.elements.UILabel(relative_rect=label_rect, text=f'Test Label {i}', manager=ui_manager, container=scrolling_container)
+        label = pygame_gui.elements.UIButton(relative_rect=label_rect, text=f'Test Label {i}', manager=ui_manager, container=scrolling_container, object_id=f"label_{i}")
         labels.append(label)
         original_label_positions.append(label_rect.topleft)
 
     vertical_scroll_bar = scrolling_container.vert_scroll_bar
-    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
+    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height, handle_label_click
