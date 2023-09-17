@@ -5,9 +5,10 @@ from utils import get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_
 from board import add_new_label
 
 class Game:
-    def __init__(self, ui_manager=None, scrolling_container=None):
+    def __init__(self, ui_manager=None, scrolling_container=None, notation_manager=None):
         self.ui_manager = ui_manager
         self.scrolling_container = scrolling_container
+        self.notation_manager = notation_manager
 
         self.current_player = 1  # 初始化為 1，表示下方玩家、-1 表示上方的玩家
         self.setup_mode = False  # 追蹤是否處於擺盤模式
@@ -251,7 +252,7 @@ class Game:
     def add_movement_to_notation(self, piece, new_cell_name):
         """將移動添加到棋譜"""
         # 添加新的標籤來記錄這一步
-        add_new_label(self.ui_manager, self.scrolling_container, "new label text")
+        add_new_label(self.ui_manager, self.scrolling_container, "new label text", self.notation_manager)
 
 
     def toggle_setup_mode(self, go_up):
