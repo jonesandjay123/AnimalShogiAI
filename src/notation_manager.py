@@ -1,3 +1,5 @@
+import pygame
+
 class NotationManager:
     def __init__(self):
         self.labels = []
@@ -6,15 +8,19 @@ class NotationManager:
         self.total_scrollable_height = 0
 
     def handle_label_click(self, label, index):
+        self.current_selected_index = index
         # 取消選中所有其他標籤
         for i, other_label in enumerate(self.labels):
             if i != index:
-                other_label.set_text(f'Test Label {i}')  # 重設背景顏色
+                other_label.colours['normal_bg'] = pygame.Color('black')  # 設定正常狀態的背景色
+                other_label.colours['normal_text'] = pygame.Color('white')  # 設定正常狀態的文字顏色
                 other_label.rebuild()
-        
-        label.set_text(f'Test Label {index} (selected)')  # 設置選中標籤的背景顏色
+            
+        label.colours['normal_bg'] = pygame.Color('blue')  # 設定被選中標籤的背景顏色
+        label.colours['normal_text'] = pygame.Color('white')  # 設定被選中標籤的文字顏色
         label.rebuild()
         print(f"Label {index} selected")
+
 
 
     def get_current_selected_index(self):
