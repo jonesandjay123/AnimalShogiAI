@@ -199,9 +199,17 @@ def create_scrolling_container(ui_manager, rect):
     visible_height = rect.height
     # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels - visible_height
     # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
-    total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
+    # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
+    # total_scrollable_height = ((label_height + vertical_spacing_between_labels) * number_of_labels) - visible_height
 
+    visible_labels = visible_height // (label_height + vertical_spacing_between_labels)
+    correction_value = ((number_of_labels - visible_labels) * 
+                        (label_height + vertical_spacing_between_labels))
 
+    total_scrollable_height = ((label_height + vertical_spacing_between_labels) * number_of_labels) - correction_value
+    
+    print(f"Total scrollable height: {total_scrollable_height}")
+    print(f"Visible height: {rect.height}")
 
 
 

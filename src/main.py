@@ -138,12 +138,17 @@ def main():
             current_scroll_position = scrolling_container.vert_scroll_bar.scroll_position
         else:
             current_scroll_position = 0
+        
+        # 新增以下這行來限制 current_scroll_position 在 0 和 1 之間
+        current_scroll_position = min(1, max(0, current_scroll_position))
 
         if current_scroll_position != last_scroll_position:
             for i, label in enumerate(labels):
                 new_y = original_label_positions[i][1] - (current_scroll_position * total_scrollable_height)
                 label.set_relative_position((original_label_positions[i][0], new_y))
+                print(f"New position of label {i}: {new_y}")  # 新添加的 log
             last_scroll_position = current_scroll_position
+            print(f"Current scroll position: {current_scroll_position}")  # 新添加的 log
         ui_manager.update(time_delta)
         ui_manager.draw_ui(window)
 
