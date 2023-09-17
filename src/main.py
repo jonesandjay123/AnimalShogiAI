@@ -2,7 +2,7 @@ import pygame
 import pygame_gui
 import sys
 from board import create_scrolling_container, draw_control_buttons, draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
-from notation_manager import handle_label_click, get_current_selected_index, get_labels
+from notation_manager import handle_label_click, set_current_selected_index, get_current_selected_index, get_labels
 from const import WIDTH, HEIGHT
 from game import Game
 from setup import SetupMode
@@ -95,13 +95,24 @@ def main():
                     handle_turn_button_click(start_player = 1)
 
                 elif control_buttons["play_right"].collidepoint(cursor_position):
-                    print("play_right 按鈕被點擊")
+                    current_index = get_current_selected_index()
+                    if current_index is not None and current_index < len(labels) - 1:
+                        set_current_selected_index(current_index + 1)
+                        handle_label_click(labels[current_index + 1], current_index + 1)
                 elif control_buttons["play_left"].collidepoint(cursor_position):
-                    print("play_left 按鈕被點擊")
+                    current_index = get_current_selected_index()
+                    if current_index is not None and current_index > 0:
+                        set_current_selected_index(current_index - 1)
+                        handle_label_click(labels[current_index - 1], current_index - 1)
                 elif control_buttons["forward_right"].collidepoint(cursor_position):
-                    print("forward_right 按鈕被點擊")
+                    if labels:
+                        set_current_selected_index(len(labels) - 1)
+                        handle_label_click(labels[-1], len(labels) - 1)
                 elif control_buttons["forward_left"].collidepoint(cursor_position):
-                    print("forward_left 按鈕被點擊")
+                    if labels:
+                        set_current_selected_index(0)
+                        handle_label_click(labels[0], 0)
+
 
                 # 非按鈕區域被點擊
                 else:

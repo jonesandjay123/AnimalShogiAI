@@ -15,7 +15,12 @@ def handle_label_click(label, index):
     print(f"Label {index} selected")
 
 def get_current_selected_index():
+    global current_selected_index
     return current_selected_index
+
+def set_current_selected_index(index):
+    global current_selected_index
+    current_selected_index = index
 
 def set_labels(label_list):
     global labels
@@ -23,11 +28,3 @@ def set_labels(label_list):
 
 def get_labels():
     return labels
-
-def set_current_selected_index(index):
-    global current_selected_index
-    current_selected_index = index
-
-def get_current_selected_index():
-    global current_selected_index
-    return current_selected_index
