@@ -22,11 +22,11 @@ def main():
     scroll_step = 0.01  # 這是每次滾動的距離，您可以根據需要調整它
     clock = pygame.time.Clock()
 
-
     game = Game()  # 創建 Game 類的一個實例
     setup = SetupMode(game) 
 
     window = pygame.display.set_mode((WIDTH, HEIGHT))
+    control_buttons = draw_control_buttons(window)
 
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
@@ -93,6 +93,16 @@ def main():
                 # 擺盤完後讓玩家１先走
                 elif lower_turn_button and lower_turn_button.collidepoint(cursor_position):
                     handle_turn_button_click(start_player = 1)
+
+                elif control_buttons["play_right"].collidepoint(cursor_position):
+                    print("play_right 按鈕被點擊")
+                elif control_buttons["play_left"].collidepoint(cursor_position):
+                    print("play_left 按鈕被點擊")
+                elif control_buttons["forward_right"].collidepoint(cursor_position):
+                    print("forward_right 按鈕被點擊")
+                elif control_buttons["forward_left"].collidepoint(cursor_position):
+                    print("forward_left 按鈕被點擊")
+
                 # 非按鈕區域被點擊
                 else:
                     game.click_on_piece(cursor_position)

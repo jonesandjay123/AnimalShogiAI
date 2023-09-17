@@ -1,5 +1,5 @@
 labels = []
-current_selected_index = None
+current_selected_index = -1  # 初始值設為-1，表示沒有選中任何標籤
 
 def handle_label_click(label, index):
     global current_selected_index
@@ -23,3 +23,11 @@ def set_labels(label_list):
 
 def get_labels():
     return labels
+
+def set_current_selected_index(index):
+    global current_selected_index
+    current_selected_index = index
+
+def get_current_selected_index():
+    global current_selected_index
+    return current_selected_index

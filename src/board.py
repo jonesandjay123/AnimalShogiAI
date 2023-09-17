@@ -2,7 +2,7 @@ import pygame
 import pygame_gui
 from const import ORANGE_TRANS, DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
 from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
-from notation_manager import set_labels, handle_label_click
+from notation_manager import set_labels
 
 
 def adjust_coordinates_with_offset(x, y, offset_x, offset_y, square_size):
@@ -192,6 +192,21 @@ def draw_control_buttons(window):
     window.blit(play_right_img, (grid_offset_x + board_width + 20 + button_spacing * 2, button_y))
     window.blit(fast_right_img, (grid_offset_x + board_width + 20 + button_spacing * 3, button_y))
 
+    # 定義每個按鈕的rect
+    fast_left_button = pygame.Rect(grid_offset_x + board_width + 20, button_y, fast_left_img.get_width(), fast_left_img.get_height())
+    play_left_button = pygame.Rect(grid_offset_x + board_width + 20 + button_spacing, button_y, play_left_img.get_width(), play_left_img.get_height())
+    play_right_button = pygame.Rect(grid_offset_x + board_width + 20 + button_spacing * 2, button_y, play_right_img.get_width(), play_right_img.get_height())
+    fast_right_button = pygame.Rect(grid_offset_x + board_width + 20 + button_spacing * 3, button_y, fast_right_img.get_width(), fast_right_img.get_height())
+
+    control_buttons = {
+        "play_right": play_right_button,
+        "play_left": play_left_button,
+        "forward_right": fast_right_button,
+        "forward_left": fast_left_button
+    }
+
+    return control_buttons
+
 
 def create_scrolling_container(ui_manager, rect):
     label_height = 20  # 標籤的高度
@@ -215,9 +230,6 @@ def create_scrolling_container(ui_manager, rect):
 
     labels = []
     original_label_positions = []
-
-    def local_handle_label_click(label, index):
-        handle_label_click(label, index)
 
     for i in range(number_of_labels):
         label_rect = pygame.Rect((0, i * (label_height + vertical_spacing_between_labels)), (180, label_height))
