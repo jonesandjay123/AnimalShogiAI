@@ -191,16 +191,20 @@ def draw_control_buttons(window):
     window.blit(play_right_img, (grid_offset_x + board_width + 20 + button_spacing * 2, button_y))
     window.blit(fast_right_img, (grid_offset_x + board_width + 20 + button_spacing * 3, button_y))
 
-def create_scrolling_container(ui_manager, rect):
+def create_scrolling_container2(ui_manager, rect):
     scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=rect, manager=ui_manager)
     # scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect(0, 0, WIDTH, HEIGHT),
     #                                        manager=ui_manager)
-    scrolling_container.set_scrollable_area_dimensions((WIDTH, HEIGHT + 200)) 
+    # scrolling_container.set_scrollable_area_dimensions((WIDTH, HEIGHT + 200)) 
+    total_scrollable_height = 20 * 30  # 這是我們根據標籤的數量和高度計算的
+    scrollable_area_height = 2000  # Set a large height to ensure there is enough space for scrolling
+    # scrolling_container.set_scrollable_area_dimensions((rect.width, total_scrollable_height))
+
 
     
     labels = []
     original_label_positions = []
-    total_scrollable_height = 20 * 30  # 這是我們根據標籤的數量和高度計算的
+
 
     # 添加一些臨時標籤來測試滾動容器
     for i in range(20):
@@ -219,6 +223,34 @@ def create_scrolling_container(ui_manager, rect):
 
     # 定義一個新的矩形來創建滾動條，確保它是在滾動容器的旁邊
     scroll_bar_rect = pygame.Rect((rect.right - 30, rect.y), (30, rect.height))
-    vertical_scroll_bar = pygame_gui.elements.UIVerticalScrollBar(relative_rect=scroll_bar_rect, visible_percentage=0.1, manager=ui_manager)
+    # vertical_scroll_bar = pygame_gui.elements.UIVerticalScrollBar(relative_rect=scroll_bar_rect, visible_percentage=0.1, manager=ui_manager)
+    vertical_scroll_bar = pygame_gui.elements.UIVerticalScrollBar(relative_rect=pygame.Rect((rect.width - 30, 0), (30, rect.height)),
+                                                             visible_percentage=0.1, manager=ui_manager, container=scrolling_container)
+
     
     return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
+
+def create_scrolling_container(ui_manager, rect):
+    label_height = 20
+    number_of_labels = 100
+    vertical_spacing_between_labels = 10
+    total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
+
+    # 修正可滾動區域的寬度來配合滾動條
+    rect_width_with_scrollbar = rect.width - 30
+    scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect((rect.x, rect.y), (rect_width_with_scrollbar, rect.height)), manager=ui_manager)
+    scrolling_container.set_scrollable_area_dimensions((rect_width_with_scrollbar, total_scrollable_height))
+
+    labels = []
+    original_label_positions = []
+
+    # 添加一些臨時標籤來測試滾動容器
+    for i in range(number_of_labels):
+        label_rect = pygame.Rect((0, i * (label_height + vertical_spacing_between_labels)), (180, label_height))
+        label = pygame_gui.elements.UILabel(relative_rect=label_rect, text=f'Test Label {i}', manager=ui_manager, container=scrolling_container)
+        labels.append(label)
+        original_label_positions.append(label_rect.topleft)
+
+    vertical_scroll_bar = scrolling_container.vert_scroll_bar
+    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
+

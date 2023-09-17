@@ -6,15 +6,10 @@ from const import WIDTH, HEIGHT
 from game import Game
 from setup import SetupMode
 
-########################################
-UI_VERTICAL_SCROLL_BAR_MOVED = 32866
-########################################
 
 def main():
     pygame.init()
 
-
-    ########################################
     # 初始化UIManager
     ui_manager = pygame_gui.UIManager((WIDTH, HEIGHT))
     # 定義一個 pygame 矩形來設置 UIScrollingContainer 的位置和大小
@@ -23,8 +18,6 @@ def main():
     # 呼叫函數來創建 UIScrollingContainer
     scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height = create_scrolling_container(ui_manager, rect)
     clock = pygame.time.Clock()
-    ########################################
-
 
 
     game = Game()  # 創建 Game 類的一個實例
@@ -44,29 +37,25 @@ def main():
         )
         game.toggle_setup_mode(False)
 
+    last_scroll_position = 0
     run = True
     while run:
-        ########################################
         time_delta = clock.tick(60)/1000.0
-        ########################################
+
         for event in pygame.event.get():
 
+            ui_manager.process_events(event) # 處理事件列隊中的事件
+            # 捕捉用戶通過點擊滾動條的頂部或底部按鈕來滾動容器的事件，並根據新的滾動位置更新標籤的位置。
+            if event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == vertical_scroll_bar.bottom_button or event.ui_element == vertical_scroll_bar.top_button:
+                        current_scroll_position = vertical_scroll_bar.scroll_position
+                        for i, label in enumerate(labels):
+                            new_y = original_label_positions[i][1] - (current_scroll_position * total_scrollable_height)
+                            label.set_relative_position((original_label_positions[i][0], new_y))
+
+
             cursor_position = pygame.mouse.get_pos() # 獲取游標位置
-
-
-
-            ########################################
-            # 處理滾動容器的滾動事件
-            if event.type == UI_VERTICAL_SCROLL_BAR_MOVED:
-                # Get the current scroll position from the vertical scroll bar of the scrolling container
-                new_scroll_position = scrolling_container.vert_scroll_bar.start_percentage * scrolling_container.scrolling_height
-                
-                for i, label in enumerate(labels):
-                    new_y = original_label_positions[i][1] - new_scroll_position
-                    label.set_relative_position((original_label_positions[i][0], new_y))
-            ########################################    
-
-
             if event.type == pygame.QUIT:
                 run = False
             elif event.type == pygame.MOUSEMOTION:  # 當滑鼠移動時
@@ -126,11 +115,18 @@ def main():
 
         game.declare_victory(window)
 
-        ########################################
         draw_control_buttons(window)   # 棋譜的四個播放控制按鈕
-        ui_manager.update(time_delta)  # 更新棋譜的容器顯示框
-        ui_manager.draw_ui(window)     # 繪製棋譜的容器顯示框
-        ########################################
+        
+        # 持續監控滾動條的位置，並在滾動條的位置發生變化時更新標籤的位置。
+        current_scroll_position = scrolling_container.vert_scroll_bar.scroll_position
+        if current_scroll_position != last_scroll_position:
+            for i, label in enumerate(labels):
+                new_y = original_label_positions[i][1] - (current_scroll_position * total_scrollable_height)
+                label.set_relative_position((original_label_positions[i][0], new_y))
+            last_scroll_position = current_scroll_position
+        ui_manager.update(time_delta)
+        ui_manager.draw_ui(window)
+
 
         pygame.display.update()
 
