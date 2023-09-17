@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 import sys
 from board import create_scrolling_container, draw_control_buttons, draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
+from notation_manager import handle_label_click, get_current_selected_index, get_labels
 from const import WIDTH, HEIGHT
 from game import Game
 from setup import SetupMode
@@ -16,7 +17,7 @@ def main():
     rect = pygame.Rect((550, 100), (250, 400))  # 將寬度減少30像素以創建空間來放置滾動條
 
     # 呼叫函數來創建 UIScrollingContainer
-    scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height, handle_label_click = create_scrolling_container(ui_manager, rect)
+    scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height = create_scrolling_container(ui_manager, rect)
     last_scroll_position = 0 # 用於跟踪滾動條的位置
     scroll_step = 0.01  # 這是每次滾動的距離，您可以根據需要調整它
     clock = pygame.time.Clock()

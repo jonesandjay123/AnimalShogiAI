@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 from const import ORANGE_TRANS, DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
 from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
+from notation_manager import set_labels, handle_label_click
 
 
 def adjust_coordinates_with_offset(x, y, offset_x, offset_y, square_size):
@@ -204,10 +205,6 @@ def create_scrolling_container(ui_manager, rect):
 
     total_scrollable_height = ((label_height + vertical_spacing_between_labels) * number_of_labels) - correction_value
     
-    # print(f"Total scrollable height: {total_scrollable_height}")
-    # print(f"Visible height: {rect.height}")
-
-
     # 修正可滾動區域的寬度來配合滾動條
     rect_width_with_scrollbar = rect.width
     scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect((rect.x, rect.y), (rect_width_with_scrollbar, rect.height + 20)), manager=ui_manager)
@@ -219,16 +216,8 @@ def create_scrolling_container(ui_manager, rect):
     labels = []
     original_label_positions = []
 
-    def handle_label_click(label, index):
-        # 取消選中所有其他標籤
-        for i, other_label in enumerate(labels):
-            if i != index:
-                other_label.set_text(f'Test Label {i}')  # 重設背景顏色
-                other_label.rebuild()
-        
-        label.set_text(f'Test Label {index} (selected)')  # 設置選中標籤的背景顏色
-        label.rebuild()
-        print(f"Label {index} selected")
+    def local_handle_label_click(label, index):
+        handle_label_click(label, index)
 
     for i in range(number_of_labels):
         label_rect = pygame.Rect((0, i * (label_height + vertical_spacing_between_labels)), (180, label_height))
@@ -236,5 +225,7 @@ def create_scrolling_container(ui_manager, rect):
         labels.append(label)
         original_label_positions.append(label_rect.topleft)
 
+    set_labels(labels)
+
     vertical_scroll_bar = scrolling_container.vert_scroll_bar
-    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height, handle_label_click
+    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
