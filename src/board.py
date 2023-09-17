@@ -191,55 +191,27 @@ def draw_control_buttons(window):
     window.blit(play_right_img, (grid_offset_x + board_width + 20 + button_spacing * 2, button_y))
     window.blit(fast_right_img, (grid_offset_x + board_width + 20 + button_spacing * 3, button_y))
 
-def create_scrolling_container2(ui_manager, rect):
-    scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=rect, manager=ui_manager)
-    # scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect(0, 0, WIDTH, HEIGHT),
-    #                                        manager=ui_manager)
-    # scrolling_container.set_scrollable_area_dimensions((WIDTH, HEIGHT + 200)) 
-    total_scrollable_height = 20 * 30  # 這是我們根據標籤的數量和高度計算的
-    scrollable_area_height = 2000  # Set a large height to ensure there is enough space for scrolling
-    # scrolling_container.set_scrollable_area_dimensions((rect.width, total_scrollable_height))
-
-
-    
-    labels = []
-    original_label_positions = []
-
-
-    # 添加一些臨時標籤來測試滾動容器
-    for i in range(20):
-        label_rect = pygame.Rect((0, i * 30), (180, 20))
-        label = pygame_gui.elements.UILabel(relative_rect=label_rect, text=f'Test Label {i}', manager=ui_manager, container=scrolling_container)
-        labels.append(label)
-        original_label_positions.append(label_rect.topleft)
-    print(original_label_positions)
-    # original_label_positions = [(0, i*30) for i in range(20)]
-    # for i, pos in enumerate(original_label_positions):
-    #     label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((pos[0], pos[1]), (100, 20)),
-    #                     text=f"Label {i}",
-    #                     manager=ui_manager,
-    #                     container=scrolling_container.get_container())  # Add labels to the container
-    #     labels.append(label)
-
-    # 定義一個新的矩形來創建滾動條，確保它是在滾動容器的旁邊
-    scroll_bar_rect = pygame.Rect((rect.right - 30, rect.y), (30, rect.height))
-    # vertical_scroll_bar = pygame_gui.elements.UIVerticalScrollBar(relative_rect=scroll_bar_rect, visible_percentage=0.1, manager=ui_manager)
-    vertical_scroll_bar = pygame_gui.elements.UIVerticalScrollBar(relative_rect=pygame.Rect((rect.width - 30, 0), (30, rect.height)),
-                                                             visible_percentage=0.1, manager=ui_manager, container=scrolling_container)
-
-    
-    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
 
 def create_scrolling_container(ui_manager, rect):
-    label_height = 20
-    number_of_labels = 100
-    vertical_spacing_between_labels = 10
+    label_height = 20  # 標籤的高度
+    number_of_labels = 21  # 標籤的數量
+    vertical_spacing_between_labels = 5  # 標籤之間的垂直間距
+    visible_height = rect.height
+    # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels - visible_height
+    # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
     total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
 
+
+
+
+
     # 修正可滾動區域的寬度來配合滾動條
-    rect_width_with_scrollbar = rect.width - 30
-    scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect((rect.x, rect.y), (rect_width_with_scrollbar, rect.height)), manager=ui_manager)
+    rect_width_with_scrollbar = rect.width
+    scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect((rect.x, rect.y), (rect_width_with_scrollbar, rect.height + 20)), manager=ui_manager)
     scrolling_container.set_scrollable_area_dimensions((rect_width_with_scrollbar, total_scrollable_height))
+    if scrolling_container.horiz_scroll_bar is not None:
+        scrolling_container.horiz_scroll_bar.kill()
+        scrolling_container.horiz_scroll_bar = None
 
     labels = []
     original_label_positions = []
@@ -253,4 +225,3 @@ def create_scrolling_container(ui_manager, rect):
 
     vertical_scroll_bar = scrolling_container.vert_scroll_bar
     return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
-
