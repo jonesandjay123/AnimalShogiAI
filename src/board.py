@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui
 from const import ORANGE_TRANS, DARK_WOOD, LIGHT_WOOD, BLACK, WHITE, ROWS, COLS, SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, WIDTH, HEIGHT
 from utils import adjust_coordinates_with_offset, get_storage_cell_details, get_storage_cell_coords
 
@@ -167,3 +168,57 @@ def draw_buttons(window, show_return_to_game_buttons):
     
     # Return all the buttons as a tuple
     return duel_button, setup_button, upper_turn_button if show_return_to_game_buttons else None, lower_turn_button if show_return_to_game_buttons else None
+
+
+def draw_control_buttons(window):
+    window_height = 560
+    board_width = 100
+    grid_offset_x = 440
+
+    # 加載圖片
+    fast_left_img = pygame.image.load('assets/fast_left.png')
+    play_left_img = pygame.image.load('assets/play_left.png')
+    play_right_img = pygame.image.load('assets/play_right.png')
+    fast_right_img = pygame.image.load('assets/fast_right.png')
+    
+    # 定義按鈕的位置
+    button_y = window_height - 50  # 調整 Y 坐標來定位按鈕
+    button_spacing = 60  # 按鈕之間的空間
+    
+    # 繪製按鈕到視窗上
+    window.blit(fast_left_img, (grid_offset_x + board_width + 20, button_y))
+    window.blit(play_left_img, (grid_offset_x + board_width + 20 + button_spacing, button_y))
+    window.blit(play_right_img, (grid_offset_x + board_width + 20 + button_spacing * 2, button_y))
+    window.blit(fast_right_img, (grid_offset_x + board_width + 20 + button_spacing * 3, button_y))
+
+def create_scrolling_container(ui_manager, rect):
+    scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=rect, manager=ui_manager)
+    # scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect(0, 0, WIDTH, HEIGHT),
+    #                                        manager=ui_manager)
+    scrolling_container.set_scrollable_area_dimensions((WIDTH, HEIGHT + 200)) 
+
+    
+    labels = []
+    original_label_positions = []
+    total_scrollable_height = 20 * 30  # 這是我們根據標籤的數量和高度計算的
+
+    # 添加一些臨時標籤來測試滾動容器
+    for i in range(20):
+        label_rect = pygame.Rect((0, i * 30), (180, 20))
+        label = pygame_gui.elements.UILabel(relative_rect=label_rect, text=f'Test Label {i}', manager=ui_manager, container=scrolling_container)
+        labels.append(label)
+        original_label_positions.append(label_rect.topleft)
+    print(original_label_positions)
+    # original_label_positions = [(0, i*30) for i in range(20)]
+    # for i, pos in enumerate(original_label_positions):
+    #     label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((pos[0], pos[1]), (100, 20)),
+    #                     text=f"Label {i}",
+    #                     manager=ui_manager,
+    #                     container=scrolling_container.get_container())  # Add labels to the container
+    #     labels.append(label)
+
+    # 定義一個新的矩形來創建滾動條，確保它是在滾動容器的旁邊
+    scroll_bar_rect = pygame.Rect((rect.right - 30, rect.y), (30, rect.height))
+    vertical_scroll_bar = pygame_gui.elements.UIVerticalScrollBar(relative_rect=scroll_bar_rect, visible_percentage=0.1, manager=ui_manager)
+    
+    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
