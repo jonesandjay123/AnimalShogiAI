@@ -197,20 +197,15 @@ def create_scrolling_container(ui_manager, rect):
     number_of_labels = 21  # 標籤的數量
     vertical_spacing_between_labels = 5  # 標籤之間的垂直間距
     visible_height = rect.height
-    # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels - visible_height
-    # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
-    # total_scrollable_height = (label_height + vertical_spacing_between_labels) * number_of_labels
-    # total_scrollable_height = ((label_height + vertical_spacing_between_labels) * number_of_labels) - visible_height
 
     visible_labels = visible_height // (label_height + vertical_spacing_between_labels)
-    correction_value = ((number_of_labels - visible_labels) * 
+    correction_value = ((number_of_labels - visible_labels - 1) * 
                         (label_height + vertical_spacing_between_labels))
 
     total_scrollable_height = ((label_height + vertical_spacing_between_labels) * number_of_labels) - correction_value
     
     print(f"Total scrollable height: {total_scrollable_height}")
     print(f"Visible height: {rect.height}")
-
 
 
     # 修正可滾動區域的寬度來配合滾動條
