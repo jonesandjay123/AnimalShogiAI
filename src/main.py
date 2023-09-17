@@ -22,7 +22,8 @@ def main():
     scroll_step = 0.01  # 這是每次滾動的距離，您可以根據需要調整它
     clock = pygame.time.Clock()
 
-    game = Game()  # 創建 Game 類的一個實例
+    game = Game(ui_manager=ui_manager, scrolling_container=scrolling_container) # 創建 Game 類的一個實例
+
     setup = SetupMode(game) 
 
     window = pygame.display.set_mode((WIDTH, HEIGHT))

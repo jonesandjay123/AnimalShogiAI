@@ -208,7 +208,7 @@ def draw_control_buttons(window):
     return control_buttons
 
 
-def create_scrolling_container(ui_manager, rect):
+def create_scrolling_container_saved(ui_manager, rect):
     label_height = 20  # 標籤的高度
     number_of_labels = 21  # 標籤的數量
     vertical_spacing_between_labels = 5  # 標籤之間的垂直間距
@@ -241,3 +241,55 @@ def create_scrolling_container(ui_manager, rect):
 
     vertical_scroll_bar = scrolling_container.vert_scroll_bar
     return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
+
+
+def create_scrolling_container(ui_manager, rect):
+    label_height = 20  # 標籤的高度
+    number_of_labels = 0  # 初始時沒有標籤
+    vertical_spacing_between_labels = 5  # 標籤之間的垂直間距
+    visible_height = rect.height
+    
+    total_scrollable_height = 0  # 初始時的可滾動高度為0
+    
+    # 修正可滾動區域的寬度來配合滾動條
+    rect_width_with_scrollbar = rect.width
+    scrolling_container = pygame_gui.elements.UIScrollingContainer(relative_rect=pygame.Rect((rect.x, rect.y), (rect_width_with_scrollbar, rect.height + 20)), manager=ui_manager)
+    scrolling_container.set_scrollable_area_dimensions((rect_width_with_scrollbar, total_scrollable_height))
+    if scrolling_container.horiz_scroll_bar is not None:
+        scrolling_container.horiz_scroll_bar.kill()
+        scrolling_container.horiz_scroll_bar = None
+
+    labels = []
+    original_label_positions = []
+
+    set_labels(labels)  # 設置空的標籤列表
+
+    vertical_scroll_bar = scrolling_container.vert_scroll_bar
+    return scrolling_container, vertical_scroll_bar, labels, original_label_positions, total_scrollable_height
+
+def add_new_label(ui_manager, scrolling_container, text, label_height=20, vertical_spacing_between_labels=5):
+    print("~~~~add new label")
+    # global number_of_labels
+    # global total_scrollable_height
+    # global labels
+    # global original_label_positions
+    
+    # # Step 2: Update global variables
+    # number_of_labels += 1
+    # total_scrollable_height += label_height + vertical_spacing_between_labels
+    
+    # # Step 3: Create a new UILabel object
+    # label_rect = pygame.Rect((0, (number_of_labels - 1) * (label_height + vertical_spacing_between_labels)), (180, label_height))
+    # label = pygame_gui.elements.UIButton(relative_rect=label_rect, text=text, manager=ui_manager, container=scrolling_container, object_id=f"label_{number_of_labels - 1}")
+    
+    # # Step 4: Add the new UILabel to the labels list and update original_label_positions list
+    # labels.append(label)
+    # original_label_positions.append(label_rect.topleft)
+    
+    # # Step 5: Update the scrollable area dimensions of the scrolling container
+    # scrolling_container.set_scrollable_area_dimensions((scrolling_container.rect.width, total_scrollable_height))
+    
+    # # Step 6: Update the scrollbar position
+    # # ... (This part will require some logic to update the scrollbar position based on the new total scrollable height)
+    
+    # set_labels(labels)  # Update the labels list in the notation manager

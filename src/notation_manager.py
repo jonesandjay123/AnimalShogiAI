@@ -1,3 +1,4 @@
+
 labels = []
 current_selected_index = -1  # 初始值設為-1，表示沒有選中任何標籤
 

@@ -2,9 +2,13 @@ import pygame
 from piece import Piece
 from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
 from utils import get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
+from board import add_new_label
 
 class Game:
-    def __init__(self):
+    def __init__(self, ui_manager=None, scrolling_container=None):
+        self.ui_manager = ui_manager
+        self.scrolling_container = scrolling_container
+
         self.current_player = 1  # 初始化為 1，表示下方玩家、-1 表示上方的玩家
         self.setup_mode = False  # 追蹤是否處於擺盤模式
         self.game_over = False  # 追蹤是否遊戲結束
@@ -214,6 +218,9 @@ class Game:
         # 遊戲勝負未揭曉才需要繼續更新下一回合輪到哪位玩家
         if not self.game_over:
             self.update_player_turn()
+        
+        # 更新棋譜
+        self.add_movement_to_notation(self.selected_piece, new_cell_name)
 
 
     def move_event(self, pos):
@@ -240,6 +247,11 @@ class Game:
     def update_player_turn(self):
         """更新下一回合輪到哪位玩家"""
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
+
+    def add_movement_to_notation(self, piece, new_cell_name):
+        """將移動添加到棋譜"""
+        # 添加新的標籤來記錄這一步
+        add_new_label(self.ui_manager, self.scrolling_container, "new label text")
 
 
     def toggle_setup_mode(self, go_up):
