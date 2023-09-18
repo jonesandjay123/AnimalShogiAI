@@ -183,8 +183,10 @@ class Game:
         if (piece.player == 1 and row_number == 1) or (piece.player == -1 and row_number == 4):
             if piece.piece_type == 'C':  # 如果是小雞，則升級
                 self.toggle_chick_to_hen(piece)
+                return True  # 指示晉升發生
             elif piece.piece_type == 'L':  # 如果是獅子衝到底線，則宣布遊戲結束
                 self.game_over = True
+        return False  # 如果沒有發生晉升，則返回 False
 
 
     def execute_move(self, new_cell_name, piece_origin):
@@ -223,7 +225,7 @@ class Game:
             self.update_player_turn()
         
         # 更新棋譜
-        self.add_movement_to_notation(self.selected_piece, new_cell_name)
+        self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
 
 
     def move_event(self, pos):
@@ -251,10 +253,34 @@ class Game:
         """更新下一回合輪到哪位玩家"""
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
 
-    def add_movement_to_notation(self, piece, new_cell_name):
+
+    def generate_notation(self, piece, new_cell_name, piece_origin):
+        """以記譜規則紀錄當前移動行為"""
+        
+        # 獲得棋子的類型名稱（例如：'Chick', 'Giraffe' 等）
+        piece_name = piece.get_piece_type_display_name()
+
+        is_promoted = self.check_if_reached_opponent_base(piece, new_cell_name)
+        
+        # 如果棋子是從儲存區打入的，則在棋譜末尾添加單引號（'）
+        if piece_origin.startswith('storage'):
+            notation_suffix = "'"
+            notation = f"{new_cell_name}{piece_name}{notation_suffix}"
+        elif is_promoted:  # 如果棋子晉升了，則在棋譜末尾添加加號（+）
+            notation_suffix = "+"
+            notation = f"{new_cell_name}{piece_name}{notation_suffix}({piece_origin})"
+        else:  # 如果沒有特殊情況，則記譜後綴為空
+            notation_suffix = ""
+            notation = f"{new_cell_name}{piece_name}({piece_origin})"
+        
+        return notation
+
+
+    def add_movement_to_notation(self, piece, new_cell_name, piece_origin):
         """將移動添加到棋譜"""
+        notation = self.generate_notation(piece, new_cell_name, piece_origin)
         # 添加新的標籤來記錄這一步
-        add_new_label(self.ui_manager, self.scrolling_container, "new label text", self.notation_manager)
+        add_new_label(self.ui_manager, self.scrolling_container, notation, self.notation_manager)
 
 
     def toggle_setup_mode(self, go_up):

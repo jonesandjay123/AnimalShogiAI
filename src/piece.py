@@ -46,6 +46,9 @@ class Piece:
             available_moves = filter_invalid_moves(piece.player, possible_moves, board)
         return available_moves
 
+    def get_piece_type_display_name(self):
+        """獲得棋子的顯示名稱"""
+        return piece_type_map[self.piece_type][0]
 
     def update_position(self, pos):
         self.x = pos[0]
