@@ -240,8 +240,8 @@ def add_new_label(ui_manager, scrolling_container, label_text, notation_manager)
     label_rect = pygame.Rect((0, number_of_labels * (label_height + vertical_spacing_between_labels)), (180, label_height))
     new_label = pygame_gui.elements.UIButton(relative_rect=label_rect, text=label_text, manager=ui_manager, container=scrolling_container, object_id=f"label_{number_of_labels}")
 
-    new_label.colours['normal_bg'] = pygame.Color('black')  # 將背景顏色設為灰色
-    new_label.colours['normal_text'] = pygame.Color('white')  # 將文字顏色設為黑色
+    new_label.colours['normal_bg'] = pygame.Color('black')  # 將背景顏色設為黑色
+    new_label.colours['normal_text'] = pygame.Color('white')  # 將文字顏色設為白色
     new_label.rebuild()
 
     # Step 3: Update the list of original positions
