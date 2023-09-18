@@ -42,6 +42,7 @@ class Game:
     def create_initial_board_config(self, start_player=1, board=None, storage1=None, storage2=None):
         """初始化為對局模式的配置"""
         self.board_config = board if board is not None else self.default_board_config()
+        print(self.board_config)
         self.current_player = start_player
         self.storage_area_player1 = storage1 if storage1 is not None else []
         self.storage_area_player2 = storage2 if storage2 is not None else []
@@ -87,6 +88,8 @@ class Game:
             if not self.setup_mode:
                 # 獲得和打印可用移動
                 self.available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
+                # 提醒玩家可以吃掉對手的獅子
+                self.check_if_lion_in_movement_range("Eat the opponent's lion!")
                 # print(f"Available moves for the selected piece: {self.available_moves}")        
 
 
@@ -196,6 +199,15 @@ class Game:
         return False  # 如果沒有發生晉升，則返回 False
 
 
+    def check_if_lion_in_movement_range(self, message):
+        """檢查對手的獅子是否正在自己的"""
+        checking_coords = self.selected_piece.get_available_moves(self.selected_piece, self.board_config)
+        for _, piece in self.board_config.items():
+            # 檢查對手的獅子是否正處於自己的checking_coords上面
+            if piece and piece.piece_type == "L" and piece.coords in checking_coords and piece.player != self.current_player:
+                print(message)
+    
+
     def execute_move(self, new_cell_name, piece_origin):
         """執行移動"""
         if not piece_origin[0].startswith('storage'):
@@ -226,6 +238,9 @@ class Game:
         # 從其原始位置移除選定的棋子
         if self.selected_piece_origin in self.board_config:
             del self.board_config[self.selected_piece_origin]
+
+        # 檢查是否將軍了對手的獅子
+        self.check_if_lion_in_movement_range("Check!")
 
         # 遊戲勝負未揭曉才需要繼續更新下一回合輪到哪位玩家
         if not self.game_over:
