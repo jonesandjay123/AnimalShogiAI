@@ -44,6 +44,8 @@ class Game:
         self.current_player = start_player
         self.storage_area_player1 = storage1 if storage1 is not None else []
         self.storage_area_player2 = storage2 if storage2 is not None else []
+
+        self.notation_manager.clear_labels() # 清空棋譜
         
         for cell_name, piece in self.board_config.items():
             piece.coords = get_cell_coords(cell_name) # 幫每個棋子標上對應的coords座標

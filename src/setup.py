@@ -13,6 +13,7 @@ class SetupMode:
         self.game.storage_area_player1 = [Piece("E", 1), Piece("L", 1), Piece("G", 1), Piece("C", 1)]
         self.game.storage_area_player2 = [Piece("E", -1), Piece("L", -1), Piece("G", -1), Piece("C", -1)]
 
+        self.game.notation_manager.clear_labels() # 清空棋譜
 
     def place_piece(self, pos):
         """根據給定的位置放置棋子"""

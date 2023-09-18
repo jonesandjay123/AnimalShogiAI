@@ -34,3 +34,11 @@ class NotationManager:
 
     def get_labels(self):
         return self.labels
+
+    def clear_labels(self):
+        for label in self.labels:
+            label.kill()  # 使用 kill 方法來移除標籤
+        self.labels = []  # 清空標籤列表
+        self.original_label_positions = []  # 清空原始位置列表
+        self.current_selected_index = -1  # 重置當前選中的索引
+        self.total_scrollable_height = 0  # 重置可滾動的高度
