@@ -19,7 +19,7 @@ def get_grid_coordinates_from_pos(pos):
 
 def get_cell_name_from_pos(pos):
     """根據給定的位置獲取單元格名稱"""
-    column_map = {0: "a", 1: "b", 2: "c"}
+    column_map = {0: "A", 1: "B", 2: "C"}
 
     col, row = get_grid_coordinates_from_pos(pos)
 
@@ -62,7 +62,7 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
 
 def get_cell_coords(cell_name):
     """獲取單元格名稱的座標"""
-    column_map = {"a": 1, "b": 2, "c": 3}
+    column_map = {"A": 1, "B": 2, "C": 3}
     # 單元格名稱對應a都是從 1 開始的
     column_letter = cell_name[0]
     row_number = int(cell_name[1])

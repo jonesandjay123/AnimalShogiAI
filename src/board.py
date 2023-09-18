@@ -15,7 +15,7 @@ def draw_pieces(window, board_config, storage_area_player1, storage_area_player2
     for key, value in board_config.items():
         if value == selected_piece:  # Skip drawing the selected piece at its original position
             continue
-        col, row = ord(key[0]) - ord('a'), int(key[1]) - 1
+        col, row = ord(key[0]) - ord('A'), int(key[1]) - 1
         piece_image = value.image  # Get the already loaded image
         piece_image = pygame.transform.scale(
             piece_image, (SQUARE_SIZE, SQUARE_SIZE))  # Resize the image
@@ -156,14 +156,14 @@ def draw_buttons(window, show_return_to_game_buttons):
     if show_return_to_game_buttons:
         # Draw "輪上方走" button
         upper_turn_button = pygame.Rect(
-            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + -80, button_width*1.85, button_height)
+            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + -82, button_width*1.85, button_height)
         pygame.draw.rect(window, WHITE, upper_turn_button)
         upper_turn_label = font.render('輪上方走', True, BLACK)
         window.blit(upper_turn_label, (upper_turn_button.x + 8, upper_turn_button.y + 4))
 
         # Draw "輪下方走" button
         lower_turn_button = pygame.Rect(
-            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + -30, button_width*1.85, button_height)
+            GRID_OFFSET_X - button_width - 84, HEIGHT // 2 + -28, button_width*1.85, button_height)
         pygame.draw.rect(window, WHITE, lower_turn_button)
         lower_turn_label = font.render('輪下方走', True, BLACK)
         window.blit(lower_turn_label, (lower_turn_button.x + 8, lower_turn_button.y + 4))

@@ -13,6 +13,7 @@ class Game:
         self.current_player = 1  # 初始化為 1，表示下方玩家、-1 表示上方的玩家
         self.setup_mode = False  # 追蹤是否處於擺盤模式
         self.game_over = False  # 追蹤是否遊戲結束
+        self.game_over_label_added = False  # 新的屬性來追蹤是否已經添加了 "Game Over" 標籤
         self.show_return_to_normal_game_route_button = False # 追蹤是否顯示返回正常遊戲模式的按鈕
         self.mouse_pos = (0, 0) # 追蹤滑鼠位置
         
@@ -28,14 +29,14 @@ class Game:
 
     def default_board_config(self):
         return {
-            "b1": Piece("L", -1),
-            "c1": Piece("E", -1),
-            "b2": Piece("C", -1),
-            "a1": Piece("G", -1),
-            "a4": Piece("E", 1),
-            "b3": Piece("C", 1),
-            "b4": Piece("L", 1),
-            "c4": Piece("G", 1),
+            "B1": Piece("L", -1),
+            "C1": Piece("E", -1),
+            "B2": Piece("C", -1),
+            "A1": Piece("G", -1),
+            "A4": Piece("E", 1),
+            "B3": Piece("C", 1),
+            "B4": Piece("L", 1),
+            "C4": Piece("G", 1),
         }
 
     def create_initial_board_config(self, start_player=1, board=None, storage1=None, storage2=None):
@@ -170,12 +171,18 @@ class Game:
         if self.game_over:
             font = pygame.font.Font(None, 74)
             player_number = 1 if self.current_player == 1 else 2
-            victory_message = f"Player {player_number} wins!!"
+            victory_message = f"Player {player_number} wins"
+
+            if not self.game_over_label_added:  # 檢查是否已經添加了 "Game Over" 標籤
+                # 借用victory_message來生成棋譜標籤
+                add_new_label(self.ui_manager, self.scrolling_container, victory_message, self.notation_manager)
+                self.game_over_label_added = True  # 設置為 True 來表示 "Game Over" 標籤已被添加
+
+            victory_message += "!!"
             text_surface = font.render(victory_message, True, (255, 0, 0))
             text_rect = text_surface.get_rect()
             text_rect.center = (400, 300)  # 調整為您的屏幕中心
             screen.blit(text_surface, text_rect)
-  
 
     def check_if_reached_opponent_base(self, piece, new_cell_name):
         """檢查是否到達對手的基線"""
@@ -288,4 +295,5 @@ class Game:
         self.setup_mode = go_up
         self.show_return_to_normal_game_route_button = False
         self.game_over = False
+        self.game_over_label_added = False
         print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")

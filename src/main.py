@@ -82,20 +82,20 @@ def main():
                 if game.selected_piece:
                     game.selected_piece.update_position(cursor_position)
             elif event.type == pygame.MOUSEBUTTONDOWN:  # 當滑鼠按下時
+                # 擺盤完後讓玩家２先走(刻意把條件擺在對局按鈕前，以便把觸發事件的優先序蓋到上面)
+                if upper_turn_button and upper_turn_button.collidepoint(cursor_position):
+                    handle_turn_button_click(start_player = -1)
+                # 擺盤完後讓玩家１先走(同上，要高過對局按鈕的點擊事件)
+                elif lower_turn_button and lower_turn_button.collidepoint(cursor_position):
+                    handle_turn_button_click(start_player = 1)
                 # 對局按鈕被點擊
-                if duel_button.collidepoint(cursor_position):
+                elif duel_button.collidepoint(cursor_position):
                     game.create_initial_board_config()  # 初始化為對局模式的配置
                     game.toggle_setup_mode(False)
                 # 擺盤按鈕被點擊
                 elif setup_button.collidepoint(cursor_position):
                     setup.initialize_setup_mode() # 清空棋盤，進入擺盤模式
                     game.toggle_setup_mode(True)
-                # 擺盤完後讓玩家２先走
-                elif upper_turn_button and upper_turn_button.collidepoint(cursor_position):
-                    handle_turn_button_click(start_player = -1)
-                # 擺盤完後讓玩家１先走
-                elif lower_turn_button and lower_turn_button.collidepoint(cursor_position):
-                    handle_turn_button_click(start_player = 1)
 
 
                 elif control_buttons["play_right"].collidepoint(cursor_position):
@@ -161,7 +161,7 @@ def main():
         game.declare_victory(window)
 
         draw_control_buttons(window)   # 棋譜的四個播放控制按鈕
-        
+
         # 持续监控滚动条的位置，并在滚动条的位置发生变化时更新标签的位置。
         if scrolling_container.vert_scroll_bar is not None:
             current_scroll_position = scrolling_container.vert_scroll_bar.scroll_position
