@@ -270,7 +270,7 @@ class Game:
         is_promoted = self.check_if_reached_opponent_base(piece, new_cell_name)
         
         # 如果棋子是從儲存區打入的，則在棋譜末尾添加單引號（'）
-        if piece_origin.startswith('storage'):
+        if piece_origin[0].startswith('storage'):
             notation_suffix = "'"
             notation = f"{new_cell_name}{piece_name}{notation_suffix}"
         elif is_promoted:  # 如果棋子晉升了，則在棋譜末尾添加加號（+）
