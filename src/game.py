@@ -1,7 +1,6 @@
 import pygame
 from piece import Piece
-from const import SQUARE_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, ROWS
-from utils import get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
+from utils import get_piece_at_pos, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 from board import add_new_label
 
 class Game:
@@ -74,7 +73,7 @@ class Game:
 
     def select_piece(self, pos):
         """根據給定的位置選擇一個棋子"""
-        piece = self.get_piece_at_pos(pos)
+        piece = get_piece_at_pos(pos, self.board_config, self.storage_area_player1, self.storage_area_player2)
         self.available_moves = []
         # 擺盤模式下可以任意選擇棋子，但是對局模式下只能選擇自己的棋子
         if piece and (self.setup_mode or piece.player == self.current_player):
@@ -90,36 +89,7 @@ class Game:
                 # 獲得和打印可用移動
                 self.available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
                 # print(f"Available moves for the selected piece: {self.available_moves}")        
-
-
-    def get_piece_at_pos(self, pos):
-        """根據給定的位置獲取棋子"""
-        storage_cell_size, margin = get_storage_cell_details()
-
-        # 檢查玩家 2 的儲存區 然後玩家 1 的儲存區
-        for i in range(7):
-            x, y = get_storage_cell_coords(i, 2, storage_cell_size, margin)
-            if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
-                # 回傳儲存區的棋子（如果有的話）
-                if i < len(self.storage_area_player2):
-                    return self.storage_area_player2[i]
-
-        # 檢查玩家 1 的儲存區
-        for i in range(7):
-            x, y = get_storage_cell_coords(i, 1, storage_cell_size, margin)
-            if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
-                # 回傳儲存區的棋子（如果有的話）
-                if i < len(self.storage_area_player1):
-                    return self.storage_area_player1[i]
-
-        # 迭代棋盤上的每個單元格，並檢查給定位置是否在單元格的範圍內
-        for cell, piece in self.board_config.items():
-            cell_x, cell_y = get_cell_coords(cell)
-            adjusted_x, adjusted_y = adjust_coordinates_with_offset(cell_x, cell_y, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE)
-            if adjusted_x <= pos[0] <= (adjusted_x + SQUARE_SIZE) and adjusted_y <= pos[1] <= (adjusted_y + SQUARE_SIZE):
-                return piece
-        return None
-
+                
 
     def get_piece_origin(self, piece):
         """獲取棋子的原始位置（可以是棋盤上的單元名稱或存儲區域的索引）"""
@@ -190,7 +160,8 @@ class Game:
         """檢查是否到達對手的基線"""
         _, row_number = get_cell_coords(new_cell_name)
         if (piece.player == 1 and row_number == 1) or (piece.player == -1 and row_number == 4):
-            if piece.piece_type == 'C':  # 如果是小雞，則升級
+            # 如果是小雞且非來自儲存區打入的子，才晉升為母雞
+            if piece.piece_type == 'C' and not self.selected_piece_origin[0].startswith('storage'):
                 self.toggle_chick_to_hen(piece)
                 return True  # 指示晉升發生
             elif piece.piece_type == 'L':  # 如果是獅子衝到底線，則宣布遊戲結束
@@ -200,10 +171,6 @@ class Game:
 
     def execute_move(self, new_cell_name, piece_origin):
         """執行移動"""
-        if not piece_origin[0].startswith('storage'):
-            # 非來自儲存區打入的子，才需要檢查是否到到達對手的基線
-            self.check_if_reached_opponent_base(self.selected_piece, new_cell_name)
-
         # 獲得目標位置上可能存在的棋子
         target_piece = self.board_config.get(new_cell_name)
 
@@ -301,7 +268,7 @@ class Game:
         self.show_return_to_normal_game_route_button = False
         self.game_over = False
         self.game_over_label_added = False
-        print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")
+        # print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")
 
 
     def ai_cautionary_whisper(self, checking_piece, current_player):

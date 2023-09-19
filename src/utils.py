@@ -5,6 +5,34 @@ def adjust_coordinates_with_offset(x, y, offset_x, offset_y, square_size):
     adjusted_y = (y-1) * square_size + offset_y
     return adjusted_x, adjusted_y
 
+def get_piece_at_pos(pos, board_config, storage_area_player1, storage_area_player2):
+    """根據給定的位置獲取棋子"""
+    storage_cell_size, margin = get_storage_cell_details()
+
+    # 檢查玩家 2 的儲存區 然後玩家 1 的儲存區
+    for i in range(7):
+        x, y = get_storage_cell_coords(i, 2, storage_cell_size, margin)
+        if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
+            # 回傳儲存區的棋子（如果有的話）
+            if i < len(storage_area_player2):
+                return storage_area_player2[i]
+
+    # 檢查玩家 1 的儲存區
+    for i in range(7):
+        x, y = get_storage_cell_coords(i, 1, storage_cell_size, margin)
+        if x <= pos[0] <= x + storage_cell_size and y <= pos[1] <= y + storage_cell_size:
+            # 回傳儲存區的棋子（如果有的話）
+            if i < len(storage_area_player1):
+                return storage_area_player1[i]
+
+    # 迭代棋盤上的每個單元格，並檢查給定位置是否在單元格的範圍內
+    for cell, piece in board_config.items():
+        cell_x, cell_y = get_cell_coords(cell)
+        adjusted_x, adjusted_y = adjust_coordinates_with_offset(cell_x, cell_y, GRID_OFFSET_X, GRID_OFFSET_Y, SQUARE_SIZE)
+        if adjusted_x <= pos[0] <= (adjusted_x + SQUARE_SIZE) and adjusted_y <= pos[1] <= (adjusted_y + SQUARE_SIZE):
+            return piece
+    return None
+
 def get_storage_cell_details():
     storage_cell_size = SQUARE_SIZE * 0.7
     margin = 8  # Adjust the margin as needed
@@ -27,6 +55,15 @@ def get_cell_name_from_pos(pos):
         return column_map[col] + str(row + 1)
     else:
         return None  # 返回 None 如果位置不在有效的棋盤範圍內
+
+def get_cell_coords(cell_name):
+    """獲取單元格名稱的座標"""
+    column_map = {"A": 1, "B": 2, "C": 3}
+    # 單元格名稱對應a都是從 1 開始的
+    column_letter = cell_name[0]
+    row_number = int(cell_name[1])
+
+    return column_map[column_letter], row_number
 
 def get_storage_cell_coords(index, player, storage_cell_size, margin):
     """獲得儲存區的座標"""
@@ -59,15 +96,6 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
         game_state["storage"][-1].append(piece.piece_type)
     
     return game_state
-
-def get_cell_coords(cell_name):
-    """獲取單元格名稱的座標"""
-    column_map = {"A": 1, "B": 2, "C": 3}
-    # 單元格名稱對應a都是從 1 開始的
-    column_letter = cell_name[0]
-    row_number = int(cell_name[1])
-
-    return column_map[column_letter], row_number
 
 def get_drop_coords(board):
     """獲取所有可打入的空格座標"""

@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 import sys
 from board import create_scrolling_container, draw_control_buttons, draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
+from utils import get_piece_at_pos
 from notation_manager import NotationManager
 from const import WIDTH, HEIGHT
 from game import Game
@@ -114,12 +115,10 @@ def main():
                         game.notation_manager.handle_label_click(game.notation_manager.labels[current_index - 1], current_index - 1)
 
                 elif control_buttons["forward_right"].collidepoint(cursor_position):
-                    print("forward_right")
                     if game.notation_manager.labels:
                         game.notation_manager.set_current_selected_index(len(game.notation_manager.labels) - 1)
                         game.notation_manager.handle_label_click(game.notation_manager.labels[-1], len(game.notation_manager.labels) - 1)
                 elif control_buttons["forward_left"].collidepoint(cursor_position):
-                    print("forward_left")
                     if game.notation_manager.labels:
                         game.notation_manager.set_current_selected_index(0)
                         game.notation_manager.handle_label_click(game.notation_manager.labels[0], 0)
@@ -135,7 +134,7 @@ def main():
                     
             elif event.type == pygame.KEYDOWN:  # 當按下鍵盤按鈕時
                 if event.key == pygame.K_t:  # "Ｔ" 鍵被按下
-                    piece = game.get_piece_at_pos(cursor_position)
+                    piece = get_piece_at_pos(cursor_position, game.board_config, game.storage_area_player1, game.storage_area_player2)
                     if piece and piece.piece_type in ["C", "H"]:  # 檢驗棋子是否為小雞或母雞
                         game.toggle_chick_to_hen(piece)  # 切換小雞和母雞
 
