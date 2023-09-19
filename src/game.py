@@ -52,6 +52,7 @@ class Game:
         for cell_name, piece in self.board_config.items():
             piece.coords = get_cell_coords(cell_name) # 幫每個棋子標上對應的coords座標
             
+        self.init_game_ai_whisper(start_player) # 全子掃描以檢查擺盤完直接就將軍的情況
 
     def click_on_piece(self, pos):
         """處理棋子的點擊事件"""
@@ -88,8 +89,6 @@ class Game:
             if not self.setup_mode:
                 # 獲得和打印可用移動
                 self.available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
-                # 提醒玩家可以吃掉對手的獅子
-                self.check_if_lion_in_movement_range("Eat the opponent's lion!")
                 # print(f"Available moves for the selected piece: {self.available_moves}")        
 
 
@@ -199,15 +198,6 @@ class Game:
         return False  # 如果沒有發生晉升，則返回 False
 
 
-    def check_if_lion_in_movement_range(self, message):
-        """檢查對手的獅子是否正在自己的"""
-        checking_coords = self.selected_piece.get_available_moves(self.selected_piece, self.board_config)
-        for _, piece in self.board_config.items():
-            # 檢查對手的獅子是否正處於自己的checking_coords上面
-            if piece and piece.piece_type == "L" and piece.coords in checking_coords and piece.player != self.current_player:
-                print(message)
-    
-
     def execute_move(self, new_cell_name, piece_origin):
         """執行移動"""
         if not piece_origin[0].startswith('storage'):
@@ -239,8 +229,8 @@ class Game:
         if self.selected_piece_origin in self.board_config:
             del self.board_config[self.selected_piece_origin]
 
-        # 檢查是否將軍了對手的獅子
-        self.check_if_lion_in_movement_range("Check!")
+        # 給訓練AI看的提醒謎之聲
+        self.ai_cautionary_whisper(self.selected_piece, self.current_player)
 
         # 遊戲勝負未揭曉才需要繼續更新下一回合輪到哪位玩家
         if not self.game_over:
@@ -312,3 +302,31 @@ class Game:
         self.game_over = False
         self.game_over_label_added = False
         print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")
+
+
+    def ai_cautionary_whisper(self, checking_piece, current_player):
+        """以當前玩家的角度提醒AI注意"""
+        # 獲得選定棋子的所有可能移動位置
+        checking_coords = checking_piece.get_available_moves(checking_piece, self.board_config)
+        
+        # 幫下一回合的對手檢查，他是否被check了
+        if checking_piece.piece_type != "L":
+            for _, piece in self.board_config.items():
+                # 檢查對手的獅子是否正處於自己的checking_coords上面
+                if piece and piece.piece_type == "L" and piece.coords in checking_coords and piece.player != current_player:
+                    print("Check!") #提醒訓練的AI要優先避開危險
+        # 幫自己的獅子走完以後檢查，是否要掛了
+        elif checking_piece.piece_type == "L":
+            opponent_moves = set()
+            for _, piece in self.board_config.items():
+                # 掃秒獅子四周所有對手的棋子
+                if piece and piece.player != current_player:
+                    opponent_moves.update(set(piece.get_available_moves(piece, self.board_config)))
+            # 判斷對手的任一棋子的移動範圍是否有掃到自己的獅子
+            if checking_piece.coords in opponent_moves:
+                print("Eat the opponent's lion!") # 提醒訓練的AI要優先吃掉對手的獅子
+
+    def init_game_ai_whisper(self, start_player):
+        """初始遊戲後的全面掃描"""
+        for _, piece in self.board_config.items():
+            self.ai_cautionary_whisper(piece, start_player * -1) # 因為是以對方角度來提醒，所以要乘以-1
