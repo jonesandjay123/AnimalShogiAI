@@ -33,6 +33,19 @@ def get_piece_at_pos(pos, board_config, storage_area_player1, storage_area_playe
             return piece
     return None
 
+def get_piece_origin(piece, board_config, storage_area_player1, storage_area_player2):
+    """獲取棋子的原始位置（可以是棋盤上的單元名稱或存儲區域的索引）"""
+    for cell_name, board_piece in board_config.items():
+        if piece == board_piece:
+            return cell_name
+    for i, storage_piece in enumerate(storage_area_player1):
+        if piece == storage_piece:
+            return ('storage1', i)
+    for i, storage_piece in enumerate(storage_area_player2):
+        if piece == storage_piece:
+            return ('storage2', i)
+    return None
+
 def get_storage_cell_details():
     storage_cell_size = SQUARE_SIZE * 0.7
     margin = 8  # Adjust the margin as needed
