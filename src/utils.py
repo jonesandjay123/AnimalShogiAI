@@ -94,20 +94,20 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
         "turn_count": turn_count,
         "board": {},
         "storage": {
-            1: [],
-            -1: []
+            "1": [],
+            "-1": []
         },
         "current_player": current_player
     }
     # 獲得棋盤的狀態
     for cell_name, piece in board_config.items():
-        game_state["board"][cell_name] = (piece.piece_type, piece.player) 
+        game_state["board"][cell_name] = [piece.piece_type, piece.player]
     # 獲得儲存區的狀態
     for piece in storage_area_player1:
-        game_state["storage"][1].append(piece.piece_type)
-    
+        game_state["storage"]["1"].append(piece.piece_type)
+
     for piece in storage_area_player2:
-        game_state["storage"][-1].append(piece.piece_type)
+        game_state["storage"]["-1"].append(piece.piece_type)
     
     return game_state
 

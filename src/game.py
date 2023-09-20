@@ -53,6 +53,11 @@ class Game:
             
         self.init_game_ai_whisper(start_player) # 全子掃描以檢查擺盤完直接就將軍的情況
 
+    def get_turn_count_val(self):
+        return self.turn_count
+
+    def set_turn_count_val(self, count):
+        self.turn_count = count
 
     def click_on_piece(self, pos):
         """處理棋子的點擊事件"""
@@ -263,13 +268,6 @@ class Game:
         self.set_turn_count_val(0) # 重置回合數
         # print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")
 
-    def get_turn_count_val(self):
-        return self.turn_count
-
-    def set_turn_count_val(self, count):
-        self.turn_count = count
-
-
     def ai_cautionary_whisper(self, checking_piece, current_player):
         """以當前玩家的角度提醒AI注意"""
         # 獲得選定棋子的所有可能移動位置
@@ -296,3 +294,22 @@ class Game:
         """初始遊戲後的全面掃描"""
         for _, piece in self.board_config.items():
             self.ai_cautionary_whisper(piece, start_player * -1) # 因為是以對方角度來提醒，所以要乘以-1
+
+    def load_game_state(self, game_state):
+        """載入遊戲狀態"""
+        self.turn_count = game_state['turn_count'] # 更新回合數
+        self.current_player = game_state['current_player'] # 更新當前玩家
+
+        print(f"game_state['board']: {game_state['board']}")
+
+        # 更新棋盤配置
+        self.board_config = {}
+        for position, (piece_type, player) in game_state['board'].items():
+            self.board_config[position] = Piece(piece_type, player, position)
+
+        # 更新儲存區
+        self.storage_area_player1 = [Piece(piece_type, 1, None) for piece_type in game_state['storage']['1']]
+        self.storage_area_player2 = [Piece(piece_type, -1, None) for piece_type in game_state['storage']['-1']]
+
+        # 需要添加一個更新界面的方法來反映這些變化
+        # self.update_ui()

@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui
 import sys
+import json
 from board import create_scrolling_container, draw_control_buttons, draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
 from utils import get_piece_at_pos
 from notation_manager import NotationManager
@@ -71,9 +72,11 @@ def main():
                     label.set_relative_position((game.notation_manager.original_label_positions[i][0], new_y))
 
         if event.type == pygame.USEREVENT and event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
-            print("!!!!UI_TEXT_ENTRY_FINISHED!!!")
             if event.ui_element == text_entry_line:
-                print(text_entry_line.get_text())
+                game_state_str = text_entry_line.get_text().replace("'", '"')
+                # 將 JSON 字符串解析為 Python 字典
+                game_state_dict = json.loads(game_state_str)
+                game.load_game_state(game_state_dict)
 
 
     run = True
@@ -81,8 +84,6 @@ def main():
         time_delta = clock.tick(60)/1000.0
 
         for event in pygame.event.get():
-
-            ui_manager.process_events(event) # 處理事件列隊中的事件
             process_events(event, game, ui_manager, vertical_scroll_bar, scrolling_container, text_entry_line)
 
             cursor_position = pygame.mouse.get_pos() # 獲取游標位置
