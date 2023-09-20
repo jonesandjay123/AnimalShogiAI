@@ -49,14 +49,21 @@ class Game:
         self.storage_area_player2 = storage2 if storage2 is not None else []
 
         self.notation_manager.clear_labels() # 清空棋譜
-        
-        for cell_name, piece in self.board_config.items():
-            piece.coords = get_cell_coords(cell_name) # 幫每個棋子標上對應的coords座標
-            
-        self.init_game_ai_whisper(start_player) # 全子掃描以檢查擺盤完直接就將軍的情況
-
+        self.rescan_piece_coords() # 重設掃描棋子座標
+        self.init_game_ai_whisper(start_player) # 全子提示掃描以檢查擺盤完直接就將軍的情況
         self.update_board_hist() # 把地０回合的局面先存進board_hist
         add_new_label(self.ui_manager, self.scrolling_container, "Start Position", self.notation_manager) # 初始狀態也給標籤
+
+    def rescan_piece_coords(self):
+        # 重設暫存屬性
+        self.selected_piece = None
+        self.selected_piece_origin = None
+        self.temp_removed_piece = None
+        self.available_moves = []
+
+        # 更新每個棋子的 coords 屬性
+        for cell_name, piece in self.board_config.items():
+            piece.coords = get_cell_coords(cell_name) # 幫每個棋子標上對應的coords座標
 
     def get_turn_count_val(self):
         return self.turn_count
@@ -331,5 +338,5 @@ class Game:
         self.storage_area_player1 = [Piece(piece_type, 1, None) for piece_type in game_state['storage']['1']]
         self.storage_area_player2 = [Piece(piece_type, -1, None) for piece_type in game_state['storage']['-1']]
 
-        # 需要添加一個更新界面的方法來反映這些變化
-        # self.update_ui()
+        # 重新掃描棋子座標 
+        self.rescan_piece_coords()
