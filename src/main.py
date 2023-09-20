@@ -60,7 +60,13 @@ def main():
             with open(filename_easy_read, 'w') as file:
                 file.write(easy_read_str)
 
-            
+            # For notation
+            filename_notation = f"output/notation_{current_time}.txt"
+            notations = [label.text for label in game.notation_manager.labels]
+            notation_str = "\n".join(notations)
+            with open(filename_notation, 'w') as file:
+                file.write(notation_str)
+
             print(f"Game state saved to {filename_ai_train} and {filename_easy_read}")
         except Exception as e:
             print(f"Failed to save the game state: {e}")
