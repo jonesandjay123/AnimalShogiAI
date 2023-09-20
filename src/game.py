@@ -55,13 +55,18 @@ class Game:
             
         self.init_game_ai_whisper(start_player) # 全子掃描以檢查擺盤完直接就將軍的情況
 
+        self.update_board_hist() # 把地０回合的局面先存進board_hist
+        add_new_label(self.ui_manager, self.scrolling_container, "Start Position", self.notation_manager) # 初始狀態也給標籤
+
     def get_turn_count_val(self):
         return self.turn_count
 
     def set_turn_count_val(self, count):
         self.turn_count = count
 
-    def get_board_hist(self):
+    def get_board_hist(self, key=None):
+        if key is not None:
+            return self.board_hist.get(key)
         return self.board_hist
 
     def set_board_hist(self, turn_count, game_state):

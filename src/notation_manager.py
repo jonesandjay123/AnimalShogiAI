@@ -7,7 +7,7 @@ class NotationManager:
         self.current_selected_index = -1
         self.total_scrollable_height = 0
 
-    def handle_label_click(self, label, index):
+    def handle_label_click(self, label, index, game):
         self.current_selected_index = index
         # 取消選中所有其他標籤
         for i, other_label in enumerate(self.labels):
@@ -19,8 +19,8 @@ class NotationManager:
         label.colours['normal_bg'] = pygame.Color('blue')  # 設定被選中標籤的背景顏色
         label.colours['normal_text'] = pygame.Color('white')  # 設定被選中標籤的文字顏色
         label.rebuild()
-        print(f"Label {index} selected")
-
+        game_state_str = game.get_board_hist(index)
+        game.load_game_state(game_state_str)
 
 
     def get_current_selected_index(self):

@@ -51,7 +51,7 @@ def main():
         if event.type == pygame.USEREVENT and event.user_type == pygame_gui.UI_BUTTON_PRESSED:
             if "label_" in event.ui_element.most_specific_combined_id:  # 檢查是否點擊了一個標籤
                 label_index = int(event.ui_element.most_specific_combined_id.split('_')[-1])  # 獲取標籤索引
-                game.notation_manager.handle_label_click(game.notation_manager.labels[label_index], label_index)  # 調用處理函數
+                game.notation_manager.handle_label_click(game.notation_manager.labels[label_index], label_index, game)  # 調用處理函數
             if vertical_scroll_bar and (event.ui_element == vertical_scroll_bar.bottom_button or event.ui_element == vertical_scroll_bar.top_button):
                 # 使用新的 scroll_step 值來更新滾動條的位置
                 if event.ui_element == vertical_scroll_bar.bottom_button:
@@ -66,7 +66,7 @@ def main():
                     current_scroll_position = 0
                 for i, label in enumerate(game.notation_manager.labels):
                     if event.ui_element == label:
-                        game.notation_manager.handle_label_click(game.notation_manager.labels[i], i)
+                        game.notation_manager.handle_label_click(game.notation_manager.labels[i], i, game)
                     new_y = game.notation_manager.original_label_positions[i][1] - (current_scroll_position * game.notation_manager.total_scrollable_height)
                     label.set_relative_position((game.notation_manager.original_label_positions[i][0], new_y))
 
@@ -113,23 +113,23 @@ def main():
                         current_index = -1
                     if current_index < len(game.notation_manager.labels) - 1:
                         game.notation_manager.set_current_selected_index(current_index + 1)
-                        game.notation_manager.handle_label_click(game.notation_manager.labels[current_index + 1], current_index + 1)
+                        game.notation_manager.handle_label_click(game.notation_manager.labels[current_index + 1], current_index + 1, game)
                 elif control_buttons["play_left"].collidepoint(cursor_position):
                     current_index = game.notation_manager.get_current_selected_index()
                     if current_index is None or current_index < 0:  # 新增此行來處理當前索引為 -1 的情況
                         current_index = 0
                     if current_index > 0:
                         game.notation_manager.set_current_selected_index(current_index - 1)
-                        game.notation_manager.handle_label_click(game.notation_manager.labels[current_index - 1], current_index - 1)
+                        game.notation_manager.handle_label_click(game.notation_manager.labels[current_index - 1], current_index - 1, game)
 
                 elif control_buttons["forward_right"].collidepoint(cursor_position):
                     if game.notation_manager.labels:
                         game.notation_manager.set_current_selected_index(len(game.notation_manager.labels) - 1)
-                        game.notation_manager.handle_label_click(game.notation_manager.labels[-1], len(game.notation_manager.labels) - 1)
+                        game.notation_manager.handle_label_click(game.notation_manager.labels[-1], len(game.notation_manager.labels) - 1, game)
                 elif control_buttons["forward_left"].collidepoint(cursor_position):
                     if game.notation_manager.labels:
                         game.notation_manager.set_current_selected_index(0)
-                        game.notation_manager.handle_label_click(game.notation_manager.labels[0], 0)
+                        game.notation_manager.handle_label_click(game.notation_manager.labels[0], 0, game)
 
 
                 # 非按鈕區域被點擊
