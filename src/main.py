@@ -1,7 +1,10 @@
 import pygame
 import pygame_gui
+from datetime import datetime
+import os
 import sys
-from board import create_scrolling_container, draw_control_buttons, draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
+import json
+from board import add_new_label, create_scrolling_container, draw_control_buttons, draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
 from utils import get_piece_at_pos
 from notation_manager import NotationManager
 from const import WIDTH, HEIGHT
@@ -34,6 +37,52 @@ def main():
 
     background = pygame.image.load('assets/background.png')
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+
+    def save_game_state(game):
+        # 如果遊戲處於擺盤模式並且沒有棋盤配置，則不保存任何東西
+        if game.board_config == {} or game.setup_mode:
+            return
+
+        try:
+            # 獲取當前的時間並創建一個基於時間的文件名
+            current_time = datetime.now().strftime("%Y%m%d_%H%M")
+            
+            # For AI train
+            filename_ai_train = f"output/ai_train_game_state_{current_time}.json"
+            ai_train_str = json.dumps(game.board_hist, separators=(',', ':'), ensure_ascii=False)
+            with open(filename_ai_train, 'w') as file:
+                file.write(ai_train_str)
+            
+            # For easy read
+            filename_easy_read = f"output/easy_read_game_state_{current_time}.txt"
+            easy_read_str = json.dumps(game.board_hist, indent=4, ensure_ascii=False)
+            easy_read_str = easy_read_str.replace("\\", "")
+            with open(filename_easy_read, 'w') as file:
+                file.write(easy_read_str)
+
+            
+            print(f"Game state saved to {filename_ai_train} and {filename_easy_read}")
+        except Exception as e:
+            print(f"Failed to save the game state: {e}")
+    
+    def load_game_state():
+        input_dir = "input"
+        try:
+            # 獲取目錄下所有文件
+            files = [os.path.join(input_dir, f) for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+            # 如果沒有文件，則打印一條消息
+            if not files:
+                print("No files found in the input directory.")
+                return
+            # 找到最新的文件
+            latest_file = max(files, key=os.path.getctime)
+            # 讀取和打印文件內容
+            with open(latest_file, "r") as file:
+                data = file.read()
+                print(data)
+        except Exception as e:
+            # 如果在嘗試讀取文件時發生錯誤，則打印錯誤消息
+            print(f"An error occurred while trying to load the game state: {e}")
 
     def handle_turn_button_click(start_player):
         game.create_initial_board_config(
@@ -72,6 +121,10 @@ def main():
 
         if event.type == pygame.USEREVENT and event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
             if event.ui_element == text_entry_line:
+                # 手動匯入的局必須要清除標籤跟board_hist，以視為新的對局
+                game.notation_manager.clear_labels()
+                game.board_hist = {}
+                add_new_label(ui_manager, scrolling_container, "Load from Notation", notation_manager)
                 game.load_game_state(text_entry_line.get_text())
 
 
@@ -145,6 +198,10 @@ def main():
                     piece = get_piece_at_pos(cursor_position, game.board_config, game.storage_area_player1, game.storage_area_player2)
                     if piece and piece.piece_type in ["C", "H"]:  # 檢驗棋子是否為小雞或母雞
                         game.toggle_chick_to_hen(piece)  # 切換小雞和母雞
+                elif event.key == pygame.K_s:  # "S" 鍵被按下
+                    save_game_state(game)
+                elif event.key == pygame.K_l:  # "L" 鍵被按下
+                    load_game_state()
 
         # 繪製背景圖片
         window.blit(background, (0, 0))
