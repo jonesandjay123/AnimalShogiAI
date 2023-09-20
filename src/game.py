@@ -79,6 +79,11 @@ class Game:
     def set_board_hist(self, turn_count, game_state):
         self.board_hist[turn_count] = game_state
 
+    def clear_board_hist_from_turn(self, turn):
+        keys_to_delete = [key for key in self.board_hist.keys() if key >= turn]
+        for key in keys_to_delete:
+            del self.board_hist[key]
+
     def update_board_hist(self):
         """把當前局面存進board_hist"""
         current_game_state = get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.turn_count)
@@ -279,6 +284,13 @@ class Game:
     def add_movement_to_notation(self, piece, new_cell_name, piece_origin):
         """將移動添加到棋譜"""
         self.set_turn_count_val(self.get_turn_count_val() + 1) # 更新回合數
+
+        # 如果是從回朔到過去某個時間點重新改寫歷史紀錄，則刪除所有當前turn_count以後的紀錄
+        if (self.get_turn_count_val() < len(self.get_board_hist())):
+            print("remove passed history from board_hist after turn_count: ", self.get_turn_count_val())
+            self.notation_manager.clear_labels_from_index(self.get_turn_count_val())
+            self.clear_board_hist_from_turn(self.get_turn_count_val())
+
         self.update_board_hist() # 把局面存進board_hist。key是回合數，value是當前局面的JSON字串
         notation = self.generate_notation(piece, new_cell_name, piece_origin, str(self.get_turn_count_val()))
         # 添加新的標籤來記錄這一步

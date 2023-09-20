@@ -43,7 +43,7 @@ class SetupMode:
             self.mouse_pos = (0, 0)
 
             # 列印當前遊戲狀態
-            print(get_current_game_state(self.game.board_config, self.game.storage_area_player1, self.game.storage_area_player2, self.game.current_player))
+            # print(get_current_game_state(self.game.board_config, self.game.storage_area_player1, self.game.storage_area_player2, self.game.current_player))
 
 
     def handle_piece_placement_in_storage(self, pos):

@@ -42,3 +42,11 @@ class NotationManager:
         self.original_label_positions = []  # 清空原始位置列表
         self.current_selected_index = -1  # 重置當前選中的索引
         self.total_scrollable_height = 0  # 重置可滾動的高度
+
+    def clear_labels_from_index(self, index):
+        # 從指定索引開始刪除所有標籤
+        for i in range(index, len(self.labels)):
+            self.labels[i].kill()  # 使用 kill 方法來移除標籤
+        
+        # 更新標籤列表，保留未被刪除的標籤
+        self.labels = self.labels[:index]
