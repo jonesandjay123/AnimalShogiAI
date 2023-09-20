@@ -5,7 +5,7 @@ from utils import get_current_game_state, get_piece_at_pos, get_piece_origin, ge
 from board import add_new_label
 
 class Game:
-    def __init__(self, ui_manager=None, scrolling_container=None, notation_manager=None):
+    def __init__(self, ui_manager=None, scrolling_container=None, notation_manager=None, board_hist=None):
         self.ui_manager = ui_manager
         self.scrolling_container = scrolling_container
         self.notation_manager = notation_manager
@@ -16,11 +16,12 @@ class Game:
         self.game_over_label_added = False  # 新的屬性來追蹤是否已經添加了 "Game Over" 標籤
         self.show_return_to_normal_game_route_button = False # 追蹤是否顯示返回正常遊戲模式的按鈕
         self.mouse_pos = (0, 0) # 追蹤滑鼠位置
+
         self.turn_count = 0 # 追蹤回合數
-        
         self.board_config = {}  # 裡存儲棋盤的當前配置
         self.storage_area_player1 = []
         self.storage_area_player2 = []
+        self.board_hist = board_hist if board_hist is not None else {}  # 初始化 board_hist 属性
 
         self.selected_piece = None  # 用來追蹤當前選中的棋子
         self.selected_piece_origin = None  # 用來追蹤選中棋子的原始位置
@@ -59,6 +60,17 @@ class Game:
 
     def set_turn_count_val(self, count):
         self.turn_count = count
+
+    def get_board_hist(self):
+        return self.board_hist
+
+    def set_board_hist(self, turn_count, game_state):
+        self.board_hist[turn_count] = game_state
+
+    def update_board_hist(self):
+        """把當前局面存進board_hist"""
+        current_game_state = get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.turn_count)
+        self.set_board_hist(self.turn_count, json.dumps(current_game_state))
 
     def click_on_piece(self, pos):
         """處理棋子的點擊事件"""
@@ -201,7 +213,7 @@ class Game:
         self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
 
         # 列印當前遊戲狀態
-        print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
+        # print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
 
 
     def move_event(self, pos):
@@ -255,6 +267,7 @@ class Game:
     def add_movement_to_notation(self, piece, new_cell_name, piece_origin):
         """將移動添加到棋譜"""
         self.set_turn_count_val(self.get_turn_count_val() + 1) # 更新回合數
+        self.update_board_hist() # 把局面存進board_hist。key是回合數，value是當前局面的JSON字串
         notation = self.generate_notation(piece, new_cell_name, piece_origin, str(self.get_turn_count_val()))
         # 添加新的標籤來記錄這一步
         add_new_label(self.ui_manager, self.scrolling_container, notation, self.notation_manager)
@@ -303,8 +316,6 @@ class Game:
 
         self.turn_count = game_state['turn_count'] # 更新回合數
         self.current_player = game_state['current_player'] # 更新當前玩家
-
-        print(f"game_state['board']: {game_state['board']}")
 
         # 更新棋盤配置
         self.board_config = {}
