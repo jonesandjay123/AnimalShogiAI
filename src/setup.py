@@ -78,7 +78,7 @@ class SetupMode:
         self.show_button_when_two_lions()
 
         # 列印當前遊戲狀態
-        print(get_current_game_state(self.game.board_config, self.game.storage_area_player1, self.game.storage_area_player2, self.game.current_player))
+        # print(get_current_game_state(self.game.board_config, self.game.storage_area_player1, self.game.storage_area_player2, self.game.current_player))
 
 
     def place_piece_in_storage(self, player, index):

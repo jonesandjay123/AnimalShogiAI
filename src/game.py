@@ -1,6 +1,6 @@
 import pygame
 from piece import Piece
-from utils import get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
+from utils import get_current_game_state, get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 from board import add_new_label
 
 class Game:
@@ -42,7 +42,6 @@ class Game:
     def create_initial_board_config(self, start_player=1, board=None, storage1=None, storage2=None):
         """初始化為對局模式的配置"""
         self.board_config = board if board is not None else self.default_board_config()
-        print(self.board_config)
         self.current_player = start_player
         self.storage_area_player1 = storage1 if storage1 is not None else []
         self.storage_area_player2 = storage2 if storage2 is not None else []
@@ -194,6 +193,9 @@ class Game:
         
         # 更新棋譜
         self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
+
+        # 列印當前遊戲狀態
+        print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
 
 
     def move_event(self, pos):
