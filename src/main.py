@@ -1,7 +1,6 @@
 import pygame
 import pygame_gui
 import sys
-import json
 from board import create_scrolling_container, draw_control_buttons, draw_current_player, draw_grid, draw_available_moves, draw_labels, draw_buttons, draw_pieces
 from utils import get_piece_at_pos
 from notation_manager import NotationManager
@@ -73,10 +72,7 @@ def main():
 
         if event.type == pygame.USEREVENT and event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
             if event.ui_element == text_entry_line:
-                game_state_str = text_entry_line.get_text().replace("'", '"')
-                # 將 JSON 字符串解析為 Python 字典
-                game_state_dict = json.loads(game_state_str)
-                game.load_game_state(game_state_dict)
+                game.load_game_state(text_entry_line.get_text())
 
 
     run = True

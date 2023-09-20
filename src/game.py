@@ -1,4 +1,5 @@
 import pygame
+import json
 from piece import Piece
 from utils import get_current_game_state, get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 from board import add_new_label
@@ -295,8 +296,11 @@ class Game:
         for _, piece in self.board_config.items():
             self.ai_cautionary_whisper(piece, start_player * -1) # 因為是以對方角度來提醒，所以要乘以-1
 
-    def load_game_state(self, game_state):
+    def load_game_state(self, game_state_str):
         """載入遊戲狀態"""
+        game_state_str = game_state_str.replace("'", '"') # 將單引號轉換為雙引號
+        game_state = json.loads(game_state_str) # 將 JSON 字串轉換為 Python 字典
+
         self.turn_count = game_state['turn_count'] # 更新回合數
         self.current_player = game_state['current_player'] # 更新當前玩家
 
