@@ -212,6 +212,15 @@ def draw_control_buttons(window):
 def create_scrolling_container(ui_manager, rect):
     # 用 global 關鍵字來引用全局變量
     global notation_manager
+
+    # 創建一個文字輸入框並將其位置設置為與 scrolling_container 對齊
+    text_entry_line = pygame_gui.elements.UITextEntryLine(
+        relative_rect=pygame.Rect((rect.x, rect.y - 32), (rect.width, 30)), 
+        manager=ui_manager
+    )
+    text_entry_line.background_colour = pygame.Color(0, 0, 0, 0)
+    text_entry_line.text_colour = pygame.Color('black')
+    text_entry_line.rebuild() # 重建以應用新的顏色
     
     # 修正可滾動區域的寬度來配合滾動條
     rect_width_with_scrollbar = rect.width
@@ -227,7 +236,7 @@ def create_scrolling_container(ui_manager, rect):
     notation_manager.set_labels(notation_manager.labels)  # 設置空的標籤列表
 
     vertical_scroll_bar = scrolling_container.vert_scroll_bar
-    return scrolling_container, vertical_scroll_bar
+    return scrolling_container, vertical_scroll_bar, text_entry_line
 
 
 def add_new_label(ui_manager, scrolling_container, label_text, notation_manager):
