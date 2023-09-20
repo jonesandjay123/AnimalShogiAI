@@ -15,6 +15,7 @@ class Game:
         self.game_over_label_added = False  # 新的屬性來追蹤是否已經添加了 "Game Over" 標籤
         self.show_return_to_normal_game_route_button = False # 追蹤是否顯示返回正常遊戲模式的按鈕
         self.mouse_pos = (0, 0) # 追蹤滑鼠位置
+        self.turn_count = 0 # 追蹤回合數
         
         self.board_config = {}  # 裡存儲棋盤的當前配置
         self.storage_area_player1 = []
@@ -221,7 +222,7 @@ class Game:
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
 
 
-    def generate_notation(self, piece, new_cell_name, piece_origin):
+    def generate_notation(self, piece, new_cell_name, piece_origin, turn_count):
         """以記譜規則紀錄當前移動行為"""
         
         # 獲得棋子的類型名稱（例如：'Chick', 'Giraffe' 等）
@@ -240,12 +241,13 @@ class Game:
             notation_suffix = ""
             notation = f"{new_cell_name}{piece_name}({piece_origin})"
         
-        return notation
+        return turn_count + " " + notation
 
 
     def add_movement_to_notation(self, piece, new_cell_name, piece_origin):
         """將移動添加到棋譜"""
-        notation = self.generate_notation(piece, new_cell_name, piece_origin)
+        self.set_turn_count_val(self.get_turn_count_val() + 1) # 更新回合數
+        notation = self.generate_notation(piece, new_cell_name, piece_origin, str(self.get_turn_count_val()))
         # 添加新的標籤來記錄這一步
         add_new_label(self.ui_manager, self.scrolling_container, notation, self.notation_manager)
 
@@ -256,7 +258,14 @@ class Game:
         self.show_return_to_normal_game_route_button = False
         self.game_over = False
         self.game_over_label_added = False
+        self.set_turn_count_val(0) # 重置回合數
         # print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")
+
+    def get_turn_count_val(self):
+        return self.turn_count
+
+    def set_turn_count_val(self, count):
+        self.turn_count = count
 
 
     def ai_cautionary_whisper(self, checking_piece, current_player):
