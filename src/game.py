@@ -18,6 +18,7 @@ class Game:
         self.mouse_pos = (0, 0) # 追蹤滑鼠位置
 
         self.turn_count = 0 # 追蹤回合數
+        self.con_non_capture_turns = 0 # 追蹤連續無吃子回合數
         self.board_config = {}  # 裡存儲棋盤的當前配置
         self.storage_area_player1 = []
         self.storage_area_player2 = []
@@ -71,6 +72,12 @@ class Game:
     def set_turn_count_val(self, count):
         self.turn_count = count
 
+    def get_con_non_capture_turns_val(self):
+        return self.con_non_capture_turns
+
+    def set_con_non_capture_turns_val(self, count):
+        self.con_non_capture_turns = count
+
     def get_board_hist(self, key=None):
         if key is not None:
             return self.board_hist.get(key)
@@ -86,7 +93,7 @@ class Game:
 
     def update_board_hist(self):
         """把當前局面存進board_hist"""
-        current_game_state = get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.turn_count)
+        current_game_state = get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val(), self.get_con_non_capture_turns_val())
         self.set_board_hist(self.turn_count, json.dumps(current_game_state))
 
     def click_on_piece(self, pos):
@@ -158,7 +165,7 @@ class Game:
         if self.game_over:
             font = pygame.font.Font(None, 74)
             player_number = 1 if self.current_player == 1 else 2
-            victory_message = f"Player {player_number} wins"
+            victory_message = f"Player {player_number} wins" if self.get_con_non_capture_turns_val() < 8 else f"Draw Repetition"
 
             if not self.game_over_label_added:  # 檢查是否已經添加了 "Game Over" 標籤
                 # 借用victory_message來生成棋譜標籤
@@ -171,6 +178,14 @@ class Game:
             text_rect.center = (400, 300)  # 調整為您的屏幕中心
             screen.blit(text_surface, text_rect)
 
+    def check_draw_condition(self, target_piece):
+        if target_piece or self.selected_piece_origin[0].startswith('storage'): # 如果有吃棋子或為打入事件，則重置連續無吃子回合數
+            self.set_con_non_capture_turns_val(0) # 重置連續無吃子回合數
+        else:
+            self.set_con_non_capture_turns_val(self.get_con_non_capture_turns_val() + 1) # 更新連續無吃子回合數
+        # print("con_non_capture_turns: ", self.get_con_non_capture_turns_val()) # 印出連續無吃子回合數
+        if self.get_con_non_capture_turns_val() >= 8: # 如果連續無吃子回合數超過8回合，則宣布遊戲結束
+            self.game_over = True
 
     def toggle_chick_to_hen(self, piece : Piece):
         """將雞轉換為母雞，反之亦然"""
@@ -226,6 +241,9 @@ class Game:
         if not self.game_over:
             self.update_player_turn()
         
+        # 檢查是否變成和棋
+        self.check_draw_condition(target_piece) 
+
         # 更新棋譜
         self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
 
@@ -304,6 +322,7 @@ class Game:
         self.game_over = False
         self.game_over_label_added = False
         self.set_turn_count_val(0) # 重置回合數
+        self.set_con_non_capture_turns_val(0) # 重置連續無吃子回合數
         # print("擺盤按鈕被點擊") if go_up else print("對局按鈕被點擊")
 
     def ai_cautionary_whisper(self, checking_piece, current_player):
@@ -339,6 +358,7 @@ class Game:
         game_state = json.loads(game_state_str) # 將 JSON 字串轉換為 Python 字典
 
         self.turn_count = game_state['turn_count'] # 更新回合數
+        self.con_non_capture_turns = game_state['con_non_capture_turns'] # 更新連續無吃子回合數
         self.current_player = game_state['current_player'] # 更新當前玩家
 
         # 更新棋盤配置

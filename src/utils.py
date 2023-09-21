@@ -88,10 +88,11 @@ def get_storage_cell_coords(index, player, storage_cell_size, margin):
     x = storage_area_start_x + (index+0) * (storage_cell_size + margin)
     return x, y
 
-def get_current_game_state(board_config, storage_area_player1, storage_area_player2, current_player, turn_count=None):
+def get_current_game_state(board_config, storage_area_player1, storage_area_player2, current_player, turn_count=None, con_non_capture_turns=None):
     """獲得當前遊戲狀態"""
     game_state = {
         "turn_count": turn_count,
+        "con_non_capture_turns": con_non_capture_turns,
         "board": {},
         "storage": {
             "1": [],
