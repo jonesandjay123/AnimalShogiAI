@@ -3,6 +3,7 @@ import json
 from piece import Piece
 from utils import get_current_game_state, get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 from board import add_new_label
+from rl_utils import get_possible_actions
 
 class Game:
     def __init__(self, ui_manager=None, scrolling_container=None, notation_manager=None, board_hist=None):
@@ -54,9 +55,11 @@ class Game:
         self.init_game_ai_whisper(start_player) # 全子提示掃描以檢查擺盤完直接就將軍的情況
         self.update_board_hist() # 把地０回合的局面先存進board_hist
         add_new_label(self.ui_manager, self.scrolling_container, "Start Position", self.notation_manager) # 初始狀態也給標籤
+        self.show_possible_actions() # 把狀態空間印出來給ＡＩ看
 
     def rescan_piece_coords(self):
         # 重設暫存屬性
+        self.turn_count = 0
         self.selected_piece = None
         self.selected_piece_origin = None
         self.temp_removed_piece = None
@@ -247,6 +250,9 @@ class Game:
         # 更新棋譜
         self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
 
+        # 把狀態空間印出來給ＡＩ看，讓AI知道下一回合要有哪些Actions可以選擇
+        self.show_possible_actions()
+
         # 列印當前遊戲狀態
         # print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
 
@@ -351,6 +357,13 @@ class Game:
         """初始遊戲後的全面掃描"""
         for _, piece in self.board_config.items():
             self.ai_cautionary_whisper(piece, start_player * -1) # 因為是以對方角度來提醒，所以要乘以-1
+        
+    def show_possible_actions(self):
+        """印出所有可能的行動"""
+        possible_actions = get_possible_actions(self.board_config, self.current_player, 
+            self.storage_area_player1, self.storage_area_player2, self.turn_count, 
+            self.con_non_capture_turns, self.game_over)
+        print(possible_actions)
 
     def load_game_state(self, game_state_str):
         """載入遊戲狀態"""

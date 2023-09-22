@@ -1,41 +1,35 @@
 from utils import get_cell_coords
 from piece import Piece
 
-class RLUitls:
-    def __init__(self, game=None):
-        self.game = game
 
-    def get_state(self, board, current_player, storage):
-        pass
+def get_state(self, board, current_player, storage):
+    pass
 
-    def get_possible_actions(self, board):
-        possible_actions = []
+def get_possible_actions(board, current_player, storage1, storage2, turn_count, con_non_capture_turns, is_game_over):
+    raw_actions = []
 
-        for cell_name, piece_simple in board['board'].items():
-            coords = get_cell_coords(cell_name)
-            symbol = piece_simple[0]
-            player = piece_simple[1]
-            piece = Piece(Piece.piece_type_map[symbol], player, coords, load_image=False)
+    for _, piece in board.items():
+        if piece.player == current_player:
             available_moves = piece.get_available_moves(board)
-            possible_actions.extend([(piece, move) for move in available_moves])
-        
-        # TODO: piece in storage
-        return possible_actions
+            piece_info = (piece.piece_type, piece.coords)
+            raw_actions.extend([(piece_info, move) for move in available_moves])
 
+    storage_area = storage1 if current_player == 1 else storage2
+    for piece in storage_area:
+        available_moves = piece.get_available_moves(board)
+        piece_info = (piece.piece_type, piece.coords) if piece.coords else piece.piece_type  # For pieces in storage, they might not have coords
+        raw_actions.extend([(piece_info, move) for move in available_moves])
 
-        # # Step 1 & 2: Find all legal moves for all pieces on the board
-        # for piece_location, piece_info in state['board'].items():
-        #     for direction in piece_info['valid_moves']:  # Assuming valid_moves is a list of possible directions a piece can move
-        #         new_location = get_new_location(piece_location, direction)  # You will need to implement get_new_location
-        #         if is_legal_move(new_location, state):  # You will need to implement is_legal_move
-        #             possible_actions.append((piece_location, new_location))
+    possible_actions = [{"piece": piece_info, "move": move} for piece_info, move in raw_actions]
 
-        # # Step 3: Include pieces in hand
-        # for piece_in_hand in state['storage'][str(state['current_player'])]:
-        #     for empty_cell in get_empty_cells(state):  # You will need to implement get_empty_cells to get all empty cells on the board
-        #         possible_actions.append(('in_hand', empty_cell))
+    game_info = {
+        "is_game_over": is_game_over,
+        "turn_count": turn_count,
+        "con_non_capture_turns": con_non_capture_turns,
+        "possible_actions": possible_actions
+    }
+    return game_info
 
-        return possible_actions
 
 def calculate_reward(self):
     reward = 0
