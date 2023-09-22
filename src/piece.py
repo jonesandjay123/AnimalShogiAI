@@ -10,7 +10,7 @@ piece_type_map = {
 }
 
 class Piece:
-    def __init__(self, piece_type, player, coords=None):
+    def __init__(self, piece_type, player, coords=None, load_image=True):
         self.piece_type = piece_type
         self.player = player
         self.coords = coords
@@ -19,7 +19,9 @@ class Piece:
         self.name, self.image_file_name = piece_type_map[piece_type]
         self.direction = "up" if player == 1 else "down"
         self.move_rules = self.get_move_rules()
-        self.load_image()
+
+        if load_image:
+            self.load_image()
 
     def load_image(self):
         self.image = pygame.image.load(
@@ -36,14 +38,14 @@ class Piece:
         }
         return move_rules[self.piece_type]
 
-    def get_available_moves(self, piece, board):
+    def get_available_moves(self, board):
         """根據棋子的移動規則和棋盤的當前狀態來獲得可用的移動。"""
         # 如果coords是None表示它來自存儲區，則返回所有空棋盤格作為可被打入的座標位置
-        if not piece.coords:
+        if not self.coords:
             available_moves = get_drop_coords(board)
         else:
-            possible_moves = get_available_coords(piece)
-            available_moves = filter_invalid_moves(piece.player, possible_moves, board)
+            possible_moves = get_available_coords(self)
+            available_moves = filter_invalid_moves(self.player, possible_moves, board)
         return available_moves
 
     def get_piece_type_display_name(self):

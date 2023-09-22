@@ -1,0 +1,12 @@
+Start Position
+1 C3Giraffe(C4)
+2 B3Chick(B2)
+3 B3Elephant(A4)
+4 B2Elephant(C1)
+5 C2Giraffe(C3)
+6 A2Giraffe(A1)
+7 A4Elephant(B3)
+8 A3Elephant(B2)
+9 C1Giraffe(C2)
+10 B4Elephant(A3)
+Player 2 wins

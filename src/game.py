@@ -130,7 +130,7 @@ class Game:
             # 正常對局模式下，還得根據選中的棋子類型跟陣營方向去判斷可能的落子位置
             if not self.setup_mode:
                 # 獲得和打印可用移動
-                self.available_moves = self.selected_piece.get_available_moves(piece, self.board_config)
+                self.available_moves = self.selected_piece.get_available_moves(self.board_config)
                 # print(f"Available moves for the selected piece: {self.available_moves}")        
                 
 
@@ -328,7 +328,7 @@ class Game:
     def ai_cautionary_whisper(self, checking_piece, current_player):
         """以當前玩家的角度提醒AI注意"""
         # 獲得選定棋子的所有可能移動位置
-        checking_coords = checking_piece.get_available_moves(checking_piece, self.board_config)
+        checking_coords = checking_piece.get_available_moves(self.board_config)
         
         # 幫下一回合的對手檢查，他是否被check了
         if checking_piece.piece_type != "L":
@@ -342,7 +342,7 @@ class Game:
             for _, piece in self.board_config.items():
                 # 掃秒獅子四周所有對手的棋子
                 if piece and piece.player != current_player:
-                    opponent_moves.update(set(piece.get_available_moves(piece, self.board_config)))
+                    opponent_moves.update(set(piece.get_available_moves(self.board_config)))
             # 判斷對手的任一棋子的移動範圍是否有掃到自己的獅子
             if checking_piece.coords in opponent_moves:
                 print("Eat the opponent's lion!") # 提醒訓練的AI要優先吃掉對手的獅子

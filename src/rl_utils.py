@@ -1,4 +1,5 @@
-# rl_utils.py
+from utils import get_cell_coords
+from piece import Piece
 
 class RLUitls:
     def __init__(self, game=None):
@@ -7,8 +8,20 @@ class RLUitls:
     def get_state(self, board, current_player, storage):
         pass
 
-    def get_possible_actions(self, state):
+    def get_possible_actions(self, board):
         possible_actions = []
+
+        for cell_name, piece_simple in board['board'].items():
+            coords = get_cell_coords(cell_name)
+            symbol = piece_simple[0]
+            player = piece_simple[1]
+            piece = Piece(Piece.piece_type_map[symbol], player, coords, load_image=False)
+            available_moves = piece.get_available_moves(board)
+            possible_actions.extend([(piece, move) for move in available_moves])
+        
+        # TODO: piece in storage
+        return possible_actions
+
 
         # # Step 1 & 2: Find all legal moves for all pieces on the board
         # for piece_location, piece_info in state['board'].items():
@@ -22,7 +35,7 @@ class RLUitls:
         #     for empty_cell in get_empty_cells(state):  # You will need to implement get_empty_cells to get all empty cells on the board
         #         possible_actions.append(('in_hand', empty_cell))
 
-        # return possible_actions
+        return possible_actions
 
 def calculate_reward(self):
     reward = 0
