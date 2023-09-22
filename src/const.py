@@ -16,3 +16,5 @@ SQUARE_SIZE = 100
 # Grid offset to center the board
 GRID_OFFSET_X = 150
 GRID_OFFSET_Y = (HEIGHT - (ROWS * SQUARE_SIZE)) // 2
+
+AUTO_STOP_TERMINATE_TURNS = 80  # 設定自動結束遊戲的回合數

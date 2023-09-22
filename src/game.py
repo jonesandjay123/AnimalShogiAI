@@ -4,6 +4,7 @@ from piece import Piece
 from utils import get_current_game_state, get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 from board import add_new_label
 from rl_utils import get_possible_actions
+from const import AUTO_STOP_TERMINATE_TURNS
 
 class Game:
     def __init__(self, ui_manager=None, scrolling_container=None, notation_manager=None, board_hist=None):
@@ -168,7 +169,8 @@ class Game:
         if self.game_over:
             font = pygame.font.Font(None, 74)
             player_number = 1 if self.current_player == 1 else 2
-            victory_message = f"Player {player_number} wins" if self.get_con_non_capture_turns_val() < 8 else f"Draw Repetition"
+            # victory_message = f"Player {player_number} wins" if self.get_con_non_capture_turns_val() < 8 else f"Draw Repetition"
+            victory_message = f"No one wins" if self.turn_count >= AUTO_STOP_TERMINATE_TURNS else f"Player {player_number} wins"
 
             if not self.game_over_label_added:  # 檢查是否已經添加了 "Game Over" 標籤
                 # 借用victory_message來生成棋譜標籤
@@ -181,13 +183,19 @@ class Game:
             text_rect.center = (400, 300)  # 調整為您的屏幕中心
             screen.blit(text_surface, text_rect)
 
+    def check_for_winner(self):
+        if self.game_over:
+            print(f"Player {self.current_player} wins")
+
     def check_draw_condition(self, target_piece):
         if target_piece or self.selected_piece_origin[0].startswith('storage'): # 如果有吃棋子或為打入事件，則重置連續無吃子回合數
             self.set_con_non_capture_turns_val(0) # 重置連續無吃子回合數
         else:
             self.set_con_non_capture_turns_val(self.get_con_non_capture_turns_val() + 1) # 更新連續無吃子回合數
         # print("con_non_capture_turns: ", self.get_con_non_capture_turns_val()) # 印出連續無吃子回合數
-        if self.get_con_non_capture_turns_val() >= 8: # 如果連續無吃子回合數超過8回合，則宣布遊戲結束
+        # if self.get_con_non_capture_turns_val() >= 8: # 如果連續無吃子回合數超過8回合，則宣布遊戲結束
+        #     self.game_over = True
+        if self.turn_count >= AUTO_STOP_TERMINATE_TURNS: # 如果走了100步，則宣布遊戲結束
             self.game_over = True
 
     def toggle_chick_to_hen(self, piece : Piece):
@@ -243,15 +251,18 @@ class Game:
         # 遊戲勝負未揭曉才需要繼續更新下一回合輪到哪位玩家
         if not self.game_over:
             self.update_player_turn()
-        
-        # 檢查是否變成和棋
-        self.check_draw_condition(target_piece) 
 
         # 更新棋譜
         self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
 
         # 把狀態空間印出來給ＡＩ看，讓AI知道下一回合要有哪些Actions可以選擇
         self.show_possible_actions()
+
+        # 檢查是否變成和棋
+        self.check_draw_condition(target_piece) 
+
+        # 檢查是否有玩家獲勝
+        self.check_for_winner() 
 
         # 列印當前遊戲狀態
         # print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
