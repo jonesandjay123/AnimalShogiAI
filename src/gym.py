@@ -1,12 +1,14 @@
 from gym import spaces
 from game import Game
-from rl_utils import calculate_reward
+from rl_utils import AnimalShogiEnvLogic
 
 class AnimalShogiEnv:
     def __init__(self):
-        # Initialize game and other necessary variables
-        self.game = Game()
-        self.action_space = spaces.Discrete(60)  # A rough estimate for now
+        # Initialize game logic
+        self.logic = AnimalShogiEnvLogic()
+
+        # Define action space and observation space
+        self.action_space = spaces.Discrete(60)  # Maximum possible actions
         self.observation_space = spaces.Dict({
             "turn_count": spaces.Discrete(100),  # Assuming a max of 100 turns
             "current_player": spaces.Discrete(2),  # Player 1 or -1
@@ -16,22 +18,38 @@ class AnimalShogiEnv:
 
     def reset(self):
         # Reset the game to its initial state
-        self.game.show_possible_actions()
-        initial_state = self.game.get_current_game_state()
+        self.logic.create_initial_board_config()
+        initial_state, _ = self.logic.generate_possible_actions()
         return initial_state
-    
-    def step(self, action):
-        # Execute the action in the game
-        self.game.show_possible_actions()
-        next_state = self.game.get_current_game_state()
-        
-        # Calculate reward using the calculate_reward function
-        reward = calculate_reward()
-        
-        done = next_state["is_game_over"]
-        
-        return next_state, reward, done, {}
-    
-    def render(self):
-        # Placeholder for now
+
+
+    def step(self):
+        self.logic.apply_action()
+
+        # Step 3: Calculate reward
+        reward = self.logic.calculate_reward(self.logic.game_over, self.logic.current_player)
+
+        # Step 4: Check if the game is over
+        done = self.logic.game_over
+
+        # Step 5: Return the results
+        new_state, _ = self.logic.generate_possible_actions()  # Or you can call generate_possible_actions again to get the new state after the action
+        info = {}  # Any additional info you'd like to return. For now, it's an empty dictionary.
+
+        return new_state, reward, done, info
+
+    def reset(self):
+        # ... as before ...
+        pass
+
+    def render(self, mode='human'):
+        # Visualization code (optional)
+        pass
+
+    def close(self):
+        # Cleanup code (optional)
+        pass
+
+    def seed(self, seed=None):
+        # Set random seed (optional)
         pass

@@ -4,6 +4,7 @@ from piece import Piece
 from utils import get_current_game_state, get_possible_actions, get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 from board import add_new_label
 from const import AUTO_STOP_TERMINATE_TURNS
+from rl_utils import AnimalShogiEnvLogic
 
 class Game:
     def __init__(self, ui_manager=None, scrolling_container=None, notation_manager=None, board_hist=None):
@@ -370,13 +371,14 @@ class Game:
         
     def show_possible_actions(self):
         """印出所有可能的行動"""
-        # 列印棋盤當前狀態（棋盤觀察）
-        print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
-        # 列印可能的行動（動作空間觀察）
-        possible_actions = get_possible_actions(self.board_config, self.current_player, 
-            self.storage_area_player1, self.storage_area_player2, self.turn_count, 
-            self.con_non_capture_turns, self.game_over)
-        print(possible_actions)
+        # # 列印棋盤當前狀態（棋盤觀察）
+        # print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
+        # # 列印可能的行動（動作空間觀察）
+        # possible_actions = get_possible_actions(self.board_config, self.current_player, 
+        #     self.storage_area_player1, self.storage_area_player2, self.turn_count, 
+        #     self.con_non_capture_turns, self.game_over)
+        # print(possible_actions)
+        AnimalShogiEnvLogic().testRLutils()
 
     def load_game_state(self, game_state_str):
         """載入遊戲狀態"""

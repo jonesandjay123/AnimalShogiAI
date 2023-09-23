@@ -119,22 +119,25 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
     return game_state
 
 def get_possible_actions(board, current_player, storage1, storage2, turn_count, con_non_capture_turns, is_game_over):
-    board_piece_possible_actions = []
-    storage_piece_possible_actions = []
+    board_piece_raw = []
+    storage_piece_raw = []
     
     # Get possible actions for board pieces
     for _, piece in board.items():
         if piece.player == current_player:
             available_moves = piece.get_available_moves(board)
             piece_info = (piece.piece_type, piece.coords, get_cell_name_from_coords(piece.coords))
-            board_piece_possible_actions.extend([(piece_info, move) for move in available_moves])
+            board_piece_raw.extend([(piece_info, move) for move in available_moves])
     
     # Get possible actions for storage pieces
     storage_area = storage1 if current_player == 1 else storage2
     for piece in storage_area:
         available_moves = piece.get_available_moves(board)
         piece_info = (piece.piece_type, piece.coords, get_cell_name_from_coords(piece.coords)) if piece.coords else piece.piece_type
-        storage_piece_possible_actions.extend([(piece_info, move) for move in available_moves])
+        storage_piece_raw.extend([(piece_info, move) for move in available_moves])
+
+    board_piece_possible_actions = [{"piece": piece_info, "move": move} for piece_info, move in board_piece_raw]
+    storage_piece_possible_actions = [{"piece": piece_info, "move": move} for piece_info, move in storage_piece_raw]
 
     game_info = {
         "turn_count": turn_count,
