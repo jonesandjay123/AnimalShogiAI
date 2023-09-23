@@ -69,6 +69,12 @@ def get_cell_name_from_pos(pos):
     else:
         return None  # 返回 None 如果位置不在有效的棋盤範圍內
 
+def get_cell_name_from_coords(coords):
+    """根據給定的座標獲取單元格名稱"""
+    column_map = {1: "A", 2: "B", 3: "C"}
+    col, row = coords
+    return column_map[col] + str(row)
+
 def get_cell_coords(cell_name):
     """獲取單元格名稱的座標"""
     column_map = {"A": 1, "B": 2, "C": 3}
@@ -92,13 +98,13 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
     """獲得當前遊戲狀態"""
     game_state = {
         "turn_count": turn_count,
-        "con_non_capture_turns": con_non_capture_turns,
+         "current_player": current_player,
+        # "con_non_capture_turns": con_non_capture_turns,
         "board": {},
         "storage": {
             "1": [],
             "-1": []
         },
-        "current_player": current_player
     }
     # 獲得棋盤的狀態
     for cell_name, piece in board_config.items():

@@ -265,7 +265,7 @@ class Game:
         self.check_for_winner() 
 
         # 列印當前遊戲狀態
-        # print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
+        print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
 
 
     def move_event(self, pos):
@@ -371,6 +371,9 @@ class Game:
         
     def show_possible_actions(self):
         """印出所有可能的行動"""
+        # 列印棋盤當前狀態（棋盤觀察）
+        print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
+        # 列印可能的行動（動作空間觀察）
         possible_actions = get_possible_actions(self.board_config, self.current_player, 
             self.storage_area_player1, self.storage_area_player2, self.turn_count, 
             self.con_non_capture_turns, self.game_over)
