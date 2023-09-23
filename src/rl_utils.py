@@ -1,5 +1,5 @@
 import random
-from utils import get_possible_actions, get_cell_coords, get_current_game_state
+from utils import get_possible_actions, get_cell_coords, get_current_game_state, get_cell_name_from_coords
 from piece import Piece
 
 class AnimalShogiEnvLogic:
@@ -84,15 +84,76 @@ class AnimalShogiEnvLogic:
             selected_action = action_list[0]
   
         return selected_action
+    
+    def execute_move(self, new_cell_name, piece_origin):
+        """執行移動"""
+        # 獲得目標位置上可能存在的棋子
+        target_piece = self.board_config.get(new_cell_name)
+
+        print(target_piece)
+
+        # 如果目標位置有一個棋子
+        if target_piece:
+            # 如果目標棋子是母雞，則降級它
+            if target_piece.piece_type == 'H':
+                self.toggle_chick_to_hen(target_piece)
+            elif target_piece.piece_type == 'L':  # 如果目標棋子是獅子，則宣布遊戲結束
+                self.game_over = True
+
+            target_piece.update_player(self.current_player)
+            target_piece.coords = None # 座標設置為 None 表示位在存儲區
+            
+            # 將目標棋子添加到相應的存儲區
+            storage_area = self.storage_area_player1 if self.current_player == 1 else self.storage_area_player2
+            storage_area.append(target_piece)
+
+        # self.selected_piece.coords = get_cell_coords(new_cell_name)       
+        # self.board_config[new_cell_name] = self.selected_piece # 移動選定的棋子到新的位置
+
+        # # 從其原始位置移除選定的棋子
+        # if self.selected_piece_origin in self.board_config:
+        #     del self.board_config[self.selected_piece_origin]
+
+        # # 給訓練AI看的提醒謎之聲
+        # self.ai_cautionary_whisper(self.selected_piece, self.current_player)
+
+        # # 遊戲勝負未揭曉才需要繼續更新下一回合輪到哪位玩家
+        # if not self.game_over:
+        #     self.update_player_turn()
+
+        # # 更新棋譜
+        # self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
+
+        # # 把狀態空間印出來給ＡＩ看，讓AI知道下一回合要有哪些Actions可以選擇
+        # self.show_possible_actions()
+
+        # # 檢查是否變成和棋
+        # self.check_draw_condition(target_piece) 
+
+        # # 檢查是否有玩家獲勝
+        # self.check_for_winner() 
+
+        # # 列印當前遊戲狀態
+        # print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
+
 
     def apply_action(self):
         """應用行動"""
         # Step 1: Check if the action is valid
         _, possible_actions = self.generate_possible_actions()
         action = self.select_action(possible_actions)
-        print(action)
+        # print(action)
+        piece_origin = action['piece'][1]
+        new_cell_name = get_cell_name_from_coords(action['move'])
+        # print(piece_origin, new_cell_name)
+        self.execute_move(new_cell_name, piece_origin)
         
-        
+
+    def toggle_chick_to_hen(self, piece : Piece):
+        """將雞轉換為母雞，反之亦然"""
+        if piece and piece.piece_type in ["C", "H"]:
+            new_piece_type = "H" if piece.piece_type == "C" else "C"
+            piece.update_piece_type(new_piece_type)       
 
     def testRLutils(self):
         self.create_initial_board_config()

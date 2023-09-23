@@ -38,10 +38,6 @@ class AnimalShogiEnv:
 
         return new_state, reward, done, info
 
-    def reset(self):
-        # ... as before ...
-        pass
-
     def render(self, mode='human'):
         # Visualization code (optional)
         pass
