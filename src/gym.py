@@ -6,16 +6,12 @@ class AnimalShogiEnv:
     def __init__(self):
         # Initialize game and other necessary variables
         self.game = Game()
-        
-        # Define action space and observation space
-        # Action space will be a discrete space based on the maximum number of possible actions
-        # Observation space will be a dictionary space based on the game's state structure
-        self.action_space = spaces.Discrete(50)  # A rough estimate for now
+        self.action_space = spaces.Discrete(60)  # A rough estimate for now
         self.observation_space = spaces.Dict({
-            "turn_count": spaces.Discrete(100),  # Assuming a max of 1000 turns
+            "turn_count": spaces.Discrete(100),  # Assuming a max of 100 turns
             "current_player": spaces.Discrete(2),  # Player 1 or -1
             "board": spaces.Dict({key: spaces.Tuple([spaces.Discrete(10), spaces.Discrete(2)]) for key in ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4"]}),
-            "storage": spaces.Dict({"1": spaces.MultiDiscrete([10 for _ in range(10)]), "-1": spaces.MultiDiscrete([10 for _ in range(10)])})
+            "storage": spaces.Dict({"1": spaces.MultiDiscrete([5 for _ in range(7)]), "-1": spaces.MultiDiscrete([5 for _ in range(7)])})
         })
 
     def reset(self):

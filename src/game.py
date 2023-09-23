@@ -1,9 +1,8 @@
 import pygame
 import json
 from piece import Piece
-from utils import get_current_game_state, get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
+from utils import get_current_game_state, get_possible_actions, get_piece_at_pos, get_piece_origin, get_cell_name_from_pos, get_grid_coordinates_from_pos, adjust_coordinates_with_offset, get_cell_coords, get_storage_cell_details, get_storage_cell_coords
 from board import add_new_label
-from rl_utils import get_possible_actions
 from const import AUTO_STOP_TERMINATE_TURNS
 
 class Game:
