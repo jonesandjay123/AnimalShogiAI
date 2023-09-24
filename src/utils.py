@@ -133,7 +133,8 @@ def get_possible_actions(board, current_player, storage1, storage2, turn_count, 
     storage_area = storage1 if current_player == 1 else storage2
     for piece in storage_area:
         available_moves = piece.get_available_moves(board)
-        piece_info = (piece.piece_type, piece.coords, get_cell_name_from_coords(piece.coords)) if piece.coords else piece.piece_type
+        # piece_info = (piece.piece_type, piece.coords, get_cell_name_from_coords(piece.coords)) if piece.coords else piece.piece_type
+        piece_info = (piece.piece_type, piece.coords if piece.coords else None, get_cell_name_from_coords(piece.coords) if piece.coords else None)
         storage_piece_raw.extend([(piece_info, move) for move in available_moves])
 
     board_piece_possible_actions = [{"piece": piece_info, "move": move} for piece_info, move in board_piece_raw]

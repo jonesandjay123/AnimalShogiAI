@@ -22,21 +22,27 @@ class AnimalShogiEnvLogic:
     
     def default_board_config(self):
         return {
+            # "B1": Piece("L", -1, None, False),
+            # "C1": Piece("E", -1, None, False),
+            # "B2": Piece("C", -1, None, False),
+            # "A1": Piece("G", -1, None, False),
+            # "A4": Piece("E", 1, None, False),
+            # "B3": Piece("C", 1, None, False),
+            # "B4": Piece("L", 1, None, False),
+            # "C4": Piece("G", 1, None, False)
             "B1": Piece("L", -1, None, False),
-            "C1": Piece("E", -1, None, False),
-            "B2": Piece("C", -1, None, False),
-            "A1": Piece("G", -1, None, False),
-            "A4": Piece("E", 1, None, False),
-            "B3": Piece("C", 1, None, False),
             "B4": Piece("L", 1, None, False),
-            "C4": Piece("G", 1, None, False)
         }
 
     def create_initial_board_config(self, start_player=1):
         """初始化為對局模式的配置"""
         self.board_config = self.default_board_config()
         self.current_player = start_player
-        self.storage_area_player1 = []
+        self.storage_area_player1 = [
+            Piece("E", 1, None, False),
+            Piece("C", 1, None, False),
+            Piece("G", 1, None, False)
+        ]
         self.storage_area_player2 = []
 
         self.rescan_piece_coords() # 重設掃描棋子座標
@@ -45,6 +51,8 @@ class AnimalShogiEnvLogic:
     def rescan_piece_coords(self):
         # 重設暫存屬性
         self.turn_count = 0
+        self.selected_piece = None
+        self.selected_piece_origin = None
         self.available_moves = []
 
         # 更新每個棋子的 coords 屬性
@@ -60,6 +68,50 @@ class AnimalShogiEnvLogic:
     def get_con_non_capture_turns_val(self):
         return self.con_non_capture_turns
 
+    def check_if_lion_in_range(self, possible_actions, board_cnfig, current_player):
+        """檢查是否在獅子的攻擊範圍內"""
+        lion_capture_actions = []
+        opponent_lion_pos = None
+        for _, piece in board_cnfig.items():
+            if piece.piece_type == "L" and piece.player != current_player:
+                opponent_lion_pos = piece.coords
+                break
+        if opponent_lion_pos:
+            for action in possible_actions['board_piece_possible_actions']:
+                if action['move'] == opponent_lion_pos:
+                    lion_capture_actions.append(action)
+        return lion_capture_actions
+
+    def is_lion_in_danger(self, possible_actions, board_config, current_player):
+        """檢查自己的獅子是否處於危險之中"""
+        own_lion_pos = None
+        
+        for action in possible_actions['board_piece_possible_actions']:
+            if action['piece'][0] == 'L':
+                own_lion_pos = action['piece'][1]
+                break
+
+        if own_lion_pos:
+            for _, piece in board_config.items():
+                if piece.player != current_player:
+                    if own_lion_pos in piece.get_available_moves(board_config):
+                        return True
+        return False
+
+    def smart_check_actions(self, possible_actions):
+        """檢查是否有獅子可以吃掉、或著獅子是否處於危險之中"""
+        lion_capture_actions = self.check_if_lion_in_range(possible_actions, self.board_config, self.current_player)
+        if lion_capture_actions:
+            possible_actions['board_piece_possible_actions'] = lion_capture_actions
+        elif self.is_lion_in_danger(possible_actions, self.board_config, self.current_player):
+            lion_actions = []
+            for action in possible_actions['board_piece_possible_actions']:
+                if action['piece'][0] == 'L':
+                    lion_actions.append(action)
+            possible_actions['board_piece_possible_actions'] = lion_actions
+        return possible_actions
+
+
     def generate_possible_actions(self):
         """印出所有可能的行動"""
         # 列印棋盤當前狀態（棋盤觀察）
@@ -68,8 +120,8 @@ class AnimalShogiEnvLogic:
         possible_actions = get_possible_actions(self.board_config, self.current_player, 
             self.storage_area_player1, self.storage_area_player2, self.turn_count, 
             self.con_non_capture_turns, self.game_over)
-            # print(game_state)
-            # print(possible_actions)
+
+        possible_actions = self.smart_check_actions(possible_actions)
         return game_state, possible_actions
 
     def select_action(self, possible_actions, epsilon=0.1):
@@ -78,8 +130,6 @@ class AnimalShogiEnvLogic:
         storage_piece_possible_actions = possible_actions["storage_piece_possible_actions"]
 
         action_list = board_piece_possible_actions + storage_piece_possible_actions
-
-        print(action_list)
 
         # Implementing ε-greedy strategy
         rand_num = random.random()  # Generate a random number between 0 and 1
@@ -97,8 +147,6 @@ class AnimalShogiEnvLogic:
         """執行移動"""
         # 獲得目標位置上可能存在的棋子
         target_piece = self.board_config.get(new_cell_name)
-
-        print(target_piece)
 
         # 如果目標位置有一個棋子
         if target_piece:
@@ -122,9 +170,6 @@ class AnimalShogiEnvLogic:
         if self.selected_piece_origin in self.board_config:
             del self.board_config[self.selected_piece_origin]
 
-        # # 給訓練AI看的提醒謎之聲
-        # self.ai_cautionary_whisper(self.selected_piece, self.current_player)
-
         # 遊戲勝負未揭曉才需要繼續更新下一回合輪到哪位玩家
         if not self.game_over:
             self.update_player_turn()
@@ -132,35 +177,42 @@ class AnimalShogiEnvLogic:
         # # 更新棋譜
         self.add_movement_to_notation(self.selected_piece, new_cell_name, piece_origin)
 
-        # # 把狀態空間印出來給ＡＩ看，讓AI知道下一回合要有哪些Actions可以選擇
-        # self.show_possible_actions()
-
-        # # 檢查是否變成和棋
-        # self.check_draw_condition(target_piece) 
-
-        # # 檢查是否有玩家獲勝
-        # self.check_for_winner() 
+        # 檢查是否變成和棋
+        self.check_draw_condition() 
 
         # # 列印當前遊戲狀態
-        # print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
+        print(get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val()))
 
 
     def apply_action(self):
         """應用行動"""
         # 獲得當前遊戲狀態和可能的行動
+        if self.game_over:
+            return True, self.notation_hist, self.current_player
+
         _, possible_actions = self.generate_possible_actions()
         action = self.select_action(possible_actions)
-        print(action)
         piece_origin = action['piece'][1]
         new_cell_name = get_cell_name_from_coords(action['move'])
-        cur_cell_name = get_cell_name_from_coords(piece_origin)
-        print(piece_origin, cur_cell_name, new_cell_name)
- 
-        # 從棋盤上找到選中的棋子
-        self.selected_piece = self.board_config[cur_cell_name]
+
+        if piece_origin is None:  # 棋子來自存儲區
+            storage_area = self.storage_area_player1 if self.current_player == 1 else self.storage_area_player2
+            # 從存儲區中找到相應的棋子
+            for piece in storage_area:
+                if piece.piece_type == action['piece'][0]:  # 這裡檢查棋子的類型是否匹配
+                    self.selected_piece = piece
+                    storage_area.remove(piece)  # 從存儲區移除該棋子
+                    break
+        else:
+            cur_cell_name = get_cell_name_from_coords(piece_origin)
+            # 從棋盤上找到選中的棋子
+            self.selected_piece = self.board_config[cur_cell_name]
+
         self.selected_piece_origin = get_piece_origin(self.selected_piece, self.board_config, self.storage_area_player1, self.storage_area_player2)
     
         self.execute_move(new_cell_name, self.selected_piece_origin)
+
+        return False, [], self.current_player
         
 
     def toggle_chick_to_hen(self, piece : Piece):
@@ -172,11 +224,6 @@ class AnimalShogiEnvLogic:
     def update_player_turn(self):
         """更新下一回合輪到哪位玩家"""
         self.current_player *= -1  # 將玩家 1 切換到 -1，並將 -1 切換到 1
-
-    def update_board_hist(self):
-        """把當前局面存進board_hist"""
-        current_game_state = get_current_game_state(self.board_config, self.storage_area_player1, self.storage_area_player2, self.current_player, self.get_turn_count_val(), self.get_con_non_capture_turns_val())
-        self.board_hist[self.turn_count] = json.dumps(current_game_state)
 
     def check_if_reached_opponent_base(self, piece, new_cell_name):
         """檢查是否到達對手的基線"""
@@ -199,7 +246,7 @@ class AnimalShogiEnvLogic:
         is_promoted = self.check_if_reached_opponent_base(piece, new_cell_name)
         
         # 如果棋子是從儲存區打入的，則在棋譜末尾添加單引號（'）
-        if piece_origin[0].startswith('storage'):
+        if piece_origin is None or piece_origin[0].startswith('storage'):
             notation_suffix = "'"
             notation = f"{new_cell_name}{piece_name}{notation_suffix}"
         elif is_promoted:  # 如果棋子晉升了，則在棋譜末尾添加加號（+）
@@ -215,17 +262,16 @@ class AnimalShogiEnvLogic:
         """將移動添加到棋譜"""
         self.set_turn_count_val(self.get_turn_count_val() + 1) # 更新回合數
 
-        self.update_board_hist() # 把局面存進board_hist。key是回合數，value是當前局面的JSON字串
         notation = self.generate_notation(piece, new_cell_name, piece_origin, str(self.get_turn_count_val()))
-        print(notation)
         self.notation_hist.append(notation) # 把當前回合的棋譜記錄下來
+        # print(notation)
 
 
     def testRLutils(self):
         self.create_initial_board_config()
         self.apply_action()
 
-    def check_draw_condition(self, target_piece):
+    def check_draw_condition(self):
         if self.turn_count >= AUTO_STOP_TERMINATE_TURNS: # 如果走了100步，則宣布遊戲結束
             self.game_over = True
 

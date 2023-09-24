@@ -24,7 +24,10 @@ class AnimalShogiEnv:
 
 
     def step(self):
-        self.logic.apply_action()
+        is_game_over, notation_hist, winner = self.logic.apply_action()
+
+        # Return the results
+        return is_game_over, notation_hist, winner
 
         # Step 3: Calculate reward
         # reward = self.logic.calculate_reward(self.logic.game_over, self.logic.current_player)
@@ -53,5 +56,16 @@ class AnimalShogiEnv:
 if __name__ == "__main__":
     env = AnimalShogiEnv()
     initina_state = env.reset()
-    print(initina_state)
-    env.step()
+    
+    is_game_over = False
+    notation_hist = None
+    winner = None
+
+    while not is_game_over:
+        is_game_over, notation_hist, winner = env.step()
+    # is_game_over, notation_hist, winner = env.step()
+
+    for hist in notation_hist:
+        print(hist)
+
+    print("Winner: ", winner)
