@@ -56,25 +56,28 @@ class Piece:
         self.x = pos[0]
         self.y = pos[1]
 
-    def update_player(self, new_player):
+    def update_player(self, new_player, update_image=True):
         # 更新 player 和 direction 屬性
         self.player = new_player
         self.direction = "up" if new_player == 1 else "down"
-        
-        # 重新加載正確的圖像
-        self.load_image()
-        
+
         # 更新移動規則，因為它們也可能依賴於 player 屬性
         self.move_rules = self.get_move_rules()
+        
+        if update_image:
+            # 重新加載正確的圖像
+            self.load_image()
+        
 
-    def update_piece_type(self, new_piece_type):
+    def update_piece_type(self, new_piece_type, update_image=True):
         self.piece_type = new_piece_type
         # 更新名稱和圖像檔名
         self.name, self.image_file_name = piece_type_map[new_piece_type]
 
-        # 重新加載正確的圖像
-        self.image = pygame.image.load(
-            f"assets/{self.image_file_name}_{self.direction}.png")
-
         # 更新移動規則，因為它們也可能依賴於 piece_type 屬性
         self.move_rules = self.get_move_rules()
+
+        if update_image:   
+            # 重新加載正確的圖像
+            self.image = pygame.image.load(
+                f"assets/{self.image_file_name}_{self.direction}.png")

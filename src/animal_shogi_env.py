@@ -27,16 +27,16 @@ class AnimalShogiEnv:
         self.logic.apply_action()
 
         # Step 3: Calculate reward
-        reward = self.logic.calculate_reward(self.logic.game_over, self.logic.current_player)
+        # reward = self.logic.calculate_reward(self.logic.game_over, self.logic.current_player)
 
-        # Step 4: Check if the game is over
-        done = self.logic.game_over
+        # # Step 4: Check if the game is over
+        # done = self.logic.game_over
 
-        # Step 5: Return the results
-        new_state, _ = self.logic.generate_possible_actions()  # Or you can call generate_possible_actions again to get the new state after the action
-        info = {}  # Any additional info you'd like to return. For now, it's an empty dictionary.
+        # # Step 5: Return the results
+        # new_state, _ = self.logic.generate_possible_actions()  # Or you can call generate_possible_actions again to get the new state after the action
+        # info = {}  # Any additional info you'd like to return. For now, it's an empty dictionary.
 
-        return new_state, reward, done, info
+        # return new_state, reward, done, info
 
     def render(self, mode='human'):
         # Visualization code (optional)
@@ -49,3 +49,9 @@ class AnimalShogiEnv:
     def seed(self, seed=None):
         # Set random seed (optional)
         pass
+
+if __name__ == "__main__":
+    env = AnimalShogiEnv()
+    initina_state = env.reset()
+    print(initina_state)
+    env.step()
