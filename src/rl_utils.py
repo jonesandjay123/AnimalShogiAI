@@ -5,8 +5,8 @@ from utils import get_piece_origin, get_possible_actions, get_cell_coords, get_c
 from piece import Piece
 
 class AnimalShogiEnvLogic:
-    def __init__(self):
-        self.current_player = 1  # 初始化為 1，表示下方玩家、-1 表示上方的玩家
+    def __init__(self, starting_player=1):
+        self.current_player = starting_player  # 初始化為 1，表示下方玩家、-1 表示上方的玩家
         self.game_over = False  # 追蹤是否遊戲結束
         self.selected_piece = None  # 用來追蹤當前選中的棋子
         self.selected_piece_origin = None  # 用來追蹤選中棋子的原始位置
@@ -54,6 +54,9 @@ class AnimalShogiEnvLogic:
         # 更新每個棋子的 coords 屬性
         for cell_name, piece in self.board_config.items():
             piece.coords = get_cell_coords(cell_name) # 幫每個棋子標上對應的coords座標
+
+    def set_starting_player(self, player):
+        self.current_player = player
 
     def get_turn_count_val(self):
         return self.turn_count

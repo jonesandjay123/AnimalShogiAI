@@ -1,11 +1,13 @@
+import random
 from gym import spaces
 from game import Game
+from utils import get_cell_coords
 from rl_utils import AnimalShogiEnvLogic
 
 class AnimalShogiEnv:
     def __init__(self):
-        # Initialize game logic
-        self.logic = AnimalShogiEnvLogic()
+        self.starting_player = 1 # 在這裡，我們默認設置玩家1為先手，但可以通過seed()方法來改變
+        self.logic = AnimalShogiEnvLogic(starting_player=self.starting_player)
 
         # Define action space and observation space
         self.action_space = spaces.Discrete(60)  # Maximum possible actions
@@ -37,16 +39,41 @@ class AnimalShogiEnv:
 
 
     def render(self, mode='human'):
-        # Visualization code (optional)
-        pass
+        board = [['---' for _ in range(4)] for _ in range(4)]
+        
+        # Get current game state
+        game_state = self.logic.get_current_game_state()
 
-    def close(self):
-        # Cleanup code (optional)
-        pass
+        # Fill in the board with pieces
+        for cell_name, piece_data in game_state['board'].items():
+            col, row = get_cell_coords(cell_name)  # Assuming you have this function or a similar one
+            piece_type = piece_data[0]
+            player = piece_data[1]
+            board[row-1][col-1] = f"{piece_type}{'+' if player == 1 else '-'}{abs(player)}"
+
+        # Print the board
+        for row in board:
+            print(" | ".join(row))
+            print("-" * 17)
+
+        # Print storage areas for both players
+        print(f"Player 1 Storage: {game_state['storage']['1']}")
+        print(f"Player 2 Storage: {game_state['storage']['-1']}")
+
 
     def seed(self, seed=None):
-        # Set random seed (optional)
-        pass
+        # Set random seed if provided
+        if seed is not None:
+            random.seed(seed)
+
+        # 隨機選擇一個玩家作為先手
+        starting_player = random.choice([1, -1])
+        self.logic.set_starting_player(starting_player)
+
+        # 根據 starting_player 的值，決定顯示 "Player 1" 或 "Player 2"
+        player_str = "Player 1" if starting_player == 1 else "Player 2"
+        print(f"{player_str} starts first!")
+
 
 if __name__ == "__main__":
     player1_total_reward = 0
@@ -54,6 +81,8 @@ if __name__ == "__main__":
 
     for g in range(10):
         env = AnimalShogiEnv()
+        env.seed() # 使用 seed 方法隨機選擇先手玩家
+
         initina_state = env.reset()
         
         is_game_over = False
@@ -61,13 +90,12 @@ if __name__ == "__main__":
         winner = None
 
         while not is_game_over:
-            observation, (reward_player1, reward_player2), is_game_over, notation_hist = env.step()
-            # print(observation)
+            observation, (reward_player1, reward_player2), is_game_over, notation_hist = env.step() #每回合的動作
+            # env.render() # 棋盤每回合變化的視覺呈現
+
             player1_total_reward += reward_player1
             player2_total_reward += reward_player2
 
-        # for hist in notation_hist:
-        #     print(hist)
         print(f"game: {g} using {len(notation_hist)} steps")
 
         if reward_player1 == 5:
