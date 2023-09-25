@@ -25,21 +25,16 @@ class AnimalShogiEnv:
 
     def step(self):
         is_game_over, notation_hist, winner = self.logic.apply_action()
+        reward_player1, reward_player2 = self.logic.calculate_reward(is_game_over, winner)
+        
+        observation = self.logic.get_current_game_state()
 
-        # Return the results
-        return is_game_over, notation_hist, winner
+        # 這裡的 'done' 是一個布爾值，指示遊戲是否結束
+        done = is_game_over
+        
+        # 返回當前的觀察、兩個玩家的獎勵、遊戲是否結束、以及其他可能的資訊
+        return observation, (reward_player1, reward_player2), done, notation_hist
 
-        # Step 3: Calculate reward
-        # reward = self.logic.calculate_reward(self.logic.game_over, self.logic.current_player)
-
-        # # Step 4: Check if the game is over
-        # done = self.logic.game_over
-
-        # # Step 5: Return the results
-        # new_state, _ = self.logic.generate_possible_actions()  # Or you can call generate_possible_actions again to get the new state after the action
-        # info = {}  # Any additional info you'd like to return. For now, it's an empty dictionary.
-
-        # return new_state, reward, done, info
 
     def render(self, mode='human'):
         # Visualization code (optional)
@@ -54,18 +49,31 @@ class AnimalShogiEnv:
         pass
 
 if __name__ == "__main__":
-    env = AnimalShogiEnv()
-    initina_state = env.reset()
-    
-    is_game_over = False
-    notation_hist = None
-    winner = None
+    player1_total_reward = 0
+    player2_total_reward = 0
 
-    while not is_game_over:
-        is_game_over, notation_hist, winner = env.step()
-    # is_game_over, notation_hist, winner = env.step()
+    for g in range(10):
+        env = AnimalShogiEnv()
+        initina_state = env.reset()
+        
+        is_game_over = False
+        notation_hist = None
+        winner = None
 
-    for hist in notation_hist:
-        print(hist)
+        while not is_game_over:
+            observation, (reward_player1, reward_player2), is_game_over, notation_hist = env.step()
+            # print(observation)
+            player1_total_reward += reward_player1
+            player2_total_reward += reward_player2
 
-    print("Winner: ", winner)
+        # for hist in notation_hist:
+        #     print(hist)
+        print(f"game: {g} using {len(notation_hist)} steps")
+
+        if reward_player1 == 5:
+            print("Player 1 wins!")
+        elif reward_player2 == 5:
+            print("Player 2 wins!")
+        else:
+            print("Draw!")
+    print(f"Player 1 total reward: {player1_total_reward}, Player 2 total reward: {player2_total_reward}")
