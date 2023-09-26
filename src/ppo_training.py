@@ -2,7 +2,7 @@ import random
 from gym import spaces
 from stable_baselines3 import PPO
 from stable_baselines3.common.envs import DummyVecEnv
-from stable_baselines3.common.callbacks import BaseCallback
+from stable_baselines3.common.callbacks import BaseCallback, ProgressBar
 from animal_shogi_gym import AnimalShogiEnv
 
 class SimpleSaveCallback(BaseCallback):
@@ -32,10 +32,12 @@ def train_and_save_model():
     model = PPO("MlpPolicy", env, verbose=1)
 
     # 定義回調函數
-    callback = SimpleSaveCallback(check_freq=10000, save_path="animal_shogi_ppo")
-
+    save_callback = SimpleSaveCallback(check_freq=10000, save_path="animal_shogi_ppo")
+    pbar = ProgressBar(total_timesteps=100000)
+    
     # 3. 訓練模型
-    model.learn(total_timesteps=100000, callback=callback)
+    model.learn(total_timesteps=100000, callback=[save_callback, pbar])
+
 def load_and_continue_training():
     """
     加載已有的模型並繼續訓練。
@@ -43,7 +45,12 @@ def load_and_continue_training():
     loaded_model = PPO.load("animal_shogi_ppo")
     env = DummyVecEnv([lambda: AnimalShogiEnv()])  # 必須再次建立環境
     loaded_model.set_env(env)
-    loaded_model.learn(total_timesteps=50000)
+
+    save_callback = SimpleSaveCallback(check_freq=10000, save_path="animal_shogi_ppo")
+    pbar = ProgressBar(total_timesteps=50000)
+    
+    # 訓練模型並使用進度條
+    loaded_model.learn(total_timesteps=50000, callback=[save_callback, pbar])
 
 def test_model():
     """
