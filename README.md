@@ -2,47 +2,58 @@
 
 ## Overview
 
-Welcome to the Animal Shogi AI project! This endeavor aims at developing a sophisticated AI model trained through reinforcement learning to play the game of Animal Shogi, also known as Dobutsu Shogi or Let's Catch the Lion! If you are unfamiliar with this variant of shogi, it is a simpler and more accessible version of the traditional Japanese board game, shogi, designed specifically for children and beginners.
+Welcome to the Animal Shogi AI project! This endeavor aims to develop a sophisticated AI model trained through reinforcement learning to play the game of Animal Shogi, also known as Dobutsu Shogi or Let's Catch the Lion! It's a simpler and more accessible version of the traditional Japanese board game, shogi, designed specifically for children and beginners. With this project, we aim to introduce a digital, AI-based opponent to the world of Animal Shogi.
 
-Through this project, we intend to not only bring this delightful game into the digital realm but also elevate the playing experience with an AI opponent that can provide a challenging and enjoyable game for players of all levels.
+## Setup and Installation
+
+1. **Clone the Repository**: Start by cloning this repository to your local machine.
+2. **Install Dependencies**: Navigate to the project directory and run the following command to install all the necessary dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ## Features
 
-Our AI model will incorporate the following essential features:
+Our AI model incorporates the following features:
 
-1. **Board Reading Mechanism**: Will be able to accurately represent the game's state at any given time.
-2. **Game Rules**: To ensure a fair game, all the rules of Animal Shogi will be meticulously implemented.
-3. **Win/Loss Determination**: The model will be able to determine the end game conditions accurately.
-4. **Reward Function**: For reinforcement learning, a reward function will be defined to train the AI model effectively.
+1. **Board Reading Mechanism**: Can accurately represent the game's state at any given time.
+2. **Game Rules**: All the rules of Animal Shogi are meticulously implemented to ensure a fair game.
+3. **Win/Loss Determination**: Can determine the end game conditions accurately.
+4. **Reward Function**: Defined for effective reinforcement learning training of the AI model.
 
-Moreover, the project will feature a graphical user interface (GUI) developed using Python, offering an intuitive and user-friendly experience.
+Additionally, the project features a user-friendly graphical interface developed using Python and Pygame.
 
-## Development
+## Development Stages
 
 ### Phase 1: Pre-Reinforcement Learning
 
-Before we dive into reinforcement learning, we will focus on establishing the following foundations:
+In this phase, we established the game's foundation:
 
-1. **Graphical User Interface (GUI)**: Developing an interface where players can interact with the game visually.
-2. **Piece Movement**: Implementing the mechanism to move the pieces according to the rules of the game.
-3. **Player Turns**: Establishing a system to manage player turns effectively.
-4. **Win/Loss Determination**: Creating a system to accurately determine the winning or losing conditions.
+- Developed a graphical user interface (GUI) for interactive gameplay.
+- Implemented piece movement based on the game's rules.
+- Introduced a system to manage player turns.
+- Designed a system to determine win/loss conditions.
 
 ### Phase 2: Reinforcement Learning
 
-Once the foundations are laid, we will proceed with the reinforcement learning phase to develop the AI model.
+In the reinforcement learning phase, we utilized the Stable Baselines3 library to develop and train the AI model using the Proximal Policy Optimization (PPO) algorithm.
 
-### Technologies
+## Testing and Evaluation
 
-- **Python**: The backend and the AI model will be developed using Python to leverage its rich ecosystem of libraries and tools available for AI and machine learning.
-- **GUI Libraries**: Depending on the development process, we will choose between libraries like Tkinter, PyQt, PySide, Kivy, or Pygame for the GUI development.
+Once the AI model is trained, it can be tested and evaluated against human players or other AI opponents to gauge its performance.
+
+## Technologies Used
+
+- **Python**: Serves as the primary language for backend development and AI modeling.
+- **Pygame**: Used for GUI development, offering an intuitive and interactive gameplay experience.
+- **Stable Baselines3**: A reinforcement learning library utilized to train the AI model.
 
 ## Contributing
 
-We warmly welcome contributions! If you are interested in contributing, please feel free to reach out and collaborate.
+Contributions are welcome! If you're interested in contributing or have suggestions for improvements, feel free to open an issue or submit a pull request.
 
 ## Contact
 
-If you have any questions, suggestions, or feedback, please don't hesitate to contact us.
+For any questions, suggestions, or feedback, please contact us.
 
-Thank you for visiting our project!
+Thank you for your interest in our project!
