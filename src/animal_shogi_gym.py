@@ -26,12 +26,12 @@ class AnimalShogiEnv:
 
 
     def step(self, action_idx):  # 注意：`step` 方法還需要一個 `action` 參數
-        is_game_over, notation_hist, winner = self.logic.apply_action()  # 使用提供的動作
-        reward_player1, reward_player2 = self.logic.calculate_reward(is_game_over, winner)
+        observation, possible_actions = self.logic.generate_possible_actions()
+        action_idx = action_idx % len(possible_actions)
+        action = possible_actions[action_idx]
 
-        _, action_list = self.logic.generate_possible_actions()
-        
-        observation = self.logic.get_current_game_state()
+        is_game_over, notation_hist, winner = self.logic.apply_action(action)  # 使用提供的動作
+        reward_player1, reward_player2 = self.logic.calculate_reward(is_game_over, winner)  # 計算獎勵
 
         # 這裡的 'done' 是一個布爾值，指示遊戲是否結束
         done = is_game_over
@@ -93,8 +93,8 @@ if __name__ == "__main__":
         winner = None
 
         while not is_game_over:
-            env.logic.generate_possible_actions()
-            observation, (reward_player1, reward_player2), is_game_over, notation_hist = env.step(0) #每回合的動作
+            action_idx = env.action_space.sample()
+            observation, (reward_player1, reward_player2), is_game_over, notation_hist = env.step(action_idx) #每回合的動作
             # env.render() # 棋盤每回合變化的視覺呈現
 
             player1_total_reward += reward_player1

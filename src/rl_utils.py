@@ -67,16 +67,16 @@ class AnimalShogiEnvLogic:
     def get_con_non_capture_turns_val(self):
         return self.con_non_capture_turns
 
-    def check_if_lion_in_range(self, possible_actions, board_cnfig, current_player):
+    def check_if_lion_in_range(self, possible_actions, board_config, current_player):
         """檢查是否在獅子的攻擊範圍內"""
         lion_capture_actions = []
         opponent_lion_pos = None
-        for _, piece in board_cnfig.items():
+        for _, piece in board_config.items():
             if piece.piece_type == "L" and piece.player != current_player:
                 opponent_lion_pos = piece.coords
                 break
         if opponent_lion_pos:
-            for action in possible_actions['board_piece_possible_actions']:
+            for action in possible_actions:
                 if action['move'] == opponent_lion_pos:
                     lion_capture_actions.append(action)
         return lion_capture_actions
@@ -84,12 +84,10 @@ class AnimalShogiEnvLogic:
     def is_lion_in_danger(self, possible_actions, board_config, current_player):
         """檢查自己的獅子是否處於危險之中"""
         own_lion_pos = None
-        
-        for action in possible_actions['board_piece_possible_actions']:
+        for action in possible_actions:
             if action['piece'][0] == 'L':
                 own_lion_pos = action['piece'][1]
                 break
-
         if own_lion_pos:
             for _, piece in board_config.items():
                 if piece.player != current_player:
@@ -101,13 +99,11 @@ class AnimalShogiEnvLogic:
         """檢查是否有獅子可以吃掉、或著獅子是否處於危險之中"""
         lion_capture_actions = self.check_if_lion_in_range(possible_actions, self.board_config, self.current_player)
         if lion_capture_actions:
-            possible_actions['board_piece_possible_actions'] = lion_capture_actions
+            return lion_capture_actions
         elif self.is_lion_in_danger(possible_actions, self.board_config, self.current_player):
-            lion_actions = []
-            for action in possible_actions['board_piece_possible_actions']:
-                if action['piece'][0] == 'L':
-                    lion_actions.append(action)
-            possible_actions['board_piece_possible_actions'] = lion_actions
+            lion_actions = [action for action in possible_actions if action['piece'][0] == 'L']
+            if lion_actions:  # 只有在確定獅子還有行動空間時，才替換可能的行動
+                return lion_actions
         return possible_actions
 
 
@@ -119,28 +115,11 @@ class AnimalShogiEnvLogic:
         possible_actions = get_possible_actions(self.board_config, self.current_player, 
             self.storage_area_player1, self.storage_area_player2, self.turn_count, 
             self.con_non_capture_turns, self.game_over)
-
-        possible_actions = self.smart_check_actions(possible_actions)
+        # 棋盤上的移動跟打入都是可選擇的行動事件
+        possible_actions = possible_actions['board_piece_possible_actions'] + possible_actions['storage_piece_possible_actions']
+        possible_actions = self.smart_check_actions(possible_actions) # 檢查是否有獅子可以吃掉、或著獅子是否處於危險之中
         return game_state, possible_actions
 
-    def select_action(self, possible_actions, epsilon=0.2):
-        """選擇棋子"""
-        board_piece_possible_actions = possible_actions["board_piece_possible_actions"]
-        storage_piece_possible_actions = possible_actions["storage_piece_possible_actions"]
-
-        action_list = board_piece_possible_actions + storage_piece_possible_actions
-
-        # Implementing ε-greedy strategy
-        rand_num = random.random()  # Generate a random number between 0 and 1
-        if rand_num < epsilon:
-            # Choose a random action
-            selected_action = random.choice(action_list)
-        else:
-            # Choose the best action - for now, we'll just pick the first one as a placeholder
-            # In a real scenario, you'd evaluate the actions using a trained model
-            selected_action = action_list[0]
-  
-        return selected_action
     
     def execute_move(self, new_cell_name, piece_origin):
         """執行移動"""
@@ -186,14 +165,12 @@ class AnimalShogiEnvLogic:
     def get_current_game_state(self):
         return self.current_state
 
-    def apply_action(self):
+    def apply_action(self, action):
         """應用行動"""
         # 獲得當前遊戲狀態和可能的行動
         if self.game_over:
             return True, self.notation_hist, self.current_player
 
-        _, possible_actions = self.generate_possible_actions()
-        action = self.select_action(possible_actions)
         piece_origin = action['piece'][1]
         new_cell_name = get_cell_name_from_coords(action['move'])
 
