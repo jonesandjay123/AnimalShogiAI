@@ -101,6 +101,8 @@ if __name__ == "__main__":
             player2_total_reward += reward_player2
 
         print(f"game: {g} using {len(notation_hist)} steps")
+        # for notation in notation_hist:
+        #     print(notation)
 
         if reward_player1 == 5:
             print("Player 1 wins!")
