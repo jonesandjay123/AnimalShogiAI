@@ -84,7 +84,9 @@ class AnimalShogiEnv(Env):
 
         info = {'notation_hist': notation_hist, 'round_player': current_player}
 
-        return observation, reward, done, info
+        observation_array = self.convert_observation_to_array(observation)
+
+        return observation_array, reward, done, info
 
 
 
@@ -131,7 +133,7 @@ if __name__ == "__main__":
     player1_total_reward = 0
     player2_total_reward = 0
 
-    for g in range(10):
+    for g in range(1):
         env = AnimalShogiEnv()
         env.seed() # 使用 seed 方法隨機選擇先手玩家
 
