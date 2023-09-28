@@ -6,7 +6,7 @@ class TQDMProgressBar(BaseCallback):
     """
     TQDM ProgressBar callback for Stable Baselines3.
     """
-    def __init__(self, total_timesteps):  # <-- total_timesteps is necessary now
+    def __init__(self, total_timesteps=1000000):  # <-- total_timesteps is necessary now
         super(TQDMProgressBar, self).__init__()
         self.pbar = None
         self.total_timesteps = total_timesteps

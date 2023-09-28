@@ -99,16 +99,19 @@ def get_current_game_state(board_config, storage_area_player1, storage_area_play
     game_state = {
         "turn_count": turn_count,
          "current_player": current_player,
-        # "con_non_capture_turns": con_non_capture_turns,
         "board": {},
         "storage": {
             "1": [],
             "-1": []
         },
     }
-    # 獲得棋盤的狀態
-    for cell_name, piece in board_config.items():
-        game_state["board"][cell_name] = [piece.piece_type, piece.player]
+    all_cells = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4"]
+    for cell_name in all_cells:
+        if cell_name in board_config:
+            game_state["board"][cell_name] = [board_config[cell_name].piece_type, board_config[cell_name].player]
+        else:
+            game_state["board"][cell_name] = [0, 0]  # 表示該位置上沒有棋子
+
     # 獲得儲存區的狀態
     for piece in storage_area_player1:
         game_state["storage"]["1"].append(piece.piece_type)
