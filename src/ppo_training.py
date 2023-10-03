@@ -37,7 +37,7 @@ def train_and_save_model():
     pbar = TQDMProgressBar()  # 使用TQDMProgressBar
     
     # 3. 訓練模型
-    model.learn(total_timesteps=100000, callback=[save_callback, pbar])
+    model.learn(total_timesteps=1000000, callback=[save_callback, pbar])
 
 def load_and_continue_training():
     """
